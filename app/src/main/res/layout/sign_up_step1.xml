@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".SignUp_Step1">
+
+    <com.example.medication.InputView
+        android:id="@+id/input_nickname"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        app:helperText="2~10자의 한글, 영문, 숫자만 사용 가능합니다."
+        app:hintText="닉네임을 입력하세요."
+        app:iconSrc="@drawable/ic_user"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_check_pw"
+        app:validationType="nickname" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_launcher_foreground"
+        tools:layout_editor_absoluteY="69dp"
+        tools:ignore="MissingConstraints" />
+
+    <com.example.medication.InputView
+        android:id="@+id/input_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="20dp"
+        android:inputType="textEmailAddress"
+        android:nextFocusDown="@id/input_pw"
+        android:imeOptions="actionNext"
+        app:validationType="email"
+        app:hintText="이메일을 입력하세요."
+        app:helperText="연락 가능한 이메일 주소를 입력해주세요."
+        app:iconSrc="@drawable/ic_email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <com.example.medication.InputView
+        android:id="@+id/input_pw"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:imeOptions="actionNext"
+        android:inputType="textPassword"
+        android:nextFocusDown="@id/input_check_pw"
+        app:helperText="8~16자의 영문, 숫자, 특수문자를 모두 포함해야 합니다."
+        app:hintText="비밀번호를 입력하세요."
+        app:iconSrc="@drawable/ic_lock"
+        app:isPassword="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_email"
+        app:validationType="password" />
+
+    <com.example.medication.InputView
+        android:id="@+id/input_check_pw"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:nextFocusDown="@id/input_nickname"
+
+        android:layout_marginHorizontal="20dp"
+        android:inputType="textPassword"
+        android:imeOptions="actionNext"
+        app:validationType="password"
+        app:hintText="비밀번호를 재입력하세요."
+        app:helperText="비밀번호를 한 번 더 입력해주세요."
+        app:iconSrc="@drawable/ic_lock_check"
+        app:isPassword="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_pw" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_finish"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="20dp"
+        android:text="회원가입 완료"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="#FFEB3B"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_nickname" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

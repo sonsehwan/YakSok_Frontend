@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="InputView">
+        <attr name="hintText" format="string"/>
+        <attr name="iconSrc" format="reference"/>
+        <attr name="isPassword" format="boolean" />
+        <attr name="helperText" format="string"/>
+
+        <!-- 입력 타입을 정의하는 enum -->
+        <attr name="validationType" format="enum">
+            <enum name="none" value="0"/>
+            <enum name="email" value="1"/>
+            <enum name="id" value="2"/>
+            <enum name="password" value="3"/>
+            <enum name="nickname" value="4"/>
+            <enum name="birth" value="5"/>
+            <enum name="phone" value="6"/>
+        </attr>
+
+        <!-- 표준 안드로이드 속성을 커스텀 뷰에서도 사용할 수 있도록 추가 -->
+        <attr name="android:inputType"/>
+        <attr name="android:imeOptions"/>
+    </declare-styleable>
+</resources>

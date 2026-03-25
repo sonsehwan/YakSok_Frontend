@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 체크 여부에 따라 아이콘과 색상이 변하는 선택자 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. 체크되었을 때 (복용 완료): 노란색 배경에 체크 아이콘이 겹쳐서 보임 -->
+    <item android:state_checked="true">
+        <layer-list>
+            <!-- 배경: 노란색 원형 shape -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="#FFEB3B" />
+                    <!-- [수정] 고유 크기를 지정하여 화면에서 사라짐 방지 -->
+                    <size android:width="26dp" android:height="26dp" />
+                </shape>
+            </item>
+            <!-- 아이콘: 하얀색 체크 표시 -->
+            <!-- [수정] 상하좌우 여백(padding)을 주어 원 안에 예쁘게 배치 -->
+            <item
+                android:bottom="6dp"
+                android:left="6dp"
+                android:right="6dp"
+                android:top="6dp"
+                android:drawable="@drawable/ic_check" />
+        </layer-list>
+    </item>
+
+    <!-- 2. 체크 안 되었을 때 (미복용): 연한 회색 테두리만 있는 빈 원 -->
+    <item>
+        <shape android:shape="oval">
+            <size android:width="26dp" android:height="26dp" />
+            <stroke
+                android:width="2dp"
+                android:color="#E0E0E0" />
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+
+</selector>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    tools:context=".Login">
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
+
+    <TextView
+        android:id="@+id/tv_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="나를 위한 약속"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_logo" />
+
+    <LinearLayout
+        android:id="@+id/ll_input_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/tv_welcome">
+
+        <com.example.medication.InputView
+            android:id="@+id/input_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintText="이메일을 입력하세요"
+            app:iconSrc="@drawable/ic_email"
+            app:validationType="email"
+            android:inputType="textEmailAddress"
+            android:imeOptions="actionNext" />
+
+        <com.example.medication.InputView
+            android:id="@+id/input_pw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:hintText="비밀번호를 입력하세요"
+            app:iconSrc="@drawable/ic_lock"
+            app:isPassword="true"
+            android:imeOptions="actionDone" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_login"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="30dp"
+        android:text="로그인"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="#FFEB3B"
+        app:cornerRadius="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_input_group"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_login">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="계정이 없으신가요? "
+            android:textColor="#999999" />
+
+        <TextView
+            android:id="@+id/tv_go_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="회원가입"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

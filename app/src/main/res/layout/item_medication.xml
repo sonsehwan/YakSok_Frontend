@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_pill"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- 왼쪽 컬러 강조선 -->
+        <View
+            android:id="@+id/view_status_bar"
+            android:layout_width="6dp"
+            android:layout_height="match_parent"
+            android:background="#FFEB3B" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <!-- 알약 아이콘 영역 -->
+            <FrameLayout
+                android:id="@+id/view_icon_bg"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_pill_icon_yellow">
+
+                <ImageView
+                    android:id="@+id/iv_pill_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_pill"
+                    app:tint="#FBC02D" />
+            </FrameLayout>
+
+            <!-- 약 정보 텍스트 영역 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_pill_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    tools:text="종합 비타민" />
+
+                <TextView
+                    android:id="@+id/tv_pill_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="#999999"
+                    android:textSize="13sp"
+                    tools:text="오전 08:30 • 식후 30분" />
+            </LinearLayout>
+
+            <!-- 수정된 복용 체크박스: 완료 텍스트 추가 및 간격 조정 -->
+            <CheckBox
+                android:id="@+id/cb_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/selector_check_box"
+                app:buttonTint="@null"
+                android:background="@null"
+                android:checked="false"
+                android:text="미복용"
+                android:textColor="#999999"
+                android:textSize="13sp"
+                android:paddingStart="8dp"
+                android:gravity="center_vertical" />
+
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
