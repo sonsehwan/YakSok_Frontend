@@ -55,14 +55,16 @@ public class MainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.nav_home) {
-                showToast("메인화면 전환 기능이 준비 중입니다.");
                 return true;
             } else if (itemId == R.id.nav_history) {
-                showToast("기록 메뉴 전환 기능이 준비 중입니다.");
+                Intent intent = new Intent(MainActivity.this, WipActivity.class);
+                startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_settings) {
-//                showToast("설정 메뉴 전환 기능이 준비 중입니다.");
-                showLogOutDialog(this);
+                Intent intent = new Intent(MainActivity.this, Settings.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
                 return true;
             }
             return false;

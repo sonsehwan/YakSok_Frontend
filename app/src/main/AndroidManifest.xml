@@ -15,6 +15,15 @@
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".MyInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WipActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Settings"
+            android:exported="false" />
+        <activity
             android:name=".CreateDirectSchedule"
             android:exported="false" />
         <activity
