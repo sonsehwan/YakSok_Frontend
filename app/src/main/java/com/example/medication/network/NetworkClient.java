@@ -8,13 +8,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkClient {
 
-    private static final String BASE_URL = "http://54.116.63.204:8080/";
+    private static final String BASE_URL = "http://54.116.63.204:8081/";
 
     private static Retrofit retrofit = null;
 
     public static UserApi getApi() {
         if (retrofit == null) {
-            // 1. OkHttpClient 설정을 통해 타임아웃 시간 연장
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(15, TimeUnit.SECONDS) // 서버 연결 대기 시간 (15초)
                     .readTimeout(15, TimeUnit.SECONDS)    // 데이터 읽기 대기 시간 (15초)

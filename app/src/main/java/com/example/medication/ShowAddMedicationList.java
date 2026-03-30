@@ -22,17 +22,17 @@ public class ShowAddMedicationList extends BottomSheetDialogFragment {
         LinearLayout btnDirect = view.findViewById(R.id.ll_create_direct);
 
         btnPrescription.setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), CreatePrescription.class));
+            startActivity(new Intent(getContext(), WipActivity.class));
             dismiss();
         });
 
         btnEnvelope.setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), CreatePrescription.class));
+            startActivity(new Intent(getContext(), WipActivity.class));
             dismiss();
         });
 
         btnDirect.setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), CreateDirectSchedule.class));
+            startActivity(new Intent(getContext(), WipActivity.class));
             dismiss();
         });
 

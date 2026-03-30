@@ -121,6 +121,7 @@ public class SignUp_Step1 extends AppCompatActivity {
                         finish();
                     }else{
                         //서버에서 회원가입에 실패 했을 경우.
+                        Log.e("SignUpError", result.getMessage());
                         showToast(result.getMessage());
                     }
                 }else{

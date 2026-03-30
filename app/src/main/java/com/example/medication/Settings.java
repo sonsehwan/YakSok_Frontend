@@ -26,40 +26,37 @@ public class Settings extends AppCompatActivity {
         // 1. 뷰 초기화
         initViews();
 
-        // 2. 하단바 상태 설정 (현재 '설정' 탭이 선택된 상태로 표시)
         bottomNav.setSelectedItemId(R.id.nav_settings);
 
-        // 3. 클릭 이벤트 설정
         setupClickListeners();
     }
 
     private void setupClickListeners() {
-        // 상단 로그아웃 아이콘 클릭
         ivLogout.setOnClickListener(v -> showLogOutDialog());
 
-        // 내 정보 관리 클릭
         llMyInfo.setOnClickListener(v -> {
             Intent intent = new Intent(Settings.this, MyInfoActivity.class);
             startActivity(intent);
         });
 
-        // 공유 관리 클릭 (준비 중)
-        llShare.setOnClickListener(v -> showToast("공유 관리 기능은 준비 중입니다."));
+        llShare.setOnClickListener(v -> {
+            Intent intent = new Intent(Settings.this, WipActivity.class);
+            startActivity(intent);
+        });
 
-        // 일반 설정 클릭 (준비 중)
-        llGeneral.setOnClickListener(v -> showToast("일반 설정 기능은 준비 중입니다."));
+        llGeneral.setOnClickListener(v -> {
+            Intent intent = new Intent(Settings.this,WipActivity.class);
+            startActivity(intent);
+        });
 
-        // 하단 네비게이션 메뉴 전환
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
             if (itemId == R.id.nav_home) {
-                // 홈(MainActivity)으로 전환
                 Intent intent = new Intent(Settings.this, MainActivity.class);
                 startActivity(intent);
-                // 탭 전환 느낌을 위해 애니메이션 제거
                 overridePendingTransition(0, 0);
-                finish(); // 현재 설정 화면은 종료
+                finish();
                 return true;
             } else if (itemId == R.id.nav_history) {
                 Intent intent = new Intent(Settings.this, WipActivity.class);
@@ -80,12 +77,11 @@ public class Settings extends AppCompatActivity {
                     // 1. 세션 데이터(Sprefs) 삭제
                     SprefsManager.clearUserInfo(Settings.this);
 
-                    // 2. 로그인 화면으로 이동하며 스택 제거
                     Intent intent = new Intent(Settings.this, Login.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
 
-                    finish(); // 현재 화면 종료
+                    finish();
                 })
                 .setNegativeButton("취소", null)
                 .show();

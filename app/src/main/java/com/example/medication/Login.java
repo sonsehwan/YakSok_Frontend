@@ -23,8 +23,6 @@ import com.example.medication.network.UserApi;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
 
-import java.io.IOException;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -75,6 +73,7 @@ public class Login extends AppCompatActivity {
         api.login(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                // 응답을 성공적으로 받고 내용이 있을 때
                 if(response.isSuccessful() && response.body() != null){
 
                     ApiResponse<UserResponse> result = response.body();
@@ -92,11 +91,11 @@ public class Login extends AppCompatActivity {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
-                    }else{
+                    }else{// 서버와 연결은 성공했지만 요청을 승인할 수 없을 때
                         showToast(result.getMessage());
                         Log.e("Login", result.getMessage());
                     }
-                }else{
+                }else{// 서버와 연결이 실패 했을 때
                     handleErrorResponse(response);
                 }
             }
@@ -111,24 +110,35 @@ public class Login extends AppCompatActivity {
 
     private void handleErrorResponse(Response<?> response) {
         try {
+            android.util.Log.e("LoginError", "HTTP 상태 코드: " + response.code());
             if (response.errorBody() != null) {
                 String errorJson = response.errorBody().string();
-                ApiResponse errorResponse = new Gson().fromJson(errorJson, ApiResponse.class);
-                String message = errorResponse.getMessage();
 
-                // 비밀번호가 틀렸거나 이메일이 없는 경우 처리
-                if (message.contains("비밀번호")) {
-                    inputPw.showError(message);
-                } else if (message.contains("이메일") || message.contains("사용자")) {
-                    inputEmail.showError(message);
-                } else {
-                    showToast(message);
+                android.util.Log.e("LoginError", "서버 원본 응답: " + errorJson);
+                // 1. 서버가 빈 값을 보냈을 때 방어
+                if (errorJson == null || errorJson.trim().isEmpty()) {
+
+                    showToast("로그인에 실패했습니다. (응답 없음)");
+                    return;
                 }
-            } else {
-                showToast("오류가 발생했습니다. (코드: " + response.code() + ")");
+
+                ApiResponse errorResponse = new Gson().fromJson(errorJson, ApiResponse.class);
+
+                // 2. 파싱은 성공했지만 안에 Message가 없을 때 방어
+                if (errorResponse != null && errorResponse.getMessage() != null) {
+                    String message = errorResponse.getMessage();
+
+                    if (message.contains("비밀번호")) inputPw.showError(message);
+                    else if (message.contains("이메일") || message.contains("사용자")) inputEmail.showError(message);
+                    else showToast(message);
+                } else {
+                    // JSON 형태가 아니거나 메세지가 없는 경우
+                    showToast("로그인 정보를 다시 확인해주세요.");
+                }
             }
-        } catch (IOException e) {
-            showToast("데이터 분석 중 오류가 발생했습니다.");
+        } catch (Exception e) {
+            // IOException 및 Gson 파싱 에러(JsonSyntaxException)를 모두 잡아서 앱 강제종료 방지
+            showToast("서버 응답을 분석할 수 없습니다.");
         }
     }
 
