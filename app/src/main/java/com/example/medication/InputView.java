@@ -209,6 +209,10 @@ public class InputView extends LinearLayout {
         return editText.getText().toString().trim();
     }
 
+    public void setText(String text){
+        editText.setText(text);
+    }
+
     @Override
     public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
         return editText.requestFocus(direction, previouslyFocusedRect);
