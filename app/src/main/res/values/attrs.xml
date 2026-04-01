@@ -5,6 +5,7 @@
         <attr name="iconSrc" format="reference"/>
         <attr name="isPassword" format="boolean" />
         <attr name="helperText" format="string"/>
+        <attr name="isReadOnly" format="boolean"/>
 
         <!-- 입력 타입을 정의하는 enum -->
         <attr name="validationType" format="enum">

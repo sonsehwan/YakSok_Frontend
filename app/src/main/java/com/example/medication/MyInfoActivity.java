@@ -58,9 +58,7 @@ public class MyInfoActivity extends AppCompatActivity {
 
         btnChangePw.setOnClickListener(v->{
             Intent intent = new Intent(this, ModifyPassword.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            finish();
         });
     }
 

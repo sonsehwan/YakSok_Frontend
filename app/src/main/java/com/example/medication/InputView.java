@@ -32,6 +32,7 @@ public class InputView extends LinearLayout {
 
     private boolean isPasswordType = false;
     private boolean isPasswordVisible = false;
+    private boolean isReadOnly = false;
     private int validationType = 0;
     private OnValidateListener onValidateListener;
     private String helperText;
@@ -74,8 +75,25 @@ public class InputView extends LinearLayout {
                 String hint = a.getString(R.styleable.InputView_hintText);
                 int iconRes = a.getResourceId(R.styleable.InputView_iconSrc, 0);
                 isPasswordType = a.getBoolean(R.styleable.InputView_isPassword, false);
+                isReadOnly = a.getBoolean(R.styleable.InputView_isReadOnly, false);
                 validationType = a.getInt(R.styleable.InputView_validationType, 0);
                 helperText = a.getString(R.styleable.InputView_helperText);
+
+                if(iconRes != 0){
+                    icon.setImageResource(iconRes);
+                    icon.setVisibility(View.VISIBLE);
+                }else{
+                    icon.setVisibility(View.GONE);
+                }
+
+                if (isReadOnly) {
+                    editText.setFocusable(false);
+                    editText.setFocusableInTouchMode(false);
+                    editText.setClickable(true);
+                    editText.setCursorVisible(false);
+                    // 에디트텍스트 클릭 시 부모(InputView)의 클릭 이벤트가 발생하도록 중계
+                    editText.setOnClickListener(v -> callOnClick());
+                }
 
                 int inputType = a.getInt(R.styleable.InputView_android_inputType, InputType.TYPE_CLASS_TEXT);
                 editText.setInputType(inputType);
