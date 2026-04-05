@@ -1,14 +1,11 @@
 package com.example.medication;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -118,32 +115,6 @@ public class MainActivity extends AppCompatActivity {
 
         int remain = total - done;
         tvSummary.setText("오늘 약속은 " + remain + "건 남았어요.");
-    }
-
-    private void showLogOutDialog(Context context){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("로그아웃");
-        builder.setMessage("로그아웃 하시겠습니까?");
-
-        builder.setPositiveButton("로그아웃", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                SprefsManager.clearUserInfo(MainActivity.this);
-                Intent intent = new Intent(MainActivity.this, Login.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-            }
-        });
-
-        builder.show();
     }
 
     private void showToast(String message){

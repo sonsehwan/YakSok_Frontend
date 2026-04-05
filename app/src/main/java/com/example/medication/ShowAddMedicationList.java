@@ -32,7 +32,7 @@ public class ShowAddMedicationList extends BottomSheetDialogFragment {
         });
 
         btnDirect.setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), WipActivity.class));
+            startActivity(new Intent(getContext(), CreatePrescription.class));
             dismiss();
         });
 

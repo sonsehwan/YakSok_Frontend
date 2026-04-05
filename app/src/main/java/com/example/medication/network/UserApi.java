@@ -13,20 +13,16 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 
 public interface UserApi {
-    /**
-     * 회원가입 API 호출
-     * @param request 안드로이드에서 모은 회원 정보 객체
-     * @return 서버로부터의 응답(성공 여부, 메시지 등)
-     */
+
     @POST("/api/users/signup")
     Call<ApiResponse<Void>> signUp(@Body UserRequest request);
 
     @POST("/api/users/login")
     Call<ApiResponse<UserResponse>> login(@Body LoginRequest request);
 
-    @PATCH("/api/users/modifyinfo")
+    @PATCH("/api/users/info")
     Call<ApiResponse<UserResponse>> modifyNickname(@Body ModifyInfoRequest request);
 
-    @PATCH("/api/users/modifyPassword")
+    @PATCH("/api/users/password")
     Call<ApiResponse<Void>> modifyPassword(@Body ModifyPasswordRequest request);
 }

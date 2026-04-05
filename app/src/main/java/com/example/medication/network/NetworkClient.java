@@ -9,9 +9,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkClient {
 
     private static final String BASE_URL = "http://54.116.63.204:8081/";
+    private static final String MD_URL = "http://apis.data.go.kr/1471000/MdcinGrnIdntfcInfoService03/";
 
     private static Retrofit retrofit = null;
 
+    // 회원관련 api 통신
     public static UserApi getApi() {
         if (retrofit == null) {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -32,5 +34,28 @@ public class NetworkClient {
             }
         }
         return retrofit.create(UserApi.class);
+    }
+
+    // 약 정보 관련 API 통신
+    public static MedicineApi getMedicineApi() {
+        if (retrofit == null) {
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(15, TimeUnit.SECONDS) // 서버 연결 대기 시간 (15초)
+                    .readTimeout(15, TimeUnit.SECONDS)    // 데이터 읽기 대기 시간 (15초)
+                    .writeTimeout(15, TimeUnit.SECONDS)   // 데이터 쓰기 대기 시간 (15초)
+                    .build();
+
+            try {
+                // 2. 설정된 OkHttpClient를 Retrofit에 적용
+                retrofit = new Retrofit.Builder()
+                        .baseUrl(MD_URL)
+                        .client(okHttpClient)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+            } catch (Exception e) {
+                android.util.Log.e("NetworkClient", "Retrofit 초기화 실패: " + e.getMessage());
+            }
+        }
+        return retrofit.create(MedicineApi.class);
     }
 }
