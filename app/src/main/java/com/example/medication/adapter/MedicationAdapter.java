@@ -61,9 +61,11 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
             showConfirmDialog(holder.itemView.getContext(), position, targetState, holder);
         });
 
-//        //직접 클릭하여 복용 상태를 변경할 때
-//        holder.cbDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
-//        });
+          /*
+        직접 클릭하여 복용 상태를 변경할 때
+        holder.cbDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        });
+*/
     }
 
     @Override

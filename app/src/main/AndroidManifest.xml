@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".MedicineSearchActivity"
+            android:exported="false" />
+        <activity
             android:name=".ModifyPassword"
             android:exported="false" />
         <activity

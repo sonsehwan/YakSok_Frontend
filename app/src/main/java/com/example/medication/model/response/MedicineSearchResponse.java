@@ -1,16 +1,20 @@
 package com.example.medication.model.response;
 
-import com.example.medication.model.SimpleMedicine;
-
-import java.util.List;
-
-import retrofit2.http.Body;
-
 public class MedicineSearchResponse {
 
-    private Body body;
+    private String image;
+    private String name;
 
-    private class body{
-        private List<SimpleMedicine> list;
+    public MedicineSearchResponse(String image, String name) {
+        this.image = image;
+        this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public String getName() {
+        return name;
     }
 }

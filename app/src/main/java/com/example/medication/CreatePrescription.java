@@ -1,6 +1,7 @@
 package com.example.medication;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -45,7 +46,9 @@ public class CreatePrescription extends AppCompatActivity {
         // 약 추가 버튼 클릭 시 리스트에 데이터 추가
         btnAddPill.setOnClickListener(v -> {
             // TODO: 약 검색/선택 화면으로 이동
-            selectedPills.add(new MedicationSetting("새로운 약 " + (selectedPills.size() + 1)));
+            Intent intent = new Intent(CreatePrescription.this, MedicineSearchActivity.class);
+            startActivity(intent);
+//            selectedPills.add(new MedicationSetting("새로운 약 " + (selectedPills.size() + 1)));
             settingAdapter.notifyItemInserted(selectedPills.size() - 1);
             updateRegisterButtonState();
         });
