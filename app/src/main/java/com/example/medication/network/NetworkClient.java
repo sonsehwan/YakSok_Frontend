@@ -9,7 +9,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkClient {
 
     private static final String BASE_URL = "http://54.116.63.204:8081/";
-    private static final String MD_URL = "http://apis.data.go.kr/1471000/MdcinGrnIdntfcInfoService03/";
 
     private static Retrofit userRetrofit = null;
     private static Retrofit medicineRetrofit = null;
@@ -45,7 +44,7 @@ public class NetworkClient {
             try {
                 // 2. 설정된 OkHttpClient를 Retrofit에 적용
                 medicineRetrofit = new Retrofit.Builder()
-                        .baseUrl(MD_URL)
+                        .baseUrl(BASE_URL)
                         .client(getHttpClient())
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();

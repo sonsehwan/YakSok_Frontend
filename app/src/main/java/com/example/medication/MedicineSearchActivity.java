@@ -37,14 +37,11 @@ public class MedicineSearchActivity extends AppCompatActivity {
         binding = MedicineSearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
-
         setupRecyclerView();
     }
 
     private void setupRecyclerView() {
         medicineAdapter = new MedicineAdapter();
-
         binding.rvMedicine.setLayoutManager(new LinearLayoutManager(this));
         binding.rvMedicine.setAdapter(medicineAdapter);
 
@@ -68,14 +65,13 @@ public class MedicineSearchActivity extends AppCompatActivity {
 
     private void searchMedicine(String keyword, Boolean isNewSearch){
         if(isLoading) return;
-
         isLoading = true;
 
         if(isNewSearch){
             currentPage = 1;
             lastSearchedKeyword = keyword;
             medicineAdapter.clearItems();
-        }else{
+        } else {
             currentPage++;
         }
 
@@ -99,7 +95,7 @@ public class MedicineSearchActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse<List<MedicineSearchResponse>>> call, @NonNull Throwable t) {
                         isLoading = false;
-                        Toast.makeText(MedicineSearchActivity.this, "네트워크 오류 발생", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MedicineSearchActivity.this, "서버 연결 실패: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
