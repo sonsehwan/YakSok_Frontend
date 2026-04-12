@@ -60,7 +60,7 @@
                     android:id="@+id/tv_label_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="복용날짜 *"
+                    android:text="복용시작 날짜 *"
                     android:textColor="#333333"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -74,8 +74,6 @@
                     android:textSize="12sp" />
             </RelativeLayout>
 
-            <!-- 날짜 선택용 InputView (Read Only 형태로 사용 권장) -->
-
             <!-- 카드 별명 섹션 -->
             <com.example.medication.InputView
                 android:id="@+id/input_date"
@@ -84,7 +82,7 @@
                 android:layout_marginHorizontal="15dp"
                 android:clickable="true"
                 android:focusable="false"
-                app:isReadOnly="false"
+                app:isReadOnly="true"
                 app:hintText="날짜를 선택하세요."
                 app:iconSrc="@drawable/ic_calendar" />
 
@@ -93,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:text="카드 별명 *"
+                android:text="약속 별명 *"
                 android:textColor="#333333"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -103,43 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
-                app:hintText="약물카드 별명" />
-
-            <!-- 약국명 섹션 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:text="약국명 *"
-                android:textColor="#333333"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <com.example.medication.InputView
-                android:id="@+id/input_pharmacy"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
-                app:hintText="처방받은 약국 이름" />
-
-            <!-- 병원명 섹션 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:text="병원명 *"
-                android:textColor="#333333"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <com.example.medication.InputView
-                android:id="@+id/input_hospital"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
-                app:hintText="진료받은 병원 이름" />
+                app:hintText="약속 별명" />
 
             <!-- 구분선 -->
             <View

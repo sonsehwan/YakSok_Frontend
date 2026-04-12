@@ -8,6 +8,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +25,7 @@ import java.util.Locale;
 public class CreatePrescription extends AppCompatActivity {
 
     private ImageView ivBack;
-    private InputView inputDate, inputPharmacy, inputHospital;
+    private InputView inputDate;
     private FrameLayout btnAddPill;
     private Button btnRegister;
 
@@ -31,6 +33,8 @@ public class CreatePrescription extends AppCompatActivity {
     private RecyclerView rvSelectedPills;
     private AddMedicationSettingAdapter settingAdapter;
     private List<MedicationSetting> selectedPills = new ArrayList<>();
+
+    private ActivityResultLauncher<Intent> searchLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +44,15 @@ public class CreatePrescription extends AppCompatActivity {
         initViews();
         setupRecyclerView();
 
+        setupSearchLauncher();
+
         ivBack.setOnClickListener(v -> finish());
         inputDate.setOnClickListener(v -> showDatePicker());
 
         // 약 추가 버튼 클릭 시 리스트에 데이터 추가
         btnAddPill.setOnClickListener(v -> {
-            // TODO: 약 검색/선택 화면으로 이동
             Intent intent = new Intent(CreatePrescription.this, MedicineSearchActivity.class);
-            startActivity(intent);
-//            selectedPills.add(new MedicationSetting("새로운 약 " + (selectedPills.size() + 1)));
-            settingAdapter.notifyItemInserted(selectedPills.size() - 1);
-            updateRegisterButtonState();
+            searchLauncher.launch(intent);
         });
 
         btnRegister.setOnClickListener(v -> {
@@ -58,9 +60,30 @@ public class CreatePrescription extends AppCompatActivity {
                 showToast("최소 한 개 이상의 약을 추가해주세요.");
                 return;
             }
-            showToast("구현 예정입니다.");
+
             finish();
         });
+    }
+
+    private void setupSearchLauncher() {
+        searchLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    // 결과가 RESULT_OK이고 데이터가 존재할 때만 실행
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+
+                        String medicineName = result.getData().getStringExtra("SELECTED_MEDICINE_NAME");
+
+                        if (medicineName != null) {
+                            selectedPills.add(new MedicationSetting(medicineName));
+
+                            settingAdapter.notifyItemInserted(selectedPills.size() - 1);
+
+                            updateRegisterButtonState();
+                        }
+                    }
+                }
+        );
     }
 
     private void setupRecyclerView() {
@@ -99,8 +122,6 @@ public class CreatePrescription extends AppCompatActivity {
     private void initViews() {
         ivBack = findViewById(R.id.iv_back);
         inputDate = findViewById(R.id.input_date);
-        inputPharmacy = findViewById(R.id.input_pharmacy);
-        inputHospital = findViewById(R.id.input_hospital);
         btnAddPill = findViewById(R.id.btn_add_pill);
         btnRegister = findViewById(R.id.btn_register);
         rvSelectedPills = findViewById(R.id.rv_selected_pills);
