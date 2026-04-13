@@ -106,9 +106,9 @@
             <!-- 구분선 -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="8dp"
+                android:layout_height="1dp"
                 android:layout_marginTop="32dp"
-                android:background="#F8F9FA" />
+                android:background="@color/black" />
 
             <!-- 약 선택 섹션 타이틀 -->
             <TextView

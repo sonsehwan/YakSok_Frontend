@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.medication.R;
 import com.example.medication.model.MedicationSetting;
 
@@ -35,6 +36,12 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MedicationSetting item = items.get(position);
+
+        Glide.with(holder.itemView.getContext())
+                .load(item.getImage())
+                .placeholder(android.R.drawable.ic_menu_report_image)
+                .error(android.R.drawable.ic_menu_close_clear_cancel)
+                .into(holder.ivImage);
 
         if (holder.dosageWatcher != null) {
             holder.etDosage.removeTextChangedListener(holder.dosageWatcher);
@@ -107,6 +114,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView ivImage;
         TextView tvName, tvDays, tvFreq;
         EditText etDosage;
         TextView btnDaysPlus, btnDaysMinus, btnFreqPlus, btnFreqMinus;
@@ -115,6 +123,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            ivImage = itemView.findViewById(R.id.iv_pill_img);
             tvName = itemView.findViewById(R.id.tv_pill_name);
             tvDays = itemView.findViewById(R.id.tv_days_value);
             tvFreq = itemView.findViewById(R.id.tv_freq_value);

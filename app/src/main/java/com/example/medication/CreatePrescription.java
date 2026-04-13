@@ -26,13 +26,14 @@ public class CreatePrescription extends AppCompatActivity {
 
     private ImageView ivBack;
     private InputView inputDate;
+    private InputView inputName;
     private FrameLayout btnAddPill;
     private Button btnRegister;
 
     // 리사이클러 뷰 관련 추가
     private RecyclerView rvSelectedPills;
     private AddMedicationSettingAdapter settingAdapter;
-    private List<MedicationSetting> selectedPills = new ArrayList<>();
+    private final List<MedicationSetting> selectedPills = new ArrayList<>();
 
     private ActivityResultLauncher<Intent> searchLauncher;
 
@@ -53,6 +54,7 @@ public class CreatePrescription extends AppCompatActivity {
         btnAddPill.setOnClickListener(v -> {
             Intent intent = new Intent(CreatePrescription.this, MedicineSearchActivity.class);
             searchLauncher.launch(intent);
+            finish();
         });
 
         btnRegister.setOnClickListener(v -> {
@@ -65,6 +67,11 @@ public class CreatePrescription extends AppCompatActivity {
         });
     }
 
+    private void startCreateYaksok(){
+        String date = inputDate.getText();
+        String yaksokName = inputName.getText();
+
+    }
     private void setupSearchLauncher() {
         searchLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -73,9 +80,10 @@ public class CreatePrescription extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
 
                         String medicineName = result.getData().getStringExtra("SELECTED_MEDICINE_NAME");
+                        String medicineImage = result.getData().getStringExtra("SELECTED_MEDICINE_IMAGE");
 
                         if (medicineName != null) {
-                            selectedPills.add(new MedicationSetting(medicineName));
+                            selectedPills.add(new MedicationSetting(medicineImage, medicineName));
 
                             settingAdapter.notifyItemInserted(selectedPills.size() - 1);
 
@@ -122,6 +130,7 @@ public class CreatePrescription extends AppCompatActivity {
     private void initViews() {
         ivBack = findViewById(R.id.iv_back);
         inputDate = findViewById(R.id.input_date);
+        inputName = findViewById(R.id.input_card_name);
         btnAddPill = findViewById(R.id.btn_add_pill);
         btnRegister = findViewById(R.id.btn_register);
         rvSelectedPills = findViewById(R.id.rv_selected_pills);
