@@ -54,7 +54,6 @@ public class CreatePrescription extends AppCompatActivity {
         btnAddPill.setOnClickListener(v -> {
             Intent intent = new Intent(CreatePrescription.this, MedicineSearchActivity.class);
             searchLauncher.launch(intent);
-            finish();
         });
 
         btnRegister.setOnClickListener(v -> {
