@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.adapter.AddMedicationSettingAdapter;
 import com.example.medication.model.MedicationSetting;
+import com.example.medication.model.request.PillRequest;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,8 +61,9 @@ public class CreatePrescription extends AppCompatActivity {
             if (selectedPills.isEmpty()) {
                 showToast("최소 한 개 이상의 약을 추가해주세요.");
                 return;
+            }else{
+                startCreateYaksok();
             }
-
             finish();
         });
     }
@@ -69,7 +71,7 @@ public class CreatePrescription extends AppCompatActivity {
     private void startCreateYaksok(){
         String date = inputDate.getText();
         String yaksokName = inputName.getText();
-
+        List<PillRequest> pills = new ArrayList<>();
     }
     private void setupSearchLauncher() {
         searchLauncher = registerForActivityResult(

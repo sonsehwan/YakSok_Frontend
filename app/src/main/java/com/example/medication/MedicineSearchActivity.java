@@ -60,6 +60,7 @@ public class MedicineSearchActivity extends AppCompatActivity {
         medicineAdapter.setOnItemClickListener(medicine -> {
             Intent resultIntent = new Intent();
             resultIntent.putExtra("SELECTED_MEDICINE_NAME", medicine.getName());
+            resultIntent.putExtra("SELECTED_MEDICINE_IMAGE", medicine.getImage());
             setResult(RESULT_OK, resultIntent);
             finish();
         });
