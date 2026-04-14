@@ -58,7 +58,7 @@ public class NetworkClient {
     }
 
     public static YaksokApi getYaksokApi() {
-        if (medicineRetrofit == null) {
+        if (yaksokRetrofit == null) {
             try {
                 yaksokRetrofit = new Retrofit.Builder()
                         .baseUrl(BASE_URL)
