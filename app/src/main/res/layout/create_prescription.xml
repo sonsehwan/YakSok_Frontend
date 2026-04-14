@@ -60,7 +60,7 @@
                     android:id="@+id/tv_label_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="복용시작 날짜 *"
+                    android:text="약속 명칭 *"
                     android:textColor="#333333"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -75,8 +75,26 @@
             </RelativeLayout>
 
             <!-- 카드 별명 섹션 -->
+
             <com.example.medication.InputView
-                android:id="@+id/input_date"
+                android:id="@+id/input_card_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                app:hintText="약속 별명" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:text="투약 시작 날짜 *"
+                android:textColor="#333333"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <com.example.medication.InputView
+                android:id="@+id/input_start_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
@@ -91,17 +109,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:text="약속 별명 *"
+                android:text="투약일 수 *"
                 android:textColor="#333333"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
             <com.example.medication.InputView
-                android:id="@+id/input_card_name"
+                android:id="@+id/input_prescriptionDays"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
-                app:hintText="약속 별명" />
+                android:inputType="number"
+                app:hintText="숫자만 입력해주세요. (예: 3일 -> 3)" />
 
             <!-- 구분선 -->
             <View

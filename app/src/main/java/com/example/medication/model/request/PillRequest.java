@@ -2,57 +2,28 @@ package com.example.medication.model.request;
 
 public class PillRequest {
 
-    private String name;
     private String image;
-    private int dayFrequncy;
-    private int duration;
-    private int dayDosage;
+    private String name;           // 약 이름
+    private int dailyFrequency;    // 1일 투여 횟수
+    private String dosage;         // 1회 투약량 (사용자 입력값)
 
-    public PillRequest(String name, String image, int dayFrequncy, int duration, int dayDosage) {
-        this.name = name;
+    public PillRequest(String image, String name) {
         this.image = image;
-        this.dayFrequncy = dayFrequncy;
-        this.duration = duration;
-        this.dayDosage = dayDosage;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
+        this.dailyFrequency = 3;    // 기본값 설정
+        this.dosage = "";       // 초기 입력값
     }
 
-    public String getImage() {
-        return image;
-    }
+    // Getter 및 Setter 메서드
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public int getDayFrequncy() {
-        return dayFrequncy;
-    }
+    public int getDailyFrequency() { return dailyFrequency; }
+    public void setDailyFrequency(int dailyFrequency) { this.dailyFrequency = dailyFrequency; }
 
-    public void setDayFrequncy(int dayFrequncy) {
-        this.dayFrequncy = dayFrequncy;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public int getDayDosage() {
-        return dayDosage;
-    }
-
-    public void setDayDosage(int dayDosage) {
-        this.dayDosage = dayDosage;
-    }
+    public String getDosage() { return dosage; }
+    public void setDosage(String dosage) { this.dosage = dosage; }
 }

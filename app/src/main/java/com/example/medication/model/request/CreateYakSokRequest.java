@@ -1,7 +1,5 @@
 package com.example.medication.model.request;
 
-import com.example.medication.model.MedicationSetting;
-
 import java.util.Date;
 import java.util.List;
 
@@ -9,9 +7,9 @@ import java.util.List;
 public class CreateYakSokRequest {
     private Date date;
     private String name;
-    private List<MedicationSetting> list;
+    private List<PillRequest> list;
 
-    public CreateYakSokRequest(Date date, String name, List<MedicationSetting> list) {
+    public CreateYakSokRequest(Date date, String name, List<PillRequest> list) {
         this.date = date;
         this.name = name;
         this.list = list;
@@ -33,11 +31,11 @@ public class CreateYakSokRequest {
         this.name = name;
     }
 
-    public List<MedicationSetting> getList() {
+    public List<PillRequest> getList() {
         return list;
     }
 
-    public void setList(List<MedicationSetting> list) {
+    public void setList(List<PillRequest> list) {
         this.list = list;
     }
 }

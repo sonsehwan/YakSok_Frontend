@@ -15,26 +15,34 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.adapter.AddMedicationSettingAdapter;
-import com.example.medication.model.MedicationSetting;
 import com.example.medication.model.request.PillRequest;
+import com.example.medication.model.request.YaksokRequest;
+import com.example.medication.model.response.ApiResponse;
+import com.example.medication.network.NetworkClient;
+import com.example.medication.network.YaksokApi;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class CreatePrescription extends AppCompatActivity {
 
     private ImageView ivBack;
-    private InputView inputDate;
-    private InputView inputName;
+    private InputView inputStartDate;
+    private InputView inputTitle;
+    private InputView inputPrescriptionDays;
     private FrameLayout btnAddPill;
     private Button btnRegister;
 
     // 리사이클러 뷰 관련 추가
     private RecyclerView rvSelectedPills;
     private AddMedicationSettingAdapter settingAdapter;
-    private final List<MedicationSetting> selectedPills = new ArrayList<>();
+    private final List<PillRequest> selectedPills = new ArrayList<>();
 
     private ActivityResultLauncher<Intent> searchLauncher;
 
@@ -49,7 +57,7 @@ public class CreatePrescription extends AppCompatActivity {
         setupSearchLauncher();
 
         ivBack.setOnClickListener(v -> finish());
-        inputDate.setOnClickListener(v -> showDatePicker());
+        inputStartDate.setOnClickListener(v -> showDatePicker());
 
         // 약 추가 버튼 클릭 시 리스트에 데이터 추가
         btnAddPill.setOnClickListener(v -> {
@@ -69,9 +77,30 @@ public class CreatePrescription extends AppCompatActivity {
     }
 
     private void startCreateYaksok(){
-        String date = inputDate.getText();
-        String yaksokName = inputName.getText();
-        List<PillRequest> pills = new ArrayList<>();
+        if(inputStartDate.getText() != null && inputTitle.getText() != null && !selectedPills.isEmpty()){
+            String date = inputStartDate.getText();
+            String name = inputTitle.getText();
+            int prescriptionDays = Integer.parseInt(inputPrescriptionDays.getText());
+            boolean takeMorning  =
+
+            YaksokRequest request = new YaksokRequest(date, name, selectedPills);
+
+            YaksokApi api = NetworkClient.getYaksokApi();
+
+            api.saveYaksok(request).enqueue(new Callback<ApiResponse<Void>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                    if(response.isSuccessful() && response.body() != null){
+                        ApiResponse<Void> result = response.body();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+
+                }
+            });
+        }
     }
     private void setupSearchLauncher() {
         searchLauncher = registerForActivityResult(
@@ -84,7 +113,7 @@ public class CreatePrescription extends AppCompatActivity {
                         String medicineImage = result.getData().getStringExtra("SELECTED_MEDICINE_IMAGE");
 
                         if (medicineName != null) {
-                            selectedPills.add(new MedicationSetting(medicineImage, medicineName));
+                            selectedPills.add(new PillRequest(medicineImage, medicineName));
 
                             settingAdapter.notifyItemInserted(selectedPills.size() - 1);
 
@@ -123,15 +152,16 @@ public class CreatePrescription extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
             String dateStr = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month + 1, dayOfMonth);
-            inputDate.setText(dateStr);
+            inputStartDate.setText(dateStr);
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         dialog.show();
     }
 
     private void initViews() {
         ivBack = findViewById(R.id.iv_back);
-        inputDate = findViewById(R.id.input_date);
-        inputName = findViewById(R.id.input_card_name);
+        inputStartDate = findViewById(R.id.input_start_date);
+        inputTitle = findViewById(R.id.input_card_title);
+        inputPrescriptionDays = findViewById(R.id.input_prescriptionDays);
         btnAddPill = findViewById(R.id.btn_add_pill);
         btnRegister = findViewById(R.id.btn_register);
         rvSelectedPills = findViewById(R.id.rv_selected_pills);

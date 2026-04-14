@@ -13,6 +13,8 @@ public class NetworkClient {
     private static Retrofit userRetrofit = null;
     private static Retrofit medicineRetrofit = null;
 
+    private static Retrofit yaksokRetrofit = null;
+
     private static OkHttpClient getHttpClient() {
         return new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)
@@ -53,5 +55,20 @@ public class NetworkClient {
             }
         }
         return medicineRetrofit.create(MedicineApi.class);
+    }
+
+    public static YaksokApi getYaksokApi() {
+        if (medicineRetrofit == null) {
+            try {
+                yaksokRetrofit = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)
+                        .client(getHttpClient())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+            } catch (Exception e) {
+                android.util.Log.e("NetworkClient", "Retrofit 초기화 실패: " + e.getMessage());
+            }
+        }
+        return yaksokRetrofit.create(YaksokApi.class);
     }
 }
