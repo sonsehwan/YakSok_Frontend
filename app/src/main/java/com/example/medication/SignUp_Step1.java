@@ -131,10 +131,8 @@ public class SignUp_Step1 extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                // 타임아웃, 와이파이 끊김 등 물리적 네트워크 연결 실패 시
                 showToast("네트워크 연결을 확인해주세요.");
-                // 에러 원인을 로그로 남기면 디버깅하기 좋습니다.
-                android.util.Log.e("SignUp", "통신 실패: " + t.getMessage());
+                Log.e("SignUp", "통신 실패: " + t.getMessage());
             }
         });
     }

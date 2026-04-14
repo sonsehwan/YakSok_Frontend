@@ -14,15 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.medication.R;
-import com.example.medication.model.MedicationSetting;
+import com.example.medication.model.request.PillRequest;
 
 import java.util.List;
 
 public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicationSettingAdapter.ViewHolder> {
 
-    private final List<MedicationSetting> items;
+    private final List<PillRequest> items;
 
-    public AddMedicationSettingAdapter(List<MedicationSetting> items) {
+    public AddMedicationSettingAdapter(List<PillRequest> items) {
         this.items = items;
     }
 
@@ -35,7 +35,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        MedicationSetting item = items.get(position);
+        PillRequest item = items.get(position);
 
         Glide.with(holder.itemView.getContext())
                 .load(item.getImage())
@@ -48,7 +48,6 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
         }
 
         holder.tvName.setText(item.getName());
-        holder.tvDays.setText(item.getPrescriptionDays() + " 일");
         holder.tvFreq.setText(item.getDailyFrequency() + " 번");
         holder.etDosage.setText(item.getDosage());
 
@@ -65,22 +64,6 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
             public void afterTextChanged(Editable s) {}
         };
         holder.etDosage.addTextChangedListener(holder.dosageWatcher);
-
-        holder.btnDaysPlus.setOnClickListener(v -> {
-            int currentPos = holder.getAdapterPosition();
-            if (currentPos != RecyclerView.NO_POSITION) {
-                item.setPrescriptionDays(item.getPrescriptionDays() + 1);
-                notifyItemChanged(currentPos);
-            }
-        });
-
-        holder.btnDaysMinus.setOnClickListener(v -> {
-            int currentPos = holder.getAdapterPosition();
-            if (currentPos != RecyclerView.NO_POSITION && item.getPrescriptionDays() > 1) {
-                item.setPrescriptionDays(item.getPrescriptionDays() - 1);
-                notifyItemChanged(currentPos);
-            }
-        });
 
         holder.btnFreqPlus.setOnClickListener(v -> {
             int currentPos = holder.getAdapterPosition();
@@ -125,11 +108,8 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
             super(itemView);
             ivImage = itemView.findViewById(R.id.iv_pill_img);
             tvName = itemView.findViewById(R.id.tv_pill_name);
-            tvDays = itemView.findViewById(R.id.tv_days_value);
             tvFreq = itemView.findViewById(R.id.tv_freq_value);
             etDosage = itemView.findViewById(R.id.et_dosage_value);
-            btnDaysPlus = itemView.findViewById(R.id.btn_days_plus);
-            btnDaysMinus = itemView.findViewById(R.id.btn_days_minus);
             btnFreqPlus = itemView.findViewById(R.id.btn_freq_plus);
             btnFreqMinus = itemView.findViewById(R.id.btn_freq_minus);
             btnRemove = itemView.findViewById(R.id.btn_remove);

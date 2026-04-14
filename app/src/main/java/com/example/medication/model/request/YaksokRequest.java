@@ -1,24 +1,25 @@
 package com.example.medication.model.request;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class YaksokRequest {
     private String title;
-    private LocalDate startDate;
+    private String startDate;
     private int prescriptionDays;
     private boolean takeMorning;
     private boolean takeLunch;
     private boolean takeDinner;
+    private String dosageTime;
     private List<PillRequest> pills;
 
-    public YaksokRequest(String title, LocalDate startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, List<PillRequest> pills) {
+    public YaksokRequest(String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, List<PillRequest> pills) {
         this.title = title;
         this.startDate = startDate;
         this.prescriptionDays = prescriptionDays;
         this.takeMorning = takeMorning;
         this.takeLunch = takeLunch;
         this.takeDinner = takeDinner;
+        this.dosageTime = dosageTime;
         this.pills = pills;
     }
 
@@ -30,11 +31,11 @@ public class YaksokRequest {
         this.title = title;
     }
 
-    public LocalDate getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
@@ -68,6 +69,14 @@ public class YaksokRequest {
 
     public void setTakeDinner(boolean takeDinner) {
         this.takeDinner = takeDinner;
+    }
+
+    public String getDosageTime() {
+        return dosageTime;
+    }
+
+    public void setDosageTime(String dosageTime) {
+        this.dosageTime = dosageTime;
     }
 
     public List<PillRequest> getPills() {
