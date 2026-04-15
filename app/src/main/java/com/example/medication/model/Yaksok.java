@@ -1,8 +1,10 @@
-package com.example.medication.model.request;
+package com.example.medication.model;
+
+import com.example.medication.model.request.PillRequest;
 
 import java.util.List;
 
-public class YaksokRequest {
+public class Yaksok {
     private Long id;
     private String title;
     private String startDate;
@@ -14,7 +16,7 @@ public class YaksokRequest {
     private List<PillRequest> pills;
     private String status;
 
-    public YaksokRequest(String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, List<PillRequest> pills, String stauts) {
+    public Yaksok(String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, List<PillRequest> pills, String stauts) {
         this.title = title;
         this.startDate = startDate;
         this.prescriptionDays = prescriptionDays;

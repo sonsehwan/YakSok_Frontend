@@ -3,7 +3,7 @@ package com.example.medication.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.medication.model.request.YaksokRequest;
+import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.UserResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -73,18 +73,18 @@ public class SprefsManager {
     }
 
     // 저장된 모든 약속 목록을 가져오기
-    public static List<YaksokRequest> getYaksokList(Context context){
+    public static List<Yaksok> getYaksokList(Context context){
         String json = getPreference(context).getString(KEY_YAKSOK_LiST, null);
         if(json == null){
             return new ArrayList<>();
         }
-        Type type = new TypeToken<List<YaksokRequest>>(){}.getType();
+        Type type = new TypeToken<List<Yaksok>>(){}.getType();
         return new Gson().fromJson(json, type);
     }
 
     // 새로 등록한 약속을 기존 목록에 추가
-    public static void addYaksok(Context context, YaksokRequest yaksok){
-        List<YaksokRequest> yaksokList = getYaksokList(context);
+    public static void addYaksok(Context context, Yaksok yaksok){
+        List<Yaksok> yaksokList = getYaksokList(context);
         yaksokList.add(yaksok);
 
         SharedPreferences.Editor editor = getPreference(context).edit();
