@@ -21,8 +21,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.adapter.AddMedicationSettingAdapter;
-import com.example.medication.model.request.PillRequest;
+import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
+import com.example.medication.model.request.PillRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
@@ -30,6 +31,8 @@ import com.example.medication.util.SprefsManager;
 
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -50,7 +53,7 @@ public class CreatePrescription extends AppCompatActivity {
     private FrameLayout btnAddPill;
     private Button btnRegister;
 
-    // 리사이클러 뷰 관련 추가
+    // 선택된 약 목록 리사이클러뷰 관련
     private RecyclerView rvSelectedPills;
     private AddMedicationSettingAdapter settingAdapter;
     private final List<PillRequest> selectedPills = new ArrayList<>();
@@ -70,44 +73,35 @@ public class CreatePrescription extends AppCompatActivity {
         ivBack.setOnClickListener(v -> finish());
         inputStartDate.setOnClickListener(v -> showDatePicker());
 
-        // 약 추가 버튼 클릭 시 리스트에 데이터 추가
+        // 약 추가 버튼 클릭 시 검색 화면 이동
         btnAddPill.setOnClickListener(v -> {
             Intent intent = new Intent(CreatePrescription.this, MedicineSearchActivity.class);
             searchLauncher.launch(intent);
         });
 
+        // 약속 등록 버튼
         btnRegister.setOnClickListener(v -> {
             if(!validateInput()) return;
-
             startCreateYaksok();
         });
     }
 
     private void setupTimePickerLogic(){
+        // 아침 체크박스 로직
         cbMorning.setOnCheckedChangeListener((button, isChecked) -> {
-            if(isChecked){
-                inputSetMorningTime.setVisibility(View.VISIBLE);
-            }else{
-                inputSetMorningTime.setVisibility(View.GONE);
-            }
+            inputSetMorningTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
         inputSetMorningTime.setOnClickListener(v -> showTimePicker(inputSetMorningTime, 8, 0));
 
+        // 점심 체크박스 로직
         cbLunch.setOnCheckedChangeListener((button, isChecked) -> {
-            if(isChecked){
-                inputSetLunchTime.setVisibility(View.VISIBLE);
-            }else{
-                inputSetLunchTime.setVisibility(View.GONE);
-            }
+            inputSetLunchTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
         inputSetLunchTime.setOnClickListener(v -> showTimePicker(inputSetLunchTime, 12, 0));
 
+        // 저녁 체크박스 로직
         cbDinner.setOnCheckedChangeListener((button, isChecked) -> {
-            if(isChecked){
-                inputSetDinnerTime.setVisibility(View.VISIBLE);
-            }else{
-                inputSetDinnerTime.setVisibility(View.GONE);
-            }
+            inputSetDinnerTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
         inputSetDinnerTime.setOnClickListener(v -> showTimePicker(inputSetDinnerTime, 18, 0));
     }
@@ -118,6 +112,7 @@ public class CreatePrescription extends AppCompatActivity {
 
         String currentTimeStr = targetInputView.getText();
 
+        // 현재 입력된 텍스트가 있으면 파싱하여 다이얼로그 초기값으로 설정
         if (currentTimeStr != null && !currentTimeStr.isEmpty()) {
             try {
                 String[] parts = currentTimeStr.split(" ");
@@ -128,11 +123,8 @@ public class CreatePrescription extends AppCompatActivity {
                     int parsedHour = Integer.parseInt(timeParts[0]);
                     int parsedMinute = Integer.parseInt(timeParts[1]);
 
-                    if (amPm.equals("오후") && parsedHour < 12) {
-                        parsedHour += 12; // 오후 1시~11시는 13~23시로 변경
-                    } else if (amPm.equals("오전") && parsedHour == 12) {
-                        parsedHour = 0; // 오전 12시(자정)는 0시로 변경
-                    }
+                    if (amPm.equals("오후") && parsedHour < 12) parsedHour += 12;
+                    else if (amPm.equals("오전") && parsedHour == 12) parsedHour = 0;
 
                     hour = parsedHour;
                     minute = parsedMinute;
@@ -153,13 +145,9 @@ public class CreatePrescription extends AppCompatActivity {
 
         dialog.show();
     }
-    private boolean validateInput() {
-        boolean isDateValid = inputStartDate.isValid();
-        boolean isTitleValid = inputTitle.isValid();
-        boolean isDaysValid = inputPrescriptionDays.isValid();
-        int selectedId = rgDosageTime.getCheckedRadioButtonId();
 
-        if (!isDateValid || !isTitleValid || !isDaysValid) {
+    private boolean validateInput() {
+        if (!inputStartDate.isValid() || !inputTitle.isValid() || !inputPrescriptionDays.isValid()) {
             showToast("필수 항목을 모두 입력해주세요.");
             return false;
         }
@@ -168,15 +156,15 @@ public class CreatePrescription extends AppCompatActivity {
             llDasage.setBackgroundResource(R.drawable.bg_error_border);
             showToast("투약 횟수를 선택해주세요.");
             return false;
-        }else{
+        } else {
             llDasage.setBackgroundResource(R.drawable.bg_yellow_border);
         }
 
-        if(selectedId == -1){
+        if(rgDosageTime.getCheckedRadioButtonId() == -1){
             rgDosageTime.setBackgroundResource(R.drawable.bg_error_border);
             showToast("투약 시간을 선택해주세요.");
             return false;
-        }else{
+        } else {
             rgDosageTime.setBackgroundResource(R.drawable.bg_yellow_border);
         }
 
@@ -184,8 +172,9 @@ public class CreatePrescription extends AppCompatActivity {
             showToast("최소 한 개 이상의 약을 추가해주세요.");
             return false;
         }
+
         for(PillRequest pill : selectedPills){
-            if(pill.getDosage().isEmpty()){
+            if(pill.getDosage() == null || pill.getDosage().isEmpty()){
                 showToast(pill.getName() +"의 투약량을 입력해주세요.");
                 return false;
             }
@@ -194,103 +183,116 @@ public class CreatePrescription extends AppCompatActivity {
     }
 
     private void startCreateYaksok(){
-        if(inputStartDate.getText() != null && inputTitle.getText() != null && !selectedPills.isEmpty()){
-            String startDate = inputStartDate.getText();
-            String name = inputTitle.getText();
-            int prescriptionDays = Integer.parseInt(inputPrescriptionDays.getText());
-            boolean takeMorning  = cbMorning.isChecked();
-            boolean takeLunch = cbLunch.isChecked();
-            boolean takeDinner = cbDinner.isChecked();
+        String startDate = inputStartDate.getText();
+        String name = inputTitle.getText();
+        int prescriptionDays = Integer.parseInt(inputPrescriptionDays.getText());
 
-            String timeMorning = takeMorning ? inputSetMorningTime.getText() : null;
-            String timeLunch = takeLunch ? inputSetLunchTime.getText() : null;
-            String timeDinner = takeDinner ? inputSetDinnerTime.getText() : null;
+        boolean takeMorning = cbMorning.isChecked();
+        boolean takeLunch = cbLunch.isChecked();
+        boolean takeDinner = cbDinner.isChecked();
 
+        // 체크되지 않은 알림 시간은 null로 전송
+        String timeMorning = takeMorning ? inputSetMorningTime.getText() : null;
+        String timeLunch = takeLunch ? inputSetLunchTime.getText() : null;
+        String timeDinner = takeDinner ? inputSetDinnerTime.getText() : null;
 
-            int selectedId = rgDosageTime.getCheckedRadioButtonId();
-            String dosageTime = "";
-            if(selectedId == R.id.rb_before){
-                dosageTime = "식전 30분";
-            }
-            else if(selectedId == R.id.rb_after){
-                dosageTime = "식후 30분";
-            }
-            else if(selectedId == R.id.rb_anytime){
-                dosageTime = "직후";
-            }
+        int selectedId = rgDosageTime.getCheckedRadioButtonId();
+        String dosageTime = "";
+        if(selectedId == R.id.rb_before) dosageTime = "식전 30분";
+        else if(selectedId == R.id.rb_after) dosageTime = "식후 30분";
+        else if(selectedId == R.id.rb_anytime) dosageTime = "직후";
 
-            Yaksok request = new Yaksok(
-                    name,
-                    startDate,
-                    prescriptionDays,
-                    takeMorning,
-                    takeLunch,
-                    takeDinner,
-                    dosageTime,
-                    timeMorning,
-                    timeLunch,
-                    timeDinner,
-                    selectedPills,
-                    "TAKING");
+        Yaksok request = new Yaksok(name, startDate, prescriptionDays, takeMorning, takeLunch, takeDinner, dosageTime, timeMorning, timeLunch, timeDinner, selectedPills, "TAKING");
 
-            YaksokApi api = NetworkClient.getYaksokApi();
+        YaksokApi api = NetworkClient.getYaksokApi();
+        String finalDosageTime = dosageTime;
 
-            api.saveYaksok(request).enqueue(new Callback<ApiResponse<Long>>() {
-                @Override
-                public void onResponse(Call<ApiResponse<Long>> call, Response<ApiResponse<Long>> response) {
-                    if(response.isSuccessful() && response.body() != null){
-                        ApiResponse<Long> result = response.body();
+        api.saveYaksok(request).enqueue(new Callback<ApiResponse<Long>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Long>> call, Response<ApiResponse<Long>> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    ApiResponse<Long> result = response.body();
 
-                        if(result.isBusinessSuccess()){
-                            Long yaksokId = result.getData();
+                    if(result.isBusinessSuccess()){
+                        Long yaksokId = result.getData();
 
-                            if(yaksokId != null) {
-                                request.setId(yaksokId);
-                                SprefsManager.addYaksok(CreatePrescription.this, request);
-                                showToast("약속이 성공적으로 등록되었습니다.");
+                        if(yaksokId != null) {
+                            request.setId(yaksokId);
+                            // 1. 전체 약속 리스트에 저장
+                            SprefsManager.addYaksok(CreatePrescription.this, request);
 
-                                Log.d("CreateYaksok", result.getMessage());
+                            // 2. 알림용 NotificationYaksok 리스트 생성
+                            // (투약일 수 * 투약 횟수만큼 생성)
+                            ArrayList<NotificationYaksok> newNotifications = new ArrayList<>();
 
-                                Intent intent = new Intent(CreatePrescription.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }else{
-                                Log.e("CreateYaksokError", "서버로부터 약속 ID를 받지 못했습니다.");
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                            Calendar cal = Calendar.getInstance();
+
+                            try {
+                                if (startDate != null && !startDate.isEmpty()) {
+                                    cal.setTime(sdf.parse(startDate));
+                                }
+                            } catch (ParseException e) {
+                                Log.e("DateParse", "날짜 파싱 실패: " + e.getMessage());
                             }
-                        }else{
-                            Log.e("CreateYaksokError", result.getMessage());
-                            showToast(result.getMessage());
-                        }
-                    }else{
-                        handleErrorResponse(response);
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<ApiResponse<Long>> call, Throwable t) {
-                    showToast("네트워크 연결을 확인해주세요.");
-                    Log.e("NetwordError", "통신 실패: " + t.getMessage());
+                            // 투약 기간만큼 반복하며 각 날짜별 알림 객체 생성
+                            for (int i = 0; i < prescriptionDays; i++) {
+                                String currentDateStr = sdf.format(cal.getTime());
+
+                                if (takeMorning) {
+                                    String t = (timeMorning != null && !timeMorning.isEmpty()) ? timeMorning : "오전 08:00";
+                                    newNotifications.add(new NotificationYaksok(name, currentDateStr, t, finalDosageTime, false));
+                                }
+                                if (takeLunch) {
+                                    String t = (timeLunch != null && !timeLunch.isEmpty()) ? timeLunch : "오후 12:00";
+                                    newNotifications.add(new NotificationYaksok(name, currentDateStr, t, finalDosageTime, false));
+                                }
+                                if (takeDinner) {
+                                    String t = (timeDinner != null && !timeDinner.isEmpty()) ? timeDinner : "오후 06:00";
+                                    newNotifications.add(new NotificationYaksok(name, currentDateStr, t, finalDosageTime, false));
+                                }
+
+                                // 다음 날짜로 이동
+                                cal.add(Calendar.DAY_OF_MONTH, 1);
+                            }
+
+                            // 3. SharedPreferences에 알림 리스트 누적 저장
+                            SprefsManager.addNotifications(CreatePrescription.this, newNotifications);
+
+                            showToast("약속이 성공적으로 등록되었습니다.");
+
+                            // 4. 메인 화면으로 이동하며 새로 생성된 리스트 전달
+                            Intent intent = new Intent(CreatePrescription.this, MainActivity.class);
+                            intent.putExtra("newNotifications", newNotifications);
+                            startActivity(intent);
+                            finish();
+                        }
+                    } else {
+                        showToast(result.getMessage());
+                    }
+                } else {
+                    handleErrorResponse(response);
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Long>> call, Throwable t) {
+                showToast("네트워크 연결을 확인해주세요.");
+            }
+        });
     }
 
     private void handleErrorResponse(Response<?> response) {
-        try{
-            if(response.errorBody()!= null){
-                String errorBodyString = response.errorBody().string();
-
-                JSONObject jsonObject = new JSONObject(errorBodyString);
-
-                String errorMessage = jsonObject.getString("message");
-
-                showToast(errorMessage);
-            }else{
-                showToast("서버 오류가 발생했습니다. (코드: " + response.code() + ")");
+        try {
+            if(response.errorBody() != null) {
+                JSONObject jsonObject = new JSONObject(response.errorBody().string());
+                showToast(jsonObject.getString("message"));
+            } else {
+                showToast("서버 오류: " + response.code());
             }
         } catch (Exception e) {
-            Log.d("CreateYaksokError", "JSON 파싱 실패: " + e.getMessage());
-            showToast("알 수 없는 오류가 발생했습니다.");
+            showToast("오류가 발생했습니다.");
         }
     }
 
@@ -299,15 +301,12 @@ public class CreatePrescription extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-
                         String medicineName = result.getData().getStringExtra("SELECTED_MEDICINE_NAME");
                         String medicineImage = result.getData().getStringExtra("SELECTED_MEDICINE_IMAGE");
 
                         if (medicineName != null) {
                             selectedPills.add(new PillRequest(medicineImage, medicineName));
-
                             settingAdapter.notifyItemInserted(selectedPills.size() - 1);
-
                             updateRegisterButtonState();
                         }
                     }
@@ -330,11 +329,11 @@ public class CreatePrescription extends AppCompatActivity {
 
     private void updateRegisterButtonState() {
         if (!selectedPills.isEmpty()) {
-            btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFFEB3B)); // 노란색
-            btnRegister.setTextColor(0xFF000000); // 검은색
+            btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFFEB3B));
+            btnRegister.setTextColor(0xFF000000);
         } else {
-            btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE0E0E0)); // 회색
-            btnRegister.setTextColor(0xFFFFFFFF); // 흰색
+            btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE0E0E0));
+            btnRegister.setTextColor(0xFFFFFFFF);
         }
     }
 

@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         setNickName();
         setupRecyclerView();
 
+
+
         fabScan.setOnClickListener(v -> {
             ShowAddMedicationList bottomSheet = new ShowAddMedicationList();
             bottomSheet.show(getSupportFragmentManager(), "show_create_list");
@@ -69,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadMedicationList();
+    }
+
     private void setupDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 M월 d일 EEEE", Locale.KOREAN);
         tvDate.setText(sdf.format(new Date()));
@@ -82,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         notificationYaksokList = new ArrayList<>();
         // 예시 데이터
-        notificationYaksokList.add(new NotificationYaksok("종합 비타민", "오전 08:30", "식후 30분", true));
-        notificationYaksokList.add(new NotificationYaksok("오메가 3", "오후 01:00", "식후 즉시", false));
-        notificationYaksokList.add(new NotificationYaksok("혈압약", "오후 07:00", "식전 30분", false));
+//        notificationYaksokList.add(new NotificationYaksok("종합 비타민", "오전 08:30", "식후 30분", true));
+//        notificationYaksokList.add(new NotificationYaksok("오메가 3", "오후 01:00", "식후 즉시", false));
+//        notificationYaksokList.add(new NotificationYaksok("혈압약", "오후 07:00", "식전 30분", false));
 
         adapter = new MedicationAdapter(notificationYaksokList, (position, isDone) -> {
             updateProgress(); // 체크 상태 변경 시 상단 UI 갱신
@@ -93,6 +101,27 @@ public class MainActivity extends AppCompatActivity {
         rvMedication.setLayoutManager(new LinearLayoutManager(this));
         rvMedication.setAdapter(adapter);
 
+        updateProgress();
+    }
+
+    private void loadMedicationList(){
+        notificationYaksokList.clear();
+
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        List<NotificationYaksok> savedList = SprefsManager.getNotificationList(this);
+        if (savedList != null && !savedList.isEmpty()) {
+            for (NotificationYaksok item : savedList) {
+                if (today.equals(item.getDate())) {
+                    notificationYaksokList.add(item);
+                }
+            }
+        }
+
+        // 5. 어댑터 새로고침 및 프로그레스바 갱신
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
         updateProgress();
     }
 

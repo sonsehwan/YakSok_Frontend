@@ -5,13 +5,15 @@ import java.io.Serializable;
 public class NotificationYaksok implements Serializable {
     private Long id;
     private String name;
+    private String date;
     private String time;
     private String instruction;
     private boolean isTaken;
 
-    public NotificationYaksok(String name, String time, String instruction, boolean isTaken) {
+    public NotificationYaksok(String name, String date, String time, String instruction, boolean isTaken) {
         this.time = time;
         this.name = name;
+        this.date = date;
         this.instruction = instruction;
         this.isTaken = isTaken;
     }
@@ -50,5 +52,13 @@ public class NotificationYaksok implements Serializable {
 
     public void setTaken(boolean taken) {
         isTaken = taken;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }
