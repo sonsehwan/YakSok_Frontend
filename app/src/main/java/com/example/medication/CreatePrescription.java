@@ -24,6 +24,7 @@ import com.example.medication.model.request.YaksokRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
+import com.example.medication.util.SprefsManager;
 
 import org.json.JSONObject;
 
@@ -62,11 +63,7 @@ public class CreatePrescription extends AppCompatActivity {
 
         initViews();
         setupRecyclerView();
-
         setupSearchLauncher();
-
-
-
 
         ivBack.setOnClickListener(v -> finish());
         inputStartDate.setOnClickListener(v -> showDatePicker());
@@ -78,45 +75,50 @@ public class CreatePrescription extends AppCompatActivity {
         });
 
         btnRegister.setOnClickListener(v -> {
-            boolean isDateValid = inputStartDate.isValid(); // (주의: 사용하신 유효성 검사 메서드 이름이 validate()가 맞는지 확인해 주세요!)
-            boolean isTitleValid = inputTitle.isValid();
-            boolean isDaysValid = inputPrescriptionDays.isValid();
-            int selectedId = rgDosageTime.getCheckedRadioButtonId();
+            if(!validateInput()) return;
 
-            if (!isDateValid || !isTitleValid || !isDaysValid) {
-                showToast("필수 항목을 모두 입력해주세요.");
-                return;
-            }
-
-            if(!cbMorning.isChecked() && !cbLunch.isChecked() && !cbDinner.isChecked()){
-                llDasage.setBackgroundResource(R.drawable.bg_error_border);
-                showToast("투약 횟수를 선택해주세요.");
-                return;
-            }else{
-                llDasage.setBackgroundResource(R.drawable.bg_yellow_border);
-            }
-
-            if(selectedId == -1){
-                rgDosageTime.setBackgroundResource(R.drawable.bg_error_border);
-                showToast("투약 시간을 선택해주세요.");
-                return;
-            }else{
-                rgDosageTime.setBackgroundResource(R.drawable.bg_yellow_border);
-            }
-
-            if (selectedPills.isEmpty()) {
-                showToast("최소 한 개 이상의 약을 추가해주세요.");
-                return;
-            }
-            for(PillRequest pill : selectedPills){
-                if(pill.getDosage().isEmpty()){
-                    showToast(pill.getName() +"의 투약량을 입력해주세요.");
-                    return;
-                }
-            }
             startCreateYaksok();
-
         });
+    }
+
+    private boolean validateInput() {
+        boolean isDateValid = inputStartDate.isValid(); // (주의: 사용하신 유효성 검사 메서드 이름이 validate()가 맞는지 확인해 주세요!)
+        boolean isTitleValid = inputTitle.isValid();
+        boolean isDaysValid = inputPrescriptionDays.isValid();
+        int selectedId = rgDosageTime.getCheckedRadioButtonId();
+
+        if (!isDateValid || !isTitleValid || !isDaysValid) {
+            showToast("필수 항목을 모두 입력해주세요.");
+            return false;
+        }
+
+        if(!cbMorning.isChecked() && !cbLunch.isChecked() && !cbDinner.isChecked()){
+            llDasage.setBackgroundResource(R.drawable.bg_error_border);
+            showToast("투약 횟수를 선택해주세요.");
+            return false;
+        }else{
+            llDasage.setBackgroundResource(R.drawable.bg_yellow_border);
+        }
+
+        if(selectedId == -1){
+            rgDosageTime.setBackgroundResource(R.drawable.bg_error_border);
+            showToast("투약 시간을 선택해주세요.");
+            return false;
+        }else{
+            rgDosageTime.setBackgroundResource(R.drawable.bg_yellow_border);
+        }
+
+        if (selectedPills.isEmpty()) {
+            showToast("최소 한 개 이상의 약을 추가해주세요.");
+            return false;
+        }
+        for(PillRequest pill : selectedPills){
+            if(pill.getDosage().isEmpty()){
+                showToast(pill.getName() +"의 투약량을 입력해주세요.");
+                return false;
+            }
+        }
+        return true;
     }
 
     private void startCreateYaksok(){
@@ -140,21 +142,32 @@ public class CreatePrescription extends AppCompatActivity {
                 dosageTime = "직후";
             }
 
-            YaksokRequest request = new YaksokRequest(name, startDate, prescriptionDays, takeMorning, takeLunch, takeDinner, dosageTime, selectedPills);
+            YaksokRequest request = new YaksokRequest(name, startDate, prescriptionDays, takeMorning, takeLunch, takeDinner, dosageTime, selectedPills, "TAKING");
 
             YaksokApi api = NetworkClient.getYaksokApi();
 
-            api.saveYaksok(request).enqueue(new Callback<ApiResponse<Void>>() {
+            api.saveYaksok(request).enqueue(new Callback<ApiResponse<Long>>() {
                 @Override
-                public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                public void onResponse(Call<ApiResponse<Long>> call, Response<ApiResponse<Long>> response) {
                     if(response.isSuccessful() && response.body() != null){
-                        ApiResponse<Void> result = response.body();
+                        ApiResponse<Long> result = response.body();
 
                         if(result.isBusinessSuccess()){
-                            Log.d("CreateYaksok", result.getMessage());
-                            Intent intent = new Intent(CreatePrescription.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            Long yaksokId = result.getData();
+
+                            if(yaksokId != null) {
+                                request.setId(yaksokId);
+                                SprefsManager.addYaksok(CreatePrescription.this, request);
+                                showToast("약속이 성공적으로 등록되었습니다.");
+
+                                Log.d("CreateYaksok", result.getMessage());
+
+                                Intent intent = new Intent(CreatePrescription.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }else{
+                                Log.e("CreateYaksokError", "서버로부터 약속 ID를 받지 못했습니다.");
+                            }
                         }else{
                             Log.e("CreateYaksokError", result.getMessage());
                             showToast(result.getMessage());
@@ -165,7 +178,7 @@ public class CreatePrescription extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                public void onFailure(Call<ApiResponse<Long>> call, Throwable t) {
                     showToast("네트워크 연결을 확인해주세요.");
                     Log.e("NetwordError", "통신 실패: " + t.getMessage());
                 }

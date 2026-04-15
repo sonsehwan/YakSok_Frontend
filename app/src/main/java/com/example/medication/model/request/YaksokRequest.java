@@ -3,6 +3,7 @@ package com.example.medication.model.request;
 import java.util.List;
 
 public class YaksokRequest {
+    private Long id;
     private String title;
     private String startDate;
     private int prescriptionDays;
@@ -11,8 +12,9 @@ public class YaksokRequest {
     private boolean takeDinner;
     private String dosageTime;
     private List<PillRequest> pills;
+    private String status;
 
-    public YaksokRequest(String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, List<PillRequest> pills) {
+    public YaksokRequest(String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, List<PillRequest> pills, String stauts) {
         this.title = title;
         this.startDate = startDate;
         this.prescriptionDays = prescriptionDays;
@@ -21,8 +23,11 @@ public class YaksokRequest {
         this.takeDinner = takeDinner;
         this.dosageTime = dosageTime;
         this.pills = pills;
+        this.status = stauts;
     }
 
+    public Long getId(){ return id; }
+    public void setId(Long id){ this.id = id; }
     public String getTitle() {
         return title;
     }
@@ -86,4 +91,8 @@ public class YaksokRequest {
     public void setPills(List<PillRequest> pills) {
         this.pills = pills;
     }
+
+    public String getStatus() { return status; }
+
+    public void setStatus(String status) { this.status = status; }
 }

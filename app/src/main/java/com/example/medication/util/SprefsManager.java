@@ -3,8 +3,14 @@ package com.example.medication.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.medication.model.request.YaksokRequest;
 import com.example.medication.model.response.UserResponse;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SprefsManager {
 
@@ -14,6 +20,8 @@ public class SprefsManager {
     //데이터를 저장할 데이터 키값
     private static final String KEY_USER_DATA = "user_data"; // 유저 객체 전체 JSON
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
+
+    private static final String KEY_YAKSOK_LiST = "yaksok_list";
 
     //저장소를 불러온다.(저장소가 없으면 만들어서 전달한다.)
     private static SharedPreferences getPreference(Context context){
@@ -61,6 +69,27 @@ public class SprefsManager {
     public static void clearUserInfo(Context context){
         SharedPreferences.Editor editor = getPreference(context).edit();
         editor.clear();
+        editor.apply();
+    }
+
+    // 저장된 모든 약속 목록을 가져오기
+    public static List<YaksokRequest> getYaksokList(Context context){
+        String json = getPreference(context).getString(KEY_YAKSOK_LiST, null);
+        if(json == null){
+            return new ArrayList<>();
+        }
+        Type type = new TypeToken<List<YaksokRequest>>(){}.getType();
+        return new Gson().fromJson(json, type);
+    }
+
+    // 새로 등록한 약속을 기존 목록에 추가
+    public static void addYaksok(Context context, YaksokRequest yaksok){
+        List<YaksokRequest> yaksokList = getYaksokList(context);
+        yaksokList.add(yaksok);
+
+        SharedPreferences.Editor editor = getPreference(context).edit();
+        String json = new Gson().toJson(yaksokList);
+        editor.putString(KEY_YAKSOK_LiST, json);
         editor.apply();
     }
 }

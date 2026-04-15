@@ -10,5 +10,5 @@ import retrofit2.http.POST;
 public interface YaksokApi {
 
     @POST("/api/yaksok")
-    Call<ApiResponse<Void>> saveYaksok(@Body YaksokRequest request);
+    Call<ApiResponse<Long>> saveYaksok(@Body YaksokRequest request);
 }
