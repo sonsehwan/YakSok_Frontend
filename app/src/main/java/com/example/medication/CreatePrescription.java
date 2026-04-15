@@ -89,36 +89,58 @@ public class CreatePrescription extends AppCompatActivity {
                 inputSetMorningTime.setVisibility(View.VISIBLE);
             }else{
                 inputSetMorningTime.setVisibility(View.GONE);
-                inputSetMorningTime.setText("아침 알림(기본 08:00)");
             }
         });
-        inputSetMorningTime.setOnClickListener(v -> showTimePicker(inputSetMorningTime));
+        inputSetMorningTime.setOnClickListener(v -> showTimePicker(inputSetMorningTime, 8, 0));
 
         cbLunch.setOnCheckedChangeListener((button, isChecked) -> {
             if(isChecked){
                 inputSetLunchTime.setVisibility(View.VISIBLE);
             }else{
                 inputSetLunchTime.setVisibility(View.GONE);
-                inputSetLunchTime.setText("점심 알림(기본 12:00)");
             }
         });
-        inputSetMorningTime.setOnClickListener(v -> showTimePicker(inputSetDinnerTime));
+        inputSetLunchTime.setOnClickListener(v -> showTimePicker(inputSetLunchTime, 12, 0));
 
         cbDinner.setOnCheckedChangeListener((button, isChecked) -> {
             if(isChecked){
                 inputSetDinnerTime.setVisibility(View.VISIBLE);
             }else{
                 inputSetDinnerTime.setVisibility(View.GONE);
-                inputSetDinnerTime.setText("저녁 알림(기본 18:00)");
             }
         });
-        inputSetMorningTime.setOnClickListener(v -> showTimePicker(inputSetDinnerTime));
+        inputSetDinnerTime.setOnClickListener(v -> showTimePicker(inputSetDinnerTime, 18, 0));
     }
 
-    private void showTimePicker(InputView targetInputView) {
-        Calendar cal = Calendar.getInstance();
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int minute = cal.get(Calendar.MINUTE);
+    private void showTimePicker(InputView targetInputView, int defaultHour, int defaultMinute) {
+        int hour = defaultHour;
+        int minute = defaultMinute;
+
+        String currentTimeStr = targetInputView.getText();
+
+        if (currentTimeStr != null && !currentTimeStr.isEmpty()) {
+            try {
+                String[] parts = currentTimeStr.split(" ");
+                if(parts.length == 2) {
+                    String amPm = parts[0];
+                    String[] timeParts = parts[1].split(":");
+
+                    int parsedHour = Integer.parseInt(timeParts[0]);
+                    int parsedMinute = Integer.parseInt(timeParts[1]);
+
+                    if (amPm.equals("오후") && parsedHour < 12) {
+                        parsedHour += 12; // 오후 1시~11시는 13~23시로 변경
+                    } else if (amPm.equals("오전") && parsedHour == 12) {
+                        parsedHour = 0; // 오전 12시(자정)는 0시로 변경
+                    }
+
+                    hour = parsedHour;
+                    minute = parsedMinute;
+                }
+            } catch (Exception e) {
+                Log.e("TimePicker", "기존 시간 파싱 실패: " + e.getMessage());
+            }
+        }
 
         TimePickerDialog dialog = new TimePickerDialog(this, (view, hourOfDay, minuteOfHour) -> {
             String amPm = hourOfDay < 12 ? "오전" : "오후";
@@ -132,7 +154,7 @@ public class CreatePrescription extends AppCompatActivity {
         dialog.show();
     }
     private boolean validateInput() {
-        boolean isDateValid = inputStartDate.isValid(); // (주의: 사용하신 유효성 검사 메서드 이름이 validate()가 맞는지 확인해 주세요!)
+        boolean isDateValid = inputStartDate.isValid();
         boolean isTitleValid = inputTitle.isValid();
         boolean isDaysValid = inputPrescriptionDays.isValid();
         int selectedId = rgDosageTime.getCheckedRadioButtonId();
@@ -180,6 +202,11 @@ public class CreatePrescription extends AppCompatActivity {
             boolean takeLunch = cbLunch.isChecked();
             boolean takeDinner = cbDinner.isChecked();
 
+            String timeMorning = takeMorning ? inputSetMorningTime.getText() : null;
+            String timeLunch = takeLunch ? inputSetLunchTime.getText() : null;
+            String timeDinner = takeDinner ? inputSetDinnerTime.getText() : null;
+
+
             int selectedId = rgDosageTime.getCheckedRadioButtonId();
             String dosageTime = "";
             if(selectedId == R.id.rb_before){
@@ -192,7 +219,19 @@ public class CreatePrescription extends AppCompatActivity {
                 dosageTime = "직후";
             }
 
-            Yaksok request = new Yaksok(name, startDate, prescriptionDays, takeMorning, takeLunch, takeDinner, dosageTime, selectedPills, "TAKING");
+            Yaksok request = new Yaksok(
+                    name,
+                    startDate,
+                    prescriptionDays,
+                    takeMorning,
+                    takeLunch,
+                    takeDinner,
+                    dosageTime,
+                    timeMorning,
+                    timeLunch,
+                    timeDinner,
+                    selectedPills,
+                    "TAKING");
 
             YaksokApi api = NetworkClient.getYaksokApi();
 
@@ -254,6 +293,7 @@ public class CreatePrescription extends AppCompatActivity {
             showToast("알 수 없는 오류가 발생했습니다.");
         }
     }
+
     private void setupSearchLauncher() {
         searchLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),

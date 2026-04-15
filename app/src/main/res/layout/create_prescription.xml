@@ -188,12 +188,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:gravity="center">
 
                 <com.example.medication.InputView
                     android:id="@+id/input_set_morning_time"
-                    android:layout_width="230dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
                     android:clickable="true"
@@ -205,7 +205,7 @@
 
                 <com.example.medication.InputView
                     android:id="@+id/input_set_lunch_time"
-                    android:layout_width="230dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
                     android:clickable="true"
@@ -217,7 +217,7 @@
 
                 <com.example.medication.InputView
                     android:id="@+id/input_set_dinner_time"
-                    android:layout_width="230dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
                     android:clickable="true"

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.adapter.MedicationAdapter;
-import com.example.medication.model.Medication;
+import com.example.medication.model.NotificationYaksok;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
 
     private MedicationAdapter adapter;
-    private List<Medication> medicationList;
+    private List<NotificationYaksok> notificationYaksokList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,13 +80,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        medicationList = new ArrayList<>();
+        notificationYaksokList = new ArrayList<>();
         // 예시 데이터
-        medicationList.add(new Medication("종합 비타민", "오전 08:30", "식후 30분", true));
-        medicationList.add(new Medication("오메가 3", "오후 01:00", "식후 즉시", false));
-        medicationList.add(new Medication("혈압약", "오후 07:00", "식전 30분", false));
+        notificationYaksokList.add(new NotificationYaksok("종합 비타민", "오전 08:30", "식후 30분", true));
+        notificationYaksokList.add(new NotificationYaksok("오메가 3", "오후 01:00", "식후 즉시", false));
+        notificationYaksokList.add(new NotificationYaksok("혈압약", "오후 07:00", "식전 30분", false));
 
-        adapter = new MedicationAdapter(medicationList, (position, isDone) -> {
+        adapter = new MedicationAdapter(notificationYaksokList, (position, isDone) -> {
             updateProgress(); // 체크 상태 변경 시 상단 UI 갱신
         });
 
@@ -97,9 +97,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateProgress() {
-        int total = medicationList.size();
+        int total = notificationYaksokList.size();
         int done = 0;
-        for (Medication m : medicationList) {
+        for (NotificationYaksok m : notificationYaksokList) {
             if (m.isTaken()) done++;
         }
 

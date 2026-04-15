@@ -12,20 +12,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.R;
-import com.example.medication.model.Medication;
+import com.example.medication.model.NotificationYaksok;
 
 import java.util.List;
 
 public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.ViewHolder> {
 
-    private List<Medication> items;
+    private List<NotificationYaksok> items;
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
         void onStatusChanged(int position, boolean isDone);
     }
 
-    public MedicationAdapter(List<Medication> items, OnItemClickListener listener) {
+    public MedicationAdapter(List<NotificationYaksok> items, OnItemClickListener listener) {
         this.items = items;
         this.listener = listener;
     }
@@ -39,7 +39,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Medication item = items.get(position);
+        NotificationYaksok item = items.get(position);
         holder.tvName.setText(item.getName());
         holder.tvInfo.setText(item.getTime() + "\n" + item.getInstruction());
 
@@ -88,7 +88,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
 
     private void showConfirmDialog(Context context, int position, boolean isDone, ViewHolder holder) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        Medication item = items.get(position);
+        NotificationYaksok item = items.get(position);
 
         String title = isDone ? "복용 완료 처리하시겠습니까?" : "복용 취소 처리하시겠습니까?";
         builder.setTitle(title);

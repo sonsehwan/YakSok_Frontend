@@ -12,17 +12,23 @@ public class Yaksok {
     private boolean takeMorning;
     private boolean takeLunch;
     private boolean takeDinner;
+    private String timeMorning;
+    private String timeLunch;
+    private String timeDinner;
     private String dosageTime;
     private List<PillRequest> pills;
     private String status;
 
-    public Yaksok(String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, List<PillRequest> pills, String stauts) {
+    public Yaksok(String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, String timeMorning, String timeLunch, String timeDinner, List<PillRequest> pills, String stauts) {
         this.title = title;
         this.startDate = startDate;
         this.prescriptionDays = prescriptionDays;
         this.takeMorning = takeMorning;
         this.takeLunch = takeLunch;
         this.takeDinner = takeDinner;
+        this.timeMorning = timeMorning;
+        this.timeLunch = timeLunch;
+        this.timeDinner = timeDinner;
         this.dosageTime = dosageTime;
         this.pills = pills;
         this.status = stauts;
@@ -77,6 +83,18 @@ public class Yaksok {
     public void setTakeDinner(boolean takeDinner) {
         this.takeDinner = takeDinner;
     }
+
+    public String getTimeMorning() {return timeMorning;}
+
+    public void setTimeMorning(String timeMorning) {this.timeMorning = timeMorning;}
+
+    public String getTimeLunch() {return timeLunch;}
+
+    public void setTimeLunch(String timeLunch) {this.timeLunch = timeLunch;}
+
+    public String getTimeDinner() {return timeDinner;}
+
+    public void setTimeDinner(String timeDinner) {this.timeDinner = timeDinner;}
 
     public String getDosageTime() {
         return dosageTime;

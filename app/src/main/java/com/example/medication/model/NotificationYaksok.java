@@ -1,12 +1,13 @@
 package com.example.medication.model;
 
-public class Medication {
+public class NotificationYaksok {
+    private Long id;
     private String name;
     private String time;
     private String instruction;
     private boolean isTaken;
 
-    public Medication(String name, String time, String instruction, boolean isTaken) {
+    public NotificationYaksok(String name, String time, String instruction, boolean isTaken) {
         this.time = time;
         this.name = name;
         this.instruction = instruction;
