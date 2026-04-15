@@ -185,6 +185,50 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <com.example.medication.InputView
+                    android:id="@+id/input_set_morning_time"
+                    android:layout_width="230dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="15dp"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:visibility="gone"
+                    app:isReadOnly="true"
+                    app:hintText="아침 알림(기본 08:00)"
+                    app:iconSrc="@drawable/ic_time" />
+
+                <com.example.medication.InputView
+                    android:id="@+id/input_set_lunch_time"
+                    android:layout_width="230dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="15dp"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:visibility="gone"
+                    app:isReadOnly="true"
+                    app:hintText="점심 알림(기본 12:00)"
+                    app:iconSrc="@drawable/ic_time" />
+
+                <com.example.medication.InputView
+                    android:id="@+id/input_set_dinner_time"
+                    android:layout_width="230dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="15dp"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:visibility="gone"
+                    app:isReadOnly="true"
+                    app:hintText="저녁 알림(기본 18:00)"
+                    app:iconSrc="@drawable/ic_time" />
+
+            </LinearLayout>
+
             <!-- 노란 테두리 배경 적용 -->
             <TextView
                 android:layout_width="wrap_content"
@@ -246,33 +290,7 @@
 
             </RadioGroup>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:background="@drawable/bg_yellow_border"
-                android:gravity="center_vertical"
 
-                app:layout_constraintBottom_toBottomOf="@+id/rg_dosage_time">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:text="아침 알림 시간 : "/>
-
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    />
-            </LinearLayout>
 
             <!-- 구분선 -->
             <View

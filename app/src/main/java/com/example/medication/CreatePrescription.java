@@ -1,9 +1,11 @@
 package com.example.medication;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
@@ -20,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.adapter.AddMedicationSettingAdapter;
 import com.example.medication.model.request.PillRequest;
-import com.example.medication.model.request.YaksokRequest;
+import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
@@ -40,9 +42,8 @@ import retrofit2.Response;
 public class CreatePrescription extends AppCompatActivity {
 
     private ImageView ivBack;
-    private InputView inputStartDate;
-    private InputView inputTitle;
-    private InputView inputPrescriptionDays;
+    private InputView inputStartDate, inputTitle, inputPrescriptionDays;
+    private InputView inputSetMorningTime, inputSetLunchTime, inputSetDinnerTime;
     private LinearLayout llDasage;
     private CheckBox cbMorning, cbLunch, cbDinner;
     private RadioGroup rgDosageTime;
@@ -64,6 +65,7 @@ public class CreatePrescription extends AppCompatActivity {
         initViews();
         setupRecyclerView();
         setupSearchLauncher();
+        setupTimePickerLogic();
 
         ivBack.setOnClickListener(v -> finish());
         inputStartDate.setOnClickListener(v -> showDatePicker());
@@ -81,6 +83,54 @@ public class CreatePrescription extends AppCompatActivity {
         });
     }
 
+    private void setupTimePickerLogic(){
+        cbMorning.setOnCheckedChangeListener((button, isChecked) -> {
+            if(isChecked){
+                inputSetMorningTime.setVisibility(View.VISIBLE);
+            }else{
+                inputSetMorningTime.setVisibility(View.GONE);
+                inputSetMorningTime.setText("아침 알림(기본 08:00)");
+            }
+        });
+        inputSetMorningTime.setOnClickListener(v -> showTimePicker(inputSetMorningTime));
+
+        cbLunch.setOnCheckedChangeListener((button, isChecked) -> {
+            if(isChecked){
+                inputSetLunchTime.setVisibility(View.VISIBLE);
+            }else{
+                inputSetLunchTime.setVisibility(View.GONE);
+                inputSetLunchTime.setText("점심 알림(기본 12:00)");
+            }
+        });
+        inputSetMorningTime.setOnClickListener(v -> showTimePicker(inputSetDinnerTime));
+
+        cbDinner.setOnCheckedChangeListener((button, isChecked) -> {
+            if(isChecked){
+                inputSetDinnerTime.setVisibility(View.VISIBLE);
+            }else{
+                inputSetDinnerTime.setVisibility(View.GONE);
+                inputSetDinnerTime.setText("저녁 알림(기본 18:00)");
+            }
+        });
+        inputSetMorningTime.setOnClickListener(v -> showTimePicker(inputSetDinnerTime));
+    }
+
+    private void showTimePicker(InputView targetInputView) {
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int minute = cal.get(Calendar.MINUTE);
+
+        TimePickerDialog dialog = new TimePickerDialog(this, (view, hourOfDay, minuteOfHour) -> {
+            String amPm = hourOfDay < 12 ? "오전" : "오후";
+            int displayHour = hourOfDay % 12;
+            if (displayHour == 0) displayHour = 12;
+
+            String timeStr = String.format(Locale.getDefault(), "%s %02d:%02d", amPm, displayHour, minuteOfHour);
+            targetInputView.setText(timeStr);
+        }, hour, minute, false);
+
+        dialog.show();
+    }
     private boolean validateInput() {
         boolean isDateValid = inputStartDate.isValid(); // (주의: 사용하신 유효성 검사 메서드 이름이 validate()가 맞는지 확인해 주세요!)
         boolean isTitleValid = inputTitle.isValid();
@@ -142,7 +192,7 @@ public class CreatePrescription extends AppCompatActivity {
                 dosageTime = "직후";
             }
 
-            YaksokRequest request = new YaksokRequest(name, startDate, prescriptionDays, takeMorning, takeLunch, takeDinner, dosageTime, selectedPills, "TAKING");
+            Yaksok request = new Yaksok(name, startDate, prescriptionDays, takeMorning, takeLunch, takeDinner, dosageTime, selectedPills, "TAKING");
 
             YaksokApi api = NetworkClient.getYaksokApi();
 
@@ -195,7 +245,7 @@ public class CreatePrescription extends AppCompatActivity {
 
                 String errorMessage = jsonObject.getString("message");
 
-                showToast("errorMessage");
+                showToast(errorMessage);
             }else{
                 showToast("서버 오류가 발생했습니다. (코드: " + response.code() + ")");
             }
@@ -266,6 +316,9 @@ public class CreatePrescription extends AppCompatActivity {
         cbMorning = findViewById(R.id.cb_morning);
         cbLunch = findViewById(R.id.cb_lunch);
         cbDinner = findViewById(R.id.cb_dinner);
+        inputSetMorningTime = findViewById(R.id.input_set_morning_time);
+        inputSetLunchTime = findViewById(R.id.input_set_lunch_time);
+        inputSetDinnerTime = findViewById(R.id.input_set_dinner_time);
         rgDosageTime = findViewById(R.id.rg_dosage_time);
         btnAddPill = findViewById(R.id.btn_add_pill);
         btnRegister = findViewById(R.id.btn_register);
