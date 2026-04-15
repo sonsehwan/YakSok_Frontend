@@ -1,6 +1,8 @@
 package com.example.medication.model;
 
-public class NotificationYaksok {
+import java.io.Serializable;
+
+public class NotificationYaksok implements Serializable {
     private Long id;
     private String name;
     private String time;
@@ -13,6 +15,10 @@ public class NotificationYaksok {
         this.instruction = instruction;
         this.isTaken = isTaken;
     }
+
+    public Long getId() { return id; }
+
+    public void setId(Long id){ this.id = id; }
 
     public String getName() {
         return name;
