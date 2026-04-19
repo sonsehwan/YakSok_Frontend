@@ -25,14 +25,13 @@ import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.PillRequest;
 import com.example.medication.model.response.ApiResponse;
+import com.example.medication.model.response.SaveYaksokResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
 import com.example.medication.util.SprefsManager;
 
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -207,55 +206,24 @@ public class CreatePrescription extends AppCompatActivity {
         YaksokApi api = NetworkClient.getYaksokApi();
         String finalDosageTime = dosageTime;
 
-        api.saveYaksok(request).enqueue(new Callback<ApiResponse<Long>>() {
+        api.saveYaksok(request).enqueue(new Callback<ApiResponse<SaveYaksokResponse>>() {
             @Override
-            public void onResponse(Call<ApiResponse<Long>> call, Response<ApiResponse<Long>> response) {
+            public void onResponse(Call<ApiResponse<SaveYaksokResponse>> call, Response<ApiResponse<SaveYaksokResponse>> response) {
                 if(response.isSuccessful() && response.body() != null){
-                    ApiResponse<Long> result = response.body();
+                    ApiResponse<SaveYaksokResponse> result = response.body();
+
+                    SaveYaksokResponse saveYaksokResponse = result.getData();
 
                     if(result.isBusinessSuccess()){
-                        Long yaksokId = result.getData();
+                        Long yaksokId = saveYaksokResponse.getId();
 
                         if(yaksokId != null) {
                             request.setId(yaksokId);
                             // 1. 전체 약속 리스트에 저장
                             SprefsManager.addYaksok(CreatePrescription.this, request);
 
-                            // 2. 알림용 NotificationYaksok 리스트 생성
-                            // (투약일 수 * 투약 횟수만큼 생성)
-                            ArrayList<NotificationYaksok> newNotifications = new ArrayList<>();
-
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                            Calendar cal = Calendar.getInstance();
-
-                            try {
-                                if (startDate != null && !startDate.isEmpty()) {
-                                    cal.setTime(sdf.parse(startDate));
-                                }
-                            } catch (ParseException e) {
-                                Log.e("DateParse", "날짜 파싱 실패: " + e.getMessage());
-                            }
-
-                            // 투약 기간만큼 반복하며 각 날짜별 알림 객체 생성
-                            for (int i = 0; i < prescriptionDays; i++) {
-                                String currentDateStr = sdf.format(cal.getTime());
-
-                                if (takeMorning) {
-                                    String t = (timeMorning != null && !timeMorning.isEmpty()) ? timeMorning : "오전 08:00";
-                                    newNotifications.add(new NotificationYaksok(name, currentDateStr, t, finalDosageTime, false));
-                                }
-                                if (takeLunch) {
-                                    String t = (timeLunch != null && !timeLunch.isEmpty()) ? timeLunch : "오후 12:00";
-                                    newNotifications.add(new NotificationYaksok(name, currentDateStr, t, finalDosageTime, false));
-                                }
-                                if (takeDinner) {
-                                    String t = (timeDinner != null && !timeDinner.isEmpty()) ? timeDinner : "오후 06:00";
-                                    newNotifications.add(new NotificationYaksok(name, currentDateStr, t, finalDosageTime, false));
-                                }
-
-                                // 다음 날짜로 이동
-                                cal.add(Calendar.DAY_OF_MONTH, 1);
-                            }
+                            // 2. 응답받은 알림용 NotificationYaksok 리스트 가져오기
+                            List<NotificationYaksok> newNotifications = saveYaksokResponse.getNotifications();
 
                             // 3. SharedPreferences에 알림 리스트 누적 저장
                             SprefsManager.addNotifications(CreatePrescription.this, newNotifications);
@@ -264,7 +232,7 @@ public class CreatePrescription extends AppCompatActivity {
 
                             // 4. 메인 화면으로 이동하며 새로 생성된 리스트 전달
                             Intent intent = new Intent(CreatePrescription.this, MainActivity.class);
-                            intent.putExtra("newNotifications", newNotifications);
+                            intent.putExtra("newNotifications", (ArrayList<NotificationYaksok>)newNotifications);
                             startActivity(intent);
                             finish();
                         }
@@ -277,7 +245,7 @@ public class CreatePrescription extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<Long>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<SaveYaksokResponse>> call, Throwable t) {
                 showToast("네트워크 연결을 확인해주세요.");
             }
         });
