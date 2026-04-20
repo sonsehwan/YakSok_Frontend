@@ -99,11 +99,11 @@ public class MainActivity extends AppCompatActivity {
         for(NotificationYaksok n : notifications){
             String category = n.getTimeCategory();
             if(category != null){
-                if(category == "아침"){
+                if(category.equalsIgnoreCase("아침")){
                     morning.add(n);
-                }else if(category == "점심"){
+                }else if(category.equalsIgnoreCase("점심")){
                     lunch.add(n);
-                }else if(category == "저녁"){
+                }else if(category.equalsIgnoreCase("저녁")){
                     dinner.add(n);
                 }
             }
