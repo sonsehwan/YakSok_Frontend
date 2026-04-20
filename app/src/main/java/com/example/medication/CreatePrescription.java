@@ -235,6 +235,10 @@ public class CreatePrescription extends AppCompatActivity {
                             intent.putExtra("newNotifications", (ArrayList<NotificationYaksok>)newNotifications);
                             startActivity(intent);
                             finish();
+                        }else{
+                            showToast("서버와의 통신 중에 문제가 발생하였습니다. 죄송합니다.");
+                            Log.e("CreateYaksokError", "약속ID를 가져오는데 실패하였습니다.");
+                            Log.e("CreateYaksokError", "yaksokId: " + yaksokId);
                         }
                     } else {
                         showToast(result.getMessage());

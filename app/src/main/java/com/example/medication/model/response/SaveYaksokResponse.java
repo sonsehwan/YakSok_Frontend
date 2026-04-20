@@ -1,11 +1,15 @@
 package com.example.medication.model.response;
 
 import com.example.medication.model.NotificationYaksok;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class SaveYaksokResponse {
+    @SerializedName("id")
     Long id;
+
+    @SerializedName("notifications")
     List<NotificationYaksok> notifications;
 
     public SaveYaksokResponse(Long id, List<NotificationYaksok> notifications) {

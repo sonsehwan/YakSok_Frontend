@@ -40,7 +40,8 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         NotificationYaksok item = items.get(position);
-        holder.tvName.setText(item.getName());
+
+        holder.tvName.setText(item.getTitle());
         holder.tvInfo.setText(item.getTime() + "\n" + item.getInstruction());
 
         // 체크 상태 설정 (무한 루프 방지를 위해 리스너 잠시 제거)
@@ -92,7 +93,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
 
         String title = isDone ? "복용 완료 처리하시겠습니까?" : "복용 취소 처리하시겠습니까?";
         builder.setTitle(title);
-        builder.setMessage(item.getName() + " 약속을 확인합니다.");
+        builder.setMessage(item.getTitle() + " 약속을 확인합니다.");
 
         builder.setPositiveButton("확인", (dialog, which) -> {
             // 1. 데이터 모델 변경

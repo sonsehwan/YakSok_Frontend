@@ -10,7 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.adapter.MedicationAdapter;
+import com.example.medication.adapter.NotificationMultiViewAdapter;
+import com.example.medication.model.NotificationListItem;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabScan;
     private BottomNavigationView bottomNav;
 
-    private MedicationAdapter adapter;
+    private NotificationMultiViewAdapter adapter;
     private List<NotificationYaksok> notificationYaksokList;
 
     @Override
@@ -41,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setupDate();
         setNickName();
-        setupRecyclerView();
 
-
+        notificationYaksokList = new ArrayList<>();
+        rvMedication.setLayoutManager(new LinearLayoutManager(this));
 
         fabScan.setOnClickListener(v -> {
             ShowAddMedicationList bottomSheet = new ShowAddMedicationList();
@@ -87,21 +88,46 @@ public class MainActivity extends AppCompatActivity {
         tvGreeting.setText("안녕하세요, "+ nickName +"님!");
     }
 
-    private void setupRecyclerView() {
-        notificationYaksokList = new ArrayList<>();
-        // 예시 데이터
-//        notificationYaksokList.add(new NotificationYaksok("종합 비타민", "오전 08:30", "식후 30분", true));
-//        notificationYaksokList.add(new NotificationYaksok("오메가 3", "오후 01:00", "식후 즉시", false));
-//        notificationYaksokList.add(new NotificationYaksok("혈압약", "오후 07:00", "식전 30분", false));
+    private void setupRecyclerView(List<NotificationYaksok> notifications) {
 
-        adapter = new MedicationAdapter(notificationYaksokList, (position, isDone) -> {
-            updateProgress(); // 체크 상태 변경 시 상단 UI 갱신
+        List<NotificationListItem> notiList = new ArrayList<>();
+
+        List<NotificationYaksok> morning = new ArrayList<>();
+        List<NotificationYaksok> lunch = new ArrayList<>();
+        List<NotificationYaksok> dinner = new ArrayList<>();
+
+        for(NotificationYaksok n : notifications){
+            String category = n.getTimeCategory();
+            if(category != null){
+                if(category == "아침"){
+                    morning.add(n);
+                }else if(category == "점심"){
+                    lunch.add(n);
+                }else if(category == "저녁"){
+                    dinner.add(n);
+                }
+            }
+        }
+
+        if(!morning.isEmpty()){
+            notiList.add(new NotificationListItem.HeaderItem("아침", "아침"));
+            for(NotificationYaksok n : morning) notiList.add(new NotificationListItem.MedicationItem(n));
+        }
+        if(!lunch.isEmpty()){
+            notiList.add(new NotificationListItem.HeaderItem("점심", "점심"));
+            for(NotificationYaksok n : lunch) notiList.add(new NotificationListItem.MedicationItem(n));
+        }
+        if(!dinner.isEmpty()){
+            notiList.add(new NotificationListItem.HeaderItem("저녁", "저녁"));
+            for(NotificationYaksok n : dinner) notiList.add(new NotificationListItem.MedicationItem(n));
+        }
+
+        adapter = new NotificationMultiViewAdapter(notiList, ()->{
+            //SprefsManager.saveNotificationList(MainActivity.this, SprefsManager.getNotificationList(MainActivity.this)); // 예시 방어코드
+            updateProgress();
         });
 
-        rvMedication.setLayoutManager(new LinearLayoutManager(this));
         rvMedication.setAdapter(adapter);
-
-        updateProgress();
     }
 
     private void loadMedicationList(){
@@ -122,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
+        setupRecyclerView(notificationYaksokList);
         updateProgress();
     }
 

@@ -1,18 +1,23 @@
 package com.example.medication.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class NotificationYaksok implements Serializable {
     private Long id;
-    private String name;
+    private String title;
+    @SerializedName("timeCategory")
+    private String timeCategory;
     private String date;
     private String time;
     private String instruction;
     private boolean isTaken;
 
-    public NotificationYaksok(String name, String date, String time, String instruction, boolean isTaken) {
+    public NotificationYaksok(String title, String timeCategory, String date, String time, String instruction, boolean isTaken) {
         this.time = time;
-        this.name = name;
+        this.title = title;
+        this.timeCategory = timeCategory;
         this.date = date;
         this.instruction = instruction;
         this.isTaken = isTaken;
@@ -22,13 +27,22 @@ public class NotificationYaksok implements Serializable {
 
     public void setId(Long id){ this.id = id; }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void settitle(String title) {
+        this.title = title;
     }
+
+    public String getTimeCategory() {
+        return timeCategory;
+    }
+
+    public void setTimeCategory(String timeCategory) {
+        this.timeCategory = timeCategory;
+    }
+
 
     public String getTime() {
         return time;
