@@ -56,7 +56,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_pill_name"
+                    android:id="@+id/tv_notification_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
@@ -65,13 +65,21 @@
                     tools:text="종합 비타민" />
 
                 <TextView
-                    android:id="@+id/tv_pill_info"
+                    android:id="@+id/tv_notification_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="#999999"
                     android:textSize="13sp"
-                    tools:text="오전 08:30 • 식후 30분" />
+                    tools:text="오전 08:30" />
+                <TextView
+                    android:id="@+id/tv_notification_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="#999999"
+                    android:textSize="13sp"
+                    tools:text="식후 30분" />
             </LinearLayout>
 
             <!-- 수정된 복용 체크박스: 완료 텍스트 추가 및 간격 조정 -->

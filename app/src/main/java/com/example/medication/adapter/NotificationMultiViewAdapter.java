@@ -1,16 +1,20 @@
 package com.example.medication.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.R;
 import com.example.medication.model.NotificationListItem;
+import com.example.medication.model.NotificationYaksok;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -66,7 +70,7 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
             View v = inflater.inflate(R.layout.item_time_header, parent, false);
             return new HeaderViewHolder(v);
         }else{
-            View v = inflater.inflate(R.layout.item_medication, parent, false);
+            View v = inflater.inflate(R.layout.item_notification, parent, false);
             return new ItemViewHolder(v);
         }
     }
@@ -91,17 +95,55 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
                 updateVisibleItems();
             });
         }else if (holder instanceof ItemViewHolder) {
-            NotificationListItem.MedicationItem med = (NotificationListItem.MedicationItem) item;
+            NotificationListItem.NotificationItem noti = (NotificationListItem.NotificationItem) item;
             ItemViewHolder h = (ItemViewHolder) holder;
+            NotificationYaksok data = noti.getData();
 
-            h.tvName.setText(med.getData().getTitle());
-            h.tvInfo.setText(med.getData().getInstruction());
+            h.tvName.setText(noti.getData().getTitle());
+            h.tvTime.setText(noti.getData().getTime());
+            h.tvInfo.setText(noti.getData().getInstruction());
+
+            h.cbDone.setOnCheckedChangeListener(null); // 리스너 간섭 방지
+            h.cbDone.setChecked(data.isTaken());
+            h.cbDone.setText(data.isTaken() ? "완료" : "미복용");
+
+            holder.itemView.setAlpha(data.isTaken() ? 0.5f : 1.0f);
+
+            h.cbDone.setOnClickListener(v -> {
+                h.cbDone.setChecked(data.isTaken());
+
+                showConfirmDialog(h.itemView.getContext(), data, h);
+            });
         }
     }
 
     @Override
     public int getItemCount() {
         return visibleItems.size();
+    }
+
+    private void showConfirmDialog(Context context, NotificationYaksok item, ItemViewHolder holder) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        String title = !item.isTaken() ? "복용 완료 처리하시겠습니까?" : "복용 취소 처리하시겠습니까?";
+        builder.setTitle(title);
+        builder.setMessage(item.getTitle() + " 약속을 확인합니다.");
+
+        builder.setPositiveButton("확인", (dialog, which) -> {
+            item.setTaken(!item.isTaken()); // 상태 반전
+
+            // UI 갱신
+            holder.cbDone.setChecked(item.isTaken());
+            holder.itemView.setAlpha(item.isTaken() ? 0.5f : 1.0f);
+            holder.cbDone.setText(item.isTaken() ? "완료" : "미복용");
+
+            if (checkListener != null) {
+                checkListener.onCheckChanged();
+            }
+        });
+
+        builder.setNegativeButton("취소", null);
+        builder.show();
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -115,11 +157,14 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvInfo;
-        ItemViewHolder(View itemView) {
+        TextView tvName, tvTime, tvInfo;
+        CheckBox cbDone;
+        ItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvName = itemView.findViewById(R.id.tv_pill_name);
-            tvInfo = itemView.findViewById(R.id.tv_pill_info);
+            tvName = itemView.findViewById(R.id.tv_notification_name);
+            tvTime = itemView.findViewById(R.id.tv_notification_time);
+            tvInfo = itemView.findViewById(R.id.tv_notification_info);
+            cbDone = itemView.findViewById(R.id.cb_done);
         }
     }
 }

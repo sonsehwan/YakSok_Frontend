@@ -21,9 +21,9 @@ public interface NotificationListItem {
     }
 
     // 약 정보 모델
-    public static class MedicationItem implements NotificationListItem {
+    public static class NotificationItem implements NotificationListItem {
         private NotificationYaksok data;
-        public MedicationItem(NotificationYaksok data){ this.data = data; }
+        public NotificationItem(NotificationYaksok data){ this.data = data; }
         public NotificationYaksok getData(){ return data; }
 
         @Override

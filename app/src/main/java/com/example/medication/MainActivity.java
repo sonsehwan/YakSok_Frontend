@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvDate, tvGreeting, tvSummary, tvProgressPercent;
     private ProgressBar progressMain;
-    private RecyclerView rvMedication;
+    private RecyclerView rvNotification;
     private FloatingActionButton fabScan;
     private BottomNavigationView bottomNav;
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setNickName();
 
         notificationYaksokList = new ArrayList<>();
-        rvMedication.setLayoutManager(new LinearLayoutManager(this));
+        rvNotification.setLayoutManager(new LinearLayoutManager(this));
 
         fabScan.setOnClickListener(v -> {
             ShowAddMedicationList bottomSheet = new ShowAddMedicationList();
@@ -111,15 +111,15 @@ public class MainActivity extends AppCompatActivity {
 
         if(!morning.isEmpty()){
             notiList.add(new NotificationListItem.HeaderItem("아침", "아침"));
-            for(NotificationYaksok n : morning) notiList.add(new NotificationListItem.MedicationItem(n));
+            for(NotificationYaksok n : morning) notiList.add(new NotificationListItem.NotificationItem(n));
         }
         if(!lunch.isEmpty()){
             notiList.add(new NotificationListItem.HeaderItem("점심", "점심"));
-            for(NotificationYaksok n : lunch) notiList.add(new NotificationListItem.MedicationItem(n));
+            for(NotificationYaksok n : lunch) notiList.add(new NotificationListItem.NotificationItem(n));
         }
         if(!dinner.isEmpty()){
             notiList.add(new NotificationListItem.HeaderItem("저녁", "저녁"));
-            for(NotificationYaksok n : dinner) notiList.add(new NotificationListItem.MedicationItem(n));
+            for(NotificationYaksok n : dinner) notiList.add(new NotificationListItem.NotificationItem(n));
         }
 
         adapter = new NotificationMultiViewAdapter(notiList, ()->{
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             updateProgress();
         });
 
-        rvMedication.setAdapter(adapter);
+        rvNotification.setAdapter(adapter);
     }
 
     private void loadMedicationList(){
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         tvSummary = findViewById(R.id.tv_summary);
         tvProgressPercent = findViewById(R.id.tv_progress_percent);
         progressMain = findViewById(R.id.progress_main);
-        rvMedication = findViewById(R.id.rv_medication);
+        rvNotification = findViewById(R.id.rv_medication);
         fabScan = findViewById(R.id.fab_scan);
         bottomNav = findViewById(R.id.bottom_navigation);
     }

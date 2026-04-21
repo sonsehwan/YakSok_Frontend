@@ -33,7 +33,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_medication, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notification, parent, false);
         return new ViewHolder(view);
     }
 
@@ -81,7 +81,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_pill_name);
-            tvInfo = itemView.findViewById(R.id.tv_pill_info);
+            tvInfo = itemView.findViewById(R.id.tv_notification_info);
             cbDone = itemView.findViewById(R.id.cb_done);
 
         }
