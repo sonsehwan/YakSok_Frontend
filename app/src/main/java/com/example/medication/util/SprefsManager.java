@@ -104,6 +104,18 @@ public class SprefsManager {
         return new Gson().fromJson(json, type);
     }
 
+    // 새로운 알림 리스트로 싹 변경
+    public static void setNotifications(Context context, List<NotificationYaksok> newNotifications) {
+        SharedPreferences.Editor editor = getPreference(context).edit();
+
+        // 새로운 전체 리스트를 JSON으로 변환
+        String json = new Gson().toJson(newNotifications);
+
+        // 기존 데이터를 덮어쓰고 저장
+        editor.putString(KEY_NOTIFICATION_LIST, json);
+        editor.apply();
+    }
+
     // 새로 생성된 NotificationYaksok 리스트를 기존 목록에 누적 추가
     public static void addNotifications(Context context, List<NotificationYaksok> newNotifications){
         List<NotificationYaksok> currentList = getNotificationList(context);

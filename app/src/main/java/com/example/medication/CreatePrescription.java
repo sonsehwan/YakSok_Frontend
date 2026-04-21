@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -184,7 +185,7 @@ public class CreatePrescription extends AppCompatActivity {
 
     private void startCreateYaksok(){
         String startDate = inputStartDate.getText();
-        String name = inputTitle.getText();
+        String title = inputTitle.getText();
         int prescriptionDays = Integer.parseInt(inputPrescriptionDays.getText());
 
         boolean takeMorning = cbMorning.isChecked();
@@ -202,40 +203,51 @@ public class CreatePrescription extends AppCompatActivity {
         else if(selectedId == R.id.rb_after) dosageTime = "식후 30분";
         else if(selectedId == R.id.rb_anytime) dosageTime = "직후";
 
-        Yaksok yaksok = new Yaksok(name, startDate, prescriptionDays, takeMorning, takeLunch, takeDinner, dosageTime, timeMorning, timeLunch, timeDinner, selectedPills, "TAKING");
-
-        CreateYakSokRequest request = new CreateYakSokRequest(SprefsManager.getUserEmail(this), yaksok);
+        CreateYakSokRequest request = new CreateYakSokRequest(
+                SprefsManager.getUserEmail(this),
+                title,
+                startDate,
+                prescriptionDays,
+                takeMorning,
+                takeLunch,
+                takeDinner,
+                dosageTime,
+                timeMorning,
+                timeLunch,
+                timeDinner,
+                selectedPills);
 
         YaksokApi api = NetworkClient.getYaksokApi();
-        String finalDosageTime = dosageTime;
 
         api.saveYaksok(request).enqueue(new Callback<ApiResponse<SaveYaksokResponse>>() {
             @Override
-            public void onResponse(Call<ApiResponse<SaveYaksokResponse>> call, Response<ApiResponse<SaveYaksokResponse>> response) {
+            public void onResponse(@NonNull Call<ApiResponse<SaveYaksokResponse>> call, @NonNull Response<ApiResponse<SaveYaksokResponse>> response) {
                 if(response.isSuccessful() && response.body() != null){
                     ApiResponse<SaveYaksokResponse> result = response.body();
 
                     SaveYaksokResponse saveYaksokResponse = result.getData();
 
                     if(result.isBusinessSuccess()){
-                        Long yaksokId = saveYaksokResponse.getId();
+                        Yaksok yaksok = saveYaksokResponse.getYaksok();
+                        Long yaksokId = yaksok.getId();
 
                         if(yaksokId != null) {
-                            request.getYaksok().setId(yaksokId);
+                            yaksok.setId(yaksokId);
+
                             // 1. 전체 약속 리스트에 저장
-                            SprefsManager.addYaksok(CreatePrescription.this, request.getYaksok());
+                            SprefsManager.addYaksok(CreatePrescription.this, yaksok);
 
                             // 2. 응답받은 알림용 NotificationYaksok 리스트 가져오기
-                            List<NotificationYaksok> newNotifications = saveYaksokResponse.getNotifications();
+                            List<NotificationYaksok> allNotifications = saveYaksokResponse.getNotifications();
 
                             // 3. SharedPreferences에 알림 리스트 누적 저장
-                            SprefsManager.addNotifications(CreatePrescription.this, newNotifications);
+                            SprefsManager.setNotifications(CreatePrescription.this, allNotifications);
 
                             showToast("약속이 성공적으로 등록되었습니다.");
 
                             // 4. 메인 화면으로 이동하며 새로 생성된 리스트 전달
                             Intent intent = new Intent(CreatePrescription.this, MainActivity.class);
-                            intent.putExtra("newNotifications", (ArrayList<NotificationYaksok>)newNotifications);
+                            //intent.putExtra("newNotifications", (ArrayList<NotificationYaksok>)newNotifications);
                             startActivity(intent);
                             finish();
                         }else{
@@ -260,17 +272,20 @@ public class CreatePrescription extends AppCompatActivity {
 
     private void handleErrorResponse(Response<?> response) {
         try {
-            if(response.errorBody() != null) {
-                JSONObject jsonObject = new JSONObject(response.errorBody().string());
-                showToast(jsonObject.getString("message"));
+            if (response.errorBody() != null) {
+                String errorJson = response.errorBody().string();
+                JSONObject jsonObject = new JSONObject(errorJson);
+                // message 키가 있으면 출력, 없으면 전체 에러 내용 출력
+                String message = jsonObject.optString("message", errorJson);
+                showToast("서버 에러: " + message);
+                Log.e("서버 에러: ", message);
             } else {
                 showToast("서버 오류: " + response.code());
             }
         } catch (Exception e) {
-            showToast("오류가 발생했습니다.");
+            showToast("네트워크 오류 발생");
         }
     }
-
     private void setupSearchLauncher() {
         searchLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),

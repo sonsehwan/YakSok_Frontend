@@ -122,10 +122,7 @@ public class MainActivity extends AppCompatActivity {
             for(NotificationYaksok n : dinner) notiList.add(new NotificationListItem.NotificationItem(n));
         }
 
-        adapter = new NotificationMultiViewAdapter(notiList, ()->{
-            //SprefsManager.saveNotificationList(MainActivity.this, SprefsManager.getNotificationList(MainActivity.this)); // 예시 방어코드
-            updateProgress();
-        });
+        adapter = new NotificationMultiViewAdapter(notiList, this::updateProgress);
 
         rvNotification.setAdapter(adapter);
     }
