@@ -5,19 +5,19 @@ import com.example.medication.model.request.PillRequest;
 import java.util.List;
 
 public class Yaksok {
-    private Long id;
-    private String title;
-    private String startDate;
-    private int prescriptionDays;
-    private boolean takeMorning;
-    private boolean takeLunch;
-    private boolean takeDinner;
-    private String timeMorning;
-    private String timeLunch;
-    private String timeDinner;
-    private String dosageTime;
-    private List<PillRequest> pills;
-    private String status;
+    private Long id; // 약속 ID
+    private String title; // 약속 이름
+    private String startDate; // 약속 시작 날짜
+    private int prescriptionDays; // 복용 기간
+    private boolean takeMorning; // 아침 복용 여부
+    private boolean takeLunch; // 점심 복용 여부
+    private boolean takeDinner; // 저녁 복용 여부
+    private String timeMorning; // 아침 복용 시간
+    private String timeLunch; // 점심 복용 시간
+    private String timeDinner; // 저녁 복용 시간
+    private String dosageTime; // 투약 시간대
+    private List<PillRequest> pills; //복약 목록
+    private String status; // 약속 상태(복용 중, 복용 완료)
 
     public Yaksok(String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, String timeMorning, String timeLunch, String timeDinner, List<PillRequest> pills, String stauts) {
         this.title = title;

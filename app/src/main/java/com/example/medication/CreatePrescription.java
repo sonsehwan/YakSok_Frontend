@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.medication.adapter.AddMedicationSettingAdapter;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
+import com.example.medication.model.request.CreateYakSokRequest;
 import com.example.medication.model.request.PillRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.SaveYaksokResponse;
@@ -201,7 +202,9 @@ public class CreatePrescription extends AppCompatActivity {
         else if(selectedId == R.id.rb_after) dosageTime = "식후 30분";
         else if(selectedId == R.id.rb_anytime) dosageTime = "직후";
 
-        Yaksok request = new Yaksok(name, startDate, prescriptionDays, takeMorning, takeLunch, takeDinner, dosageTime, timeMorning, timeLunch, timeDinner, selectedPills, "TAKING");
+        Yaksok yaksok = new Yaksok(name, startDate, prescriptionDays, takeMorning, takeLunch, takeDinner, dosageTime, timeMorning, timeLunch, timeDinner, selectedPills, "TAKING");
+
+        CreateYakSokRequest request = new CreateYakSokRequest(SprefsManager.getUserEmail(this), yaksok);
 
         YaksokApi api = NetworkClient.getYaksokApi();
         String finalDosageTime = dosageTime;
@@ -218,9 +221,9 @@ public class CreatePrescription extends AppCompatActivity {
                         Long yaksokId = saveYaksokResponse.getId();
 
                         if(yaksokId != null) {
-                            request.setId(yaksokId);
+                            request.getYaksok().setId(yaksokId);
                             // 1. 전체 약속 리스트에 저장
-                            SprefsManager.addYaksok(CreatePrescription.this, request);
+                            SprefsManager.addYaksok(CreatePrescription.this, request.getYaksok());
 
                             // 2. 응답받은 알림용 NotificationYaksok 리스트 가져오기
                             List<NotificationYaksok> newNotifications = saveYaksokResponse.getNotifications();

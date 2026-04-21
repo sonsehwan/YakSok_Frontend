@@ -1,41 +1,30 @@
 package com.example.medication.model.request;
 
-import java.util.Date;
-import java.util.List;
+import com.example.medication.model.Yaksok;
 
 
 public class CreateYakSokRequest {
-    private Date date;
-    private String name;
-    private List<PillRequest> list;
+    private String userEmail;
+    private Yaksok yaksok;
 
-    public CreateYakSokRequest(Date date, String name, List<PillRequest> list) {
-        this.date = date;
-        this.name = name;
-        this.list = list;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public Date getDate() {
-        return date;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public Yaksok getYaksok() {
+        return yaksok;
     }
 
-    public String getName() {
-        return name;
+    public void setYaksok(Yaksok yaksok) {
+        this.yaksok = yaksok;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<PillRequest> getList() {
-        return list;
-    }
-
-    public void setList(List<PillRequest> list) {
-        this.list = list;
+    public CreateYakSokRequest(String userEmail, Yaksok yaksok) {
+        this.userEmail = userEmail;
+        this.yaksok = yaksok;
     }
 }
