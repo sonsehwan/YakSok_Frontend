@@ -12,6 +12,7 @@ public class NotificationYaksok implements Serializable {
     private String date;
     private String time;
     private String instruction;
+    @SerializedName(value = "isTaken", alternate = {"taken"})
     private boolean isTaken;
 
     public NotificationYaksok(String title, String timeCategory, String date, String time, String instruction, boolean isTaken) {
@@ -59,6 +60,7 @@ public class NotificationYaksok implements Serializable {
     public void setInstruction(String instruction) {
         this.instruction = instruction;
     }
+
 
     public boolean isTaken() {
         return isTaken;

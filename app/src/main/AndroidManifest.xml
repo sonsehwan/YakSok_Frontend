@@ -36,10 +36,6 @@
             android:name=".CreatePrescription"
             android:exported="false" />
 
-        <activity
-            android:name=".ShowAddMedicationList"
-            android:exported="false" />
-
         <!-- 로그인 -->
         <activity
             android:name=".Login"

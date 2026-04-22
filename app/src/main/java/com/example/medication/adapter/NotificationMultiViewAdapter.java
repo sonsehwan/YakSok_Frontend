@@ -1,12 +1,14 @@
 package com.example.medication.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -15,11 +17,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.medication.R;
 import com.example.medication.model.NotificationListItem;
 import com.example.medication.model.NotificationYaksok;
+import com.example.medication.model.response.ApiResponse;
+import com.example.medication.network.NetworkClient;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -99,20 +107,22 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
             ItemViewHolder h = (ItemViewHolder) holder;
             NotificationYaksok data = noti.getData();
 
-            h.tvName.setText(noti.getData().getTitle());
-            h.tvTime.setText(noti.getData().getTime());
-            h.tvInfo.setText(noti.getData().getInstruction());
+            h.tvName.setText(data.getTitle());
+            h.tvTime.setText(data.getTime());
+            h.tvInfo.setText(data.getInstruction());
 
             h.cbDone.setOnCheckedChangeListener(null); // 리스너 간섭 방지
             h.cbDone.setChecked(data.isTaken());
             h.cbDone.setText(data.isTaken() ? "완료" : "미복용");
-
             holder.itemView.setAlpha(data.isTaken() ? 0.5f : 1.0f);
 
             h.cbDone.setOnClickListener(v -> {
                 h.cbDone.setChecked(data.isTaken());
 
-                showConfirmDialog(h.itemView.getContext(), data, h);
+                int currentPos = holder.getAdapterPosition();
+                if (currentPos != RecyclerView.NO_POSITION) {
+                    showConfirmDialog(h.itemView.getContext(), currentPos, noti, h);
+                }
             });
         }
     }
@@ -122,28 +132,57 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
         return visibleItems.size();
     }
 
-    private void showConfirmDialog(Context context, NotificationYaksok item, ItemViewHolder holder) {
+    private void showConfirmDialog(Context context, int position, NotificationListItem.NotificationItem notiItem, ItemViewHolder holder) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        NotificationYaksok data = notiItem.getData();
+        boolean originalState = data.isTaken();
+        boolean newState = !originalState;
 
-        String title = !item.isTaken() ? "복용 완료 처리하시겠습니까?" : "복용 취소 처리하시겠습니까?";
+        String title = !originalState ? "복용 완료 처리하시겠습니까?" : "복용 취소 처리하시겠습니까?";
         builder.setTitle(title);
-        builder.setMessage(item.getTitle() + " 약속을 확인합니다.");
+        builder.setMessage(data.getTitle() + " 약속을 확인합니다.");
 
         builder.setPositiveButton("확인", (dialog, which) -> {
-            item.setTaken(!item.isTaken()); // 상태 반전
-
-            // UI 갱신
-            holder.cbDone.setChecked(item.isTaken());
-            holder.itemView.setAlpha(item.isTaken() ? 0.5f : 1.0f);
-            holder.cbDone.setText(item.isTaken() ? "완료" : "미복용");
+            data.setTaken(newState); // 상태 반전
+            notifyItemChanged(position);
 
             if (checkListener != null) {
                 checkListener.onCheckChanged();
             }
+            NetworkClient.getYaksokApi().updateNotificationStatus(data.getId(), newState)
+                    .enqueue(new Callback<ApiResponse<Void>>() {
+                        @Override
+                        public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                            if (!response.isSuccessful()) {
+                                // 3-1. 서버 에러 시 원래 상태로 롤백
+                                rollbackStatus(context, position, data, originalState, "서버에러: " + response.code());
+                                if (checkListener != null) checkListener.onCheckChanged();
+                            }else{
+                                Log.d("통신 성공", "알림 상태 변경 성공");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                            // 3-2. 통신 에러 발생 시 원상 복구하며 에러 원인 출력
+                            // 개발 중에만 t.getMessage()를 띄우고, 서비스 중에는 "네트워크 오류" 등으로 묶습니다.
+                            String errorMessage = t.getMessage() != null ? t.getMessage() : "원인 불명";
+                            Log.e("통신 에러", errorMessage);
+                            rollbackStatus(context, position, data, originalState, "오류: " + errorMessage);
+                            if (checkListener != null) checkListener.onCheckChanged();
+                        }
+                    });
+
         });
 
         builder.setNegativeButton("취소", null);
         builder.show();
+    }
+
+    private void rollbackStatus(Context context, int position, NotificationYaksok data, boolean originalState, String errorMessage) {
+        data.setTaken(originalState);
+        notifyItemChanged(position);
+        Toast.makeText(context, "통신 실패 (" + errorMessage + ")", Toast.LENGTH_SHORT).show();
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {

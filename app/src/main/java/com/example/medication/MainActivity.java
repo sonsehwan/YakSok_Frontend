@@ -2,6 +2,7 @@ package com.example.medication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.medication.adapter.NotificationMultiViewAdapter;
 import com.example.medication.model.NotificationListItem;
 import com.example.medication.model.NotificationYaksok;
+import com.example.medication.model.response.ApiResponse;
+import com.example.medication.network.NetworkClient;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,6 +25,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -123,16 +130,59 @@ public class MainActivity extends AppCompatActivity {
         }
 
         adapter = new NotificationMultiViewAdapter(notiList, this::updateProgress);
-
         rvNotification.setAdapter(adapter);
     }
 
     private void loadMedicationList(){
         notificationYaksokList.clear();
+        String userEmail = SprefsManager.getUserEmail(this); // 로그인한 유저의 이메일 정보
 
+        NetworkClient.getYaksokApi().getNotifications(userEmail) // 해당 유저가 생성한 알림 정보를 DB에서 받아서 로컬에 저장
+                .enqueue(new Callback<ApiResponse<List<NotificationYaksok>>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<List<NotificationYaksok>>> call, Response<ApiResponse<List<NotificationYaksok>>> response) {
+                        if(response.isSuccessful() && response.body() != null){
+                            ApiResponse<List<NotificationYaksok>> result = response.body();
+                            List<NotificationYaksok> notifications = result.getData();
+                            SprefsManager.setNotifications(MainActivity.this, notifications); //비동기이기 때문에 리스트를 성공적으로 저장해도 이미 리스트가 없을 때의 화면을 그려버려서 안보인다.
+                            Log.d("메인화면", "성공적으로 알림 리스트를 가져왔습니다.");
+                            Log.d("메인화면", "알림 리스트: " + result.getData());
+
+                            String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+                            if (notifications != null && !notifications.isEmpty()) {
+                                for (NotificationYaksok item : notifications) {
+                                    if (today.equals(item.getDate())) {
+                                        notificationYaksokList.add(item);
+                                    }
+                                }
+                            }
+
+                            setupRecyclerView(notificationYaksokList);
+                            updateProgress();
+
+                        }else{
+                            Log.e("메인화면 에러", "알림 리스트를 가져오는데 실패하였습니다." + response.code() + " 메시지: " + response.message());
+                            showToast("알림 리스트를 가져오는데 실패하였습니다.");
+
+                            loadFromLocalFallback();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ApiResponse<List<NotificationYaksok>>> call, Throwable t) {
+                        Log.e("메인화면 에러","통신 실패: " + t.getMessage());
+
+                        loadFromLocalFallback();
+                    }
+                });
+    }
+
+    private void loadFromLocalFallback() {
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-        List<NotificationYaksok> savedList = SprefsManager.getNotificationList(this);
+        // 서버에서 가져오는 데 실패했으므로, 기기(로컬)에 마지막으로 저장되어 있던 리스트를 꺼냅니다.
+        List<NotificationYaksok> savedList = SprefsManager.getNotificationList(MainActivity.this);
+
         if (savedList != null && !savedList.isEmpty()) {
             for (NotificationYaksok item : savedList) {
                 if (today.equals(item.getDate())) {
@@ -141,10 +191,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // 5. 어댑터 새로고침 및 프로그레스바 갱신
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
+        // 로컬 데이터로 화면을 그립니다.
         setupRecyclerView(notificationYaksokList);
         updateProgress();
     }
@@ -168,6 +215,20 @@ public class MainActivity extends AppCompatActivity {
 
         int remain = total - done;
         tvSummary.setText("오늘 약속은 " + remain + "건 남았어요.");
+
+        List<NotificationYaksok> allSavedList = SprefsManager.getNotificationList(this);
+        if (allSavedList != null) {
+            for (NotificationYaksok todayItem : notificationYaksokList) {
+                for (NotificationYaksok savedItem : allSavedList) {
+                    // int와 Long 비교 주의 (entity는 int id, 서버 DTO 확인 필요)
+                    if (savedItem.getId() == todayItem.getId()) {
+                        savedItem.setTaken(todayItem.isTaken());
+                        break;
+                    }
+                }
+            }
+            SprefsManager.setNotifications(this, allSavedList);
+        }
     }
 
     private void showToast(String message){
