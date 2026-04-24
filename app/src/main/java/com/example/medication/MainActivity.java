@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.example.medication.adapter.NotificationMultiViewAdapter;
 import com.example.medication.model.NotificationListItem;
@@ -52,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
         notificationYaksokList = new ArrayList<>();
         rvNotification.setLayoutManager(new LinearLayoutManager(this));
+
+        RecyclerView.ItemAnimator animator = rvNotification.getItemAnimator();
+        if(animator instanceof SimpleItemAnimator){
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
 
         fabScan.setOnClickListener(v -> {
             ShowAddMedicationList bottomSheet = new ShowAddMedicationList();
