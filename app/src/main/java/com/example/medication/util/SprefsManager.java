@@ -69,7 +69,8 @@ public class SprefsManager {
     //로그아웃 시 모든 정보 삭제
     public static void clearUserInfo(Context context){
         SharedPreferences.Editor editor = getPreference(context).edit();
-        editor.clear();
+        editor.remove(KEY_USER_DATA);
+        editor.remove(KEY_IS_LOGGED_IN);
         editor.apply();
     }
 

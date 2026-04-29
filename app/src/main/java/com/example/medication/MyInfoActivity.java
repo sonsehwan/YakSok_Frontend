@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.medication.model.request.ModifyInfoRequest;
@@ -33,6 +34,7 @@ public class MyInfoActivity extends AppCompatActivity {
     private InputView inputNickname;
     private Button btnChangePw;
     private Button btnSaveInfo;
+    private Button btnWithdraw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,8 @@ public class MyInfoActivity extends AppCompatActivity {
         inputNickname = findViewById(R.id.input_nickname);
         btnChangePw = findViewById(R.id.btn_change_pw);
         btnSaveInfo = findViewById(R.id.btn_save_info);
+        btnWithdraw = findViewById(R.id.btn_withdraw);
+        btnWithdraw.setOnClickListener(v -> showWithdrawConfirmDialog());
 
         // 기존에 저장된 닉네임을 불러와서 미리 채워둡니다.
         String currentNickname = SprefsManager.getUserNickName(this);
@@ -60,6 +64,62 @@ public class MyInfoActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ModifyPassword.class);
             startActivity(intent);
         });
+    }
+
+    private void showWithdrawConfirmDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("회원 탈퇴")
+                .setMessage("정말로 탈퇴하시겠습니까?\n모든 데이터가 삭제되며 복구할 수 없습니다.")
+                .setPositiveButton("탈퇴", (dialog, which) -> {
+                    deleteUserFromServer();
+                })
+                .setNegativeButton("취소", null)
+                .show();
+    }
+
+    private void deleteUserFromServer() {
+        UserApi api = NetworkClient.getApi();
+        String userEmail = SprefsManager.getUserEmail(this);
+
+        Log.d("MyInfoActivity", "탈퇴 요청 이메일: " + userEmail);
+
+        api.deleteUser(userEmail).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(MyInfoActivity.this, "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+
+                    SprefsManager.clearUserInfo(MyInfoActivity.this);
+
+                    navigateToLoginScreen();
+                } else {
+                    int statusCode = response.code();
+                    String errorMsg = "알 수 없는 에러";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMsg = response.errorBody().string();
+                        }
+                        Log.e("MyInfoActivity", "탈퇴 실패 코드: " + statusCode + ", 에러 본문: " + errorMsg);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(MyInfoActivity.this, "탈퇴 실패 (코드: " + statusCode + ")", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                Log.e("MyInfoActivity", "탈퇴 API 통신 실패: " + t.getMessage());
+                Toast.makeText(MyInfoActivity.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void navigateToLoginScreen() {
+        Intent intent = new Intent(MyInfoActivity.this, Login.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void startModify(){

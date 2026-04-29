@@ -121,7 +121,20 @@
 
     </LinearLayout>
 
-
+    <Button
+        android:id="@+id/btn_withdraw"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#FF3B30"
+        android:text="회원 탈퇴"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btn_save_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- 수정하기 버튼 -->
     <Button
