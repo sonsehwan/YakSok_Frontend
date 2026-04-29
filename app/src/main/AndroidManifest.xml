@@ -14,6 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".YaksokList"
             android:exported="false" />
