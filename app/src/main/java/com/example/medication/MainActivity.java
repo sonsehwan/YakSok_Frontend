@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.nav_home) {
                 return true;
             } else if (itemId == R.id.nav_history) {
-                Intent intent = new Intent(MainActivity.this, WipActivity.class);
+                Intent intent = new Intent(MainActivity.this, YaksokList.class);
                 startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_settings) {

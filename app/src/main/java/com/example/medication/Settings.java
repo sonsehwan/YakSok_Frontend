@@ -59,7 +59,7 @@ public class Settings extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.nav_history) {
-                Intent intent = new Intent(Settings.this, WipActivity.class);
+                Intent intent = new Intent(Settings.this, YaksokList.class);
                 startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_settings) {
