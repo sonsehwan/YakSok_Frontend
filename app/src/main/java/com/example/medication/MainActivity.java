@@ -1,6 +1,8 @@
 package com.example.medication;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ProgressBar;
@@ -210,15 +212,23 @@ public class MainActivity extends AppCompatActivity {
         for (NotificationYaksok m : notificationYaksokList) {
             if (m.isTaken()) done++;
         }
-
+        int percent = 0;
         // 수정: total이 0일 때 발생할 수 있는 0으로 나누기 오류 방지
         if (total > 0) {
-            int percent = (int) (((float) done / total) * 100);
+            percent = (int) (((float) done / total) * 100);
             progressMain.setProgress(percent);
             tvProgressPercent.setText(percent + "%");
         } else {
             progressMain.setProgress(0);
             tvProgressPercent.setText("0%");
+        }
+
+        if (percent == 0) {
+            progressMain.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF3B30"))); // 빨간색
+        } else if (percent == 100) {
+            progressMain.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50"))); // 초록색
+        } else {
+            progressMain.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFEB3B"))); // 노란색
         }
 
         int remain = total - done;
