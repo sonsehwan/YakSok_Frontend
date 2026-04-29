@@ -71,7 +71,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_history) {
                 Intent intent = new Intent(MainActivity.this, YaksokList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_settings) {
                 Intent intent = new Intent(MainActivity.this, Settings.class);

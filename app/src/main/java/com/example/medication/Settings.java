@@ -54,13 +54,16 @@ public class Settings extends AppCompatActivity {
 
             if (itemId == R.id.nav_home) {
                 Intent intent = new Intent(Settings.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 finish();
                 return true;
             } else if (itemId == R.id.nav_history) {
                 Intent intent = new Intent(Settings.this, YaksokList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_settings) {
                 return true; // 현재 화면이므로 아무것도 안 함
