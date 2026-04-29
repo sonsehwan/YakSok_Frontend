@@ -16,9 +16,15 @@ import java.util.List;
 public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.ViewHolder> {
 
     private List<Yaksok> items;
+    private OnItemClickListener listener;
 
-    public YaksokListAdapter(List<Yaksok> items) {
+    public interface OnItemClickListener {
+        void onItemClick(Yaksok yaksok, int position);
+    }
+
+    public YaksokListAdapter(List<Yaksok> items, OnItemClickListener listener) {
         this.items = items;
+        this.listener = listener;
     }
 
     @NonNull
@@ -32,9 +38,18 @@ public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Yaksok item = items.get(position);
 
+        String status = "상태 없음";
+        if(item.getStatus() != null){
+            if(item.getStatus().equals("복용 완료")){
+                status = "복용 완료";
+            }else{
+                status = "복용 중";
+            }
+        }
+
         holder.tvTitle.setText(item.getTitle());
         holder.tvPeriod.setText(item.getStartDate() + " 부터 " + item.getPrescriptionDays() + "일간");
-        holder.tvStatus.setText(item.getStatus() != null ? item.getStatus() : "상태 없음");
+        holder.tvStatus.setText(status);
 
         // 상태에 따라 색상을 다르게 주고 싶다면 여기서 처리할 수 있습니다.
         if ("복용 완료".equals(item.getStatus())) {
@@ -42,6 +57,18 @@ public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.Vi
         } else {
             holder.tvStatus.setTextColor(0xFFFBC02D); // 노란색
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(item, position);
+            }
+        });
+    }
+
+    public void removeItem(int position) {
+        items.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, items.size());
     }
 
     @Override

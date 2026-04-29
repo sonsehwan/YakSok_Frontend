@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
+    android:fitsSystemWindows="true"
     tools:context=".YaksokList">
 
     <ImageView
@@ -15,13 +16,14 @@
         android:layout_marginStart="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
+        android:contentDescription="뒤로가기 버튼"
         android:focusable="true"
         android:padding="4dp"
-        android:contentDescription="뒤로가기 버튼"
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintBottom_toBottomOf="@+id/tv_header_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_header_title" />
+        app:layout_constraintTop_toTopOf="@+id/tv_header_title"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/tv_header_title"
@@ -52,10 +54,26 @@
         android:clipToPadding="false"
         android:paddingTop="8dp"
         android:paddingBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_divider"
         tools:listitem="@layout/item_yaksok" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/bg_bottom_nav"
+        android:elevation="12dp"
+        app:itemIconSize="24dp"
+        app:itemIconTint="@color/selector_nav_color"
+        app:itemTextColor="@color/selector_nav_color"
+        app:labelVisibilityMode="labeled"
+        app:itemActiveIndicatorStyle="@null"
+        app:itemPaddingTop="20dp"
+        app:itemPaddingBottom="20dp"
+        app:menu="@menu/bottom_nav_menu"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -32,4 +33,7 @@ public interface YaksokApi {
 
     @GET("api/yaksok/list/{userEmail}")
     Call<ApiResponse<List<Yaksok>>> getYaksokList(@Path("userEmail") String userEmail);
+
+    @DELETE("api/yaksok/{id}")
+    Call<ApiResponse<Void>> deleteYaksok(@Path("id") Long id);
 }
