@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".YaksokList"
+            android:exported="false" />
+        <activity
             android:name=".MedicineSearchActivity"
             android:exported="false" />
         <activity
@@ -34,9 +37,7 @@
             android:exported="false" />
         <activity
             android:name=".CreatePrescription"
-            android:exported="false" />
-
-        <!-- 로그인 -->
+            android:exported="false" /> <!-- 로그인 -->
         <activity
             android:name=".Login"
             android:exported="true">

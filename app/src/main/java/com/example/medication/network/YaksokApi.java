@@ -1,6 +1,7 @@
 package com.example.medication.network;
 
 import com.example.medication.model.NotificationYaksok;
+import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.CreateYakSokRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.SaveYaksokResponse;
@@ -28,4 +29,7 @@ public interface YaksokApi {
 
     @GET("api/yaksok/{userEmail}/notifications")
     Call<ApiResponse<List<NotificationYaksok>>> getNotifications(@Path("userEmail") String userEmail);
+
+    @GET("api/yaksok/list/{userEmail}")
+    Call<ApiResponse<List<Yaksok>>> getYaksokList(@Path("userEmail") String userEmail);
 }
