@@ -219,11 +219,14 @@ public class MainActivity extends AppCompatActivity {
         if (total > 0) {
             percent = (int) (((float) done / total) * 100);
             visualPercent = percent;
-
-            if (percent == 0) {
-                visualPercent = 100;
-            }
         }
+
+        if (percent == 0) {
+            visualPercent = 100;
+        }
+
+        progressMain.setProgress(visualPercent);
+        tvProgressPercent.setText(percent + "%");
 
         if (percent == 0) {
             progressMain.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF3B30"))); // 빨간색
