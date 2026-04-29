@@ -213,14 +213,16 @@ public class MainActivity extends AppCompatActivity {
             if (m.isTaken()) done++;
         }
         int percent = 0;
+        int visualPercent = 0;
+
         // 수정: total이 0일 때 발생할 수 있는 0으로 나누기 오류 방지
         if (total > 0) {
             percent = (int) (((float) done / total) * 100);
-            progressMain.setProgress(percent);
-            tvProgressPercent.setText(percent + "%");
-        } else {
-            progressMain.setProgress(0);
-            tvProgressPercent.setText("0%");
+            visualPercent = percent;
+
+            if (percent == 0) {
+                visualPercent = 100;
+            }
         }
 
         if (percent == 0) {
