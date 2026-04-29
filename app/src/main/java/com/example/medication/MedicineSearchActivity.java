@@ -14,7 +14,7 @@ import com.example.medication.adapter.MedicineAdapter;
 import com.example.medication.databinding.MedicineSearchBinding;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.MedicineSearchResponse;
-import com.example.medication.network.MedicineApi;
+import com.example.medication.network.PillApi;
 import com.example.medication.network.NetworkClient;
 
 import java.util.List;
@@ -98,7 +98,7 @@ public class MedicineSearchActivity extends AppCompatActivity {
         }
 
         // NetworkClient를 통해 생성된 API 인터페이스 가져오기
-        MedicineApi api = NetworkClient.getMedicineApi();
+        PillApi api = NetworkClient.getMedicineApi();
 
         // 백엔드 서버에 요청 보내기
         api.searchMedicine(lastSearchedKeyword, currentPage)
