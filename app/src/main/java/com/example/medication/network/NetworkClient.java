@@ -11,7 +11,7 @@ public class NetworkClient {
     private static final String BASE_URL = "http://54.116.63.204:8081/";
 
     private static Retrofit userRetrofit = null;
-    private static Retrofit medicineRetrofit = null;
+    private static Retrofit pillRetrofit = null;
 
     private static Retrofit yaksokRetrofit = null;
 
@@ -41,11 +41,11 @@ public class NetworkClient {
     }
 
     // 약 정보 관련 API 통신
-    public static MedicineApi getMedicineApi() {
-        if (medicineRetrofit == null) {
+    public static PillApi getMedicineApi() {
+        if (pillRetrofit == null) {
             try {
                 // 2. 설정된 OkHttpClient를 Retrofit에 적용
-                medicineRetrofit = new Retrofit.Builder()
+                pillRetrofit = new Retrofit.Builder()
                         .baseUrl(BASE_URL)
                         .client(getHttpClient())
                         .addConverterFactory(GsonConverterFactory.create())
@@ -54,7 +54,7 @@ public class NetworkClient {
                 android.util.Log.e("NetworkClient", "Retrofit 초기화 실패: " + e.getMessage());
             }
         }
-        return medicineRetrofit.create(MedicineApi.class);
+        return pillRetrofit.create(PillApi.class);
     }
 
     public static YaksokApi getYaksokApi() {
