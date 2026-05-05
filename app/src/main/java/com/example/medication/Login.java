@@ -15,12 +15,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.medication.model.request.FirebaseTokenRequest;
 import com.example.medication.model.request.LoginRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.example.medication.util.SprefsManager;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -85,6 +87,9 @@ public class Login extends AppCompatActivity {
                         //저장소에 저장
                         SprefsManager.setUserInfo(Login.this, user);
 
+                        //FCM 토큰 생성 및 저장
+                        getAndSendFcmToken(user.getEmail());
+
                         Log.d("Login", result.getMessage());
 
                         Intent intent = new Intent(Login.this, MainActivity.class);
@@ -108,13 +113,47 @@ public class Login extends AppCompatActivity {
         });
     }
 
+    private void getAndSendFcmToken(String email){
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("FcmToken", "FCM 토큰 획득 실패", task.getException());
+                        return;
+                    }
+                    String token = task.getResult();
+                    Log.d("FcmToken", "획득한 토큰: " + token);
+                    sendTokenToServer(email, token);
+                });
+    }
+
+    private void sendTokenToServer(String email, String token){
+        FirebaseTokenRequest request = new FirebaseTokenRequest(email, token);
+        UserApi api = NetworkClient.getApi();
+
+        api.updateFcmToken(request).enqueue(new Callback<ApiResponse<Void>>(){
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
+                if(response.isSuccessful()) {
+                    Log.d("FcmToken", "토큰을 저장적으로 저장하였습니다.");
+                }else{
+                    Log.e("FcmToken", "토큰 저장에 실패했습니다.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                Log.e("FcmToken", "네트워크 통신 실패: " + t.getMessage());
+            }
+        });
+    }
+
     private void handleErrorResponse(Response<?> response) {
         try {
-            android.util.Log.e("LoginError", "HTTP 상태 코드: " + response.code());
+            Log.e("LoginError", "HTTP 상태 코드: " + response.code());
             if (response.errorBody() != null) {
                 String errorJson = response.errorBody().string();
 
-                android.util.Log.e("LoginError", "서버 원본 응답: " + errorJson);
+                Log.e("LoginError", "서버 원본 응답: " + errorJson);
                 // 1. 서버가 빈 값을 보냈을 때 방어
                 if (errorJson == null || errorJson.trim().isEmpty()) {
 

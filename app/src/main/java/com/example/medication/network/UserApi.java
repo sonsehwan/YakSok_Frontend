@@ -1,5 +1,6 @@
 package com.example.medication.network;
 
+import com.example.medication.model.request.FirebaseTokenRequest;
 import com.example.medication.model.request.LoginRequest;
 import com.example.medication.model.request.ModifyInfoRequest;
 import com.example.medication.model.request.ModifyPasswordRequest;
@@ -30,4 +31,7 @@ public interface UserApi {
 
     @DELETE("api/users/{email}")
     Call<ApiResponse<Void>> deleteUser(@Path("email") String email);
+
+    @POST("/api/Users/fcm-token")
+    Call<ApiResponse<Void>> updateFcmToken(@Body FirebaseTokenRequest request);
 }
