@@ -2,6 +2,8 @@ package com.example.medication;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
@@ -37,10 +39,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendRegistrationToServer(String email, String token) {
-        FirebaseTokenRequest request = new FirebaseTokenRequest(email, token);
+        FirebaseTokenRequest request = new FirebaseTokenRequest(token);
         UserApi api = NetworkClient.getApi();
 
-        api.updateFcmToken(request).enqueue(new Callback<ApiResponse<Void>>(){
+        api.updateFcmToken(email, request).enqueue(new Callback<ApiResponse<Void>>(){
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
                 if(response.isSuccessful()){
@@ -62,24 +64,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        // 알림 메시지(Notification)가 포함된 경우
-        if (remoteMessage.getNotification() != null) {
-            String title = remoteMessage.getNotification().getTitle();
-            String body = remoteMessage.getNotification().getBody();
-            showNotification(title, body);
-        }
-
         // 데이터 메시지(Data)가 포함된 경우(커스텀 알림용)
         if (!remoteMessage.getData().isEmpty()) {
             String title = remoteMessage.getData().get("title");
             String body = remoteMessage.getData().get("body");
+            String notiIdStr = remoteMessage.getData().get("notificationId");
+
+            int notificationId = 0;
+            if(notiIdStr != null) {
+                notificationId = Integer.parseInt(notiIdStr);
+            }
+
             if (title != null && body != null) {
-                showNotification(title, body);
+                showNotification(title, body, notificationId);
             }
         }
     }
 
-    private void showNotification(String title, String body) {
+    private void showNotification(String title, String body, int notificationId) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         String channelId = "yaksok_channel";
 
@@ -87,19 +89,33 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     channelId,
-                    "YakSok Notifications",
+                    "복약 알림",
                     NotificationManager.IMPORTANCE_HIGH
             );
             channel.setDescription("YakSok의 약 복용 시간 알림을 수신합니다.");
             notificationManager.createNotificationChannel(channel);
         }
 
+        Intent completeIntent = new Intent(this, NotificationActionReceiver.class);
+        completeIntent.setAction("ACTION_COMPLETE");
+        completeIntent.putExtra("notificationId", notificationId);
+        PendingIntent completePendingIntent = PendingIntent.getBroadcast(
+                this, notificationId, completeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        Intent snoozeIntent = new Intent(this, NotificationActionReceiver.class);
+        snoozeIntent.setAction("ACTION_SNOOZE");
+        snoozeIntent.putExtra("notificationId", notificationId);
+        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(
+                this, notificationId + 1000, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(body)
-                .setAutoCancel(true);
-
-        notificationManager.notify(0, builder.build());
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .addAction(0, "약속 완료", completePendingIntent)
+                .addAction(0, "약속 미루기", snoozePendingIntent);
+        notificationManager.notify(notificationId, builder.build());
     }
 }

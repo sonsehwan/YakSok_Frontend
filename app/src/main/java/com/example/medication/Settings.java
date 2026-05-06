@@ -2,6 +2,7 @@ package com.example.medication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -9,8 +10,16 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.medication.model.request.FirebaseTokenRequest;
+import com.example.medication.model.response.ApiResponse;
+import com.example.medication.network.NetworkClient;
+import com.example.medication.network.UserApi;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Settings extends AppCompatActivity {
 
@@ -32,7 +41,10 @@ public class Settings extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        ivLogout.setOnClickListener(v -> showLogOutDialog());
+        ivLogout.setOnClickListener(v -> {
+            showLogOutDialog();
+            deleteToken();
+        });
 
         llMyInfo.setOnClickListener(v -> {
             Intent intent = new Intent(Settings.this, MyInfoActivity.class);
@@ -88,6 +100,28 @@ public class Settings extends AppCompatActivity {
                 })
                 .setNegativeButton("취소", null)
                 .show();
+    }
+
+    private void deleteToken(){
+        String email = SprefsManager.getUserEmail(this);
+        FirebaseTokenRequest request = new FirebaseTokenRequest(null);
+        UserApi api = NetworkClient.getApi();
+
+        api.updateFcmToken(email, request).enqueue(new Callback<ApiResponse<Void>>(){
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
+                if(response.isSuccessful()) {
+                    Log.d("FcmToken", "토큰을 저장적으로 삭제하였습니다.");
+                }else{
+                    Log.e("FcmToken", "토큰 삭제에 실패했습니다.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                Log.e("FcmToken", "네트워크 통신 실패: " + t.getMessage());
+            }
+        });
     }
 
     private void showToast(String message) {

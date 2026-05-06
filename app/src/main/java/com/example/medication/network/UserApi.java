@@ -32,6 +32,6 @@ public interface UserApi {
     @DELETE("api/users/{email}")
     Call<ApiResponse<Void>> deleteUser(@Path("email") String email);
 
-    @POST("/api/Users/fcm-token")
-    Call<ApiResponse<Void>> updateFcmToken(@Body FirebaseTokenRequest request);
+    @PATCH("/api/users/{email}/fcm-token")
+    Call<ApiResponse<Void>> updateFcmToken(@Path("email") String email, @Body FirebaseTokenRequest request);
 }
