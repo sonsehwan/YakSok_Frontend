@@ -32,11 +32,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             Log.d("NotificationAction", "약속 완료 버튼 클릭됨 ID: " + notificationId);
             completeNotification(context, notificationId);
 
-            Toast.makeText(context, "약 복용이 완료 처리되었습니다.", Toast.LENGTH_SHORT).show();
-
         } else if ("ACTION_SNOOZE".equals(action)) { // 미루기 버튼 클릭 시
             Log.d("NotificationAction", "미루기 버튼 클릭됨 ID: " + notificationId);
-            //TODO: 미루기 로직
             Toast.makeText(context, "10분 뒤에 다시 알려드릴게요.", Toast.LENGTH_SHORT).show();
         }
     }

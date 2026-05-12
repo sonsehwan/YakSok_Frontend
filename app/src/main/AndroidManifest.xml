@@ -16,6 +16,7 @@
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
 
+        <receiver android:name=".NotificationActionReceiver" android:exported="false"/>
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="false">

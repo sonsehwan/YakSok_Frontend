@@ -14,7 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class ShowAddMedicationList extends BottomSheetDialogFragment {
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @NonNull Bundle savedInstanceStatue){
+    public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @NonNull Bundle savedInstanceStatue) {
         View view = inflater.inflate(R.layout.show_add_medcation_list, container, false);
 
         LinearLayout btnPrescription = view.findViewById(R.id.ll_create_prescription);
