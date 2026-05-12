@@ -40,7 +40,7 @@ public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.Vi
 
         String status = "상태 없음";
         if(item.getStatus() != null){
-            if(item.getStatus().equals("복용 완료")){
+            if(item.getStatus().equals("COMPLETED")){
                 status = "복용 완료";
             }else{
                 status = "복용 중";
@@ -51,7 +51,6 @@ public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.Vi
         holder.tvPeriod.setText(item.getStartDate() + " 부터 " + item.getPrescriptionDays() + "일간");
         holder.tvStatus.setText(status);
 
-        // 상태에 따라 색상을 다르게 주고 싶다면 여기서 처리할 수 있습니다.
         if ("복용 완료".equals(item.getStatus())) {
             holder.tvStatus.setTextColor(0xFF999999); // 회색
         } else {
