@@ -14,6 +14,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -21,6 +22,12 @@ public interface YaksokApi {
 
     @POST("/api/yaksok")
     Call<ApiResponse<SaveYaksokResponse>> saveYaksok(@Body CreateYakSokRequest request);
+
+    @PUT("/api/yaksok/{id}")
+    Call<ApiResponse<SaveYaksokResponse>> updateYaksok(
+            @Path("id") Long id,
+            @Body CreateYakSokRequest request
+    );
 
     @PATCH("api/yaksok/notifications/{notificationId}/status")
     Call<ApiResponse<Void>> updateNotificationStatus(

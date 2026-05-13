@@ -53,8 +53,15 @@ public class YaksokList extends AppCompatActivity {
         rvYaksokList.setLayoutManager(new LinearLayoutManager(this));
 
         // 어댑터 초기화 (클릭 리스너를 통해 다이얼로그 호출)
-        adapter = new YaksokListAdapter(new ArrayList<>(), (yaksok, position) -> {
-            showDeleteConfirmDialog(yaksok, position);
+        adapter = new YaksokListAdapter(new ArrayList<>(), new YaksokListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Yaksok yaksok, int position) {
+                Intent intent = new Intent(YaksokList.this, ModifyYaksok.class);
+
+                intent.putExtra("YAKSOK_DATA", yaksok);
+
+                startActivity(intent);
+            }
         });
         rvYaksokList.setAdapter(adapter);
 

@@ -2,9 +2,10 @@ package com.example.medication.model;
 
 import com.example.medication.model.request.PillRequest;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Yaksok {
+public class Yaksok implements Serializable {
     private Long id; // 약속 ID
     private String title; // 약속 이름
     private String startDate; // 약속 시작 날짜

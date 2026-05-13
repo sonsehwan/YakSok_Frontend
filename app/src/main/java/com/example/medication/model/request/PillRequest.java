@@ -1,6 +1,8 @@
 package com.example.medication.model.request;
 
-public class PillRequest {
+import java.io.Serializable;
+
+public class PillRequest implements Serializable {
 
     private String image;
     private String name;           // 약 이름
