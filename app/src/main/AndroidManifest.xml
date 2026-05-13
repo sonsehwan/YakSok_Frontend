@@ -3,7 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -15,8 +20,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ModifyYaksok"
+            android:exported="false" />
 
-        <receiver android:name=".NotificationActionReceiver" android:exported="false"/>
+        <receiver
+            android:name=".NotificationActionReceiver"
+            android:exported="false" />
+
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="false">
@@ -44,10 +55,10 @@
             android:name=".Settings"
             android:exported="false" />
         <activity
-            android:name=".CreateDirectSchedule"
+            android:name=".CreatePrescription"
             android:exported="false" />
         <activity
-            android:name=".CreatePrescription"
+            android:name=".CreateDirectSchedule"
             android:exported="false" /> <!-- 로그인 -->
         <activity
             android:name=".Login"

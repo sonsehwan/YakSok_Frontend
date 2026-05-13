@@ -267,7 +267,7 @@ public class ModifyYaksok extends AppCompatActivity {
 
         YaksokApi api = NetworkClient.getYaksokApi();
 
-        api.saveYaksok(request).enqueue(new Callback<ApiResponse<SaveYaksokResponse>>() {
+        api.updateYaksok(originalYaksok.getId(), request).enqueue(new Callback<ApiResponse<SaveYaksokResponse>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<SaveYaksokResponse>> call, @NonNull Response<ApiResponse<SaveYaksokResponse>> response) {
                 if(response.isSuccessful() && response.body() != null){
@@ -282,26 +282,22 @@ public class ModifyYaksok extends AppCompatActivity {
                         if(yaksokId != null) {
                             yaksok.setId(yaksokId);
 
-                            // 1. 전체 약속 리스트에 저장
-                            SprefsManager.addYaksok(ModifyYaksok.this, yaksok);
+                            SprefsManager.updateYaksok(ModifyYaksok.this, yaksok);
 
-                            // 2. 응답받은 알림용 NotificationYaksok 리스트 가져오기
                             List<NotificationYaksok> allNotifications = saveYaksokResponse.getNotifications();
 
-                            // 3. SharedPreferences에 기존 알림 리스트 제거후 새로 저장
                             SprefsManager.setNotifications(ModifyYaksok.this, allNotifications);
 
-                            showToast("약속이 성공적으로 등록되었습니다.");
+                            showToast("약속이 성공적으로 수정되었습니다.");
 
-                            // 4. 메인 화면으로 이동하며 새로 생성된 리스트 전달
                             Intent intent = new Intent(ModifyYaksok.this, MainActivity.class);
-                            //intent.putExtra("newNotifications", (ArrayList<NotificationYaksok>)newNotifications);
+                            // 수정한 내용이 확실하게 반영된 상태로 메인 화면을 새로고침 띄우기 위한 플래그 추가
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                             finish();
-                        }else{
+                        } else {
                             showToast("서버와의 통신 중에 문제가 발생하였습니다. 죄송합니다.");
-                            Log.e("CreateYaksokError", "약속ID를 가져오는데 실패하였습니다.");
-                            Log.e("CreateYaksokError", "yaksokId: " + yaksokId);
+                            Log.e("ModifyYaksokError", "약속ID를 가져오는데 실패하였습니다.");
                         }
                     } else {
                         showToast(result.getMessage());
