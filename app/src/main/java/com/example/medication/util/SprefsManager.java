@@ -95,6 +95,28 @@ public class SprefsManager {
         editor.apply();
     }
 
+    public static void updateYaksok(Context context, Yaksok updatedYaksok) {
+        // 1. 기존에 저장된 약속 리스트를 불러옵니다. (기존에 작성해두신 메서드 활용)
+        List<Yaksok> yaksokList = getYaksokList(context);
+
+        if (yaksokList != null) {
+            // 2. 리스트를 순회하며 수정할 약속과 ID가 일치하는 아이템을 찾습니다.
+            for (int i = 0; i < yaksokList.size(); i++) {
+                if (yaksokList.get(i).getId().equals(updatedYaksok.getId())) {
+                    // 3. 일치하는 위치(index)의 데이터를 수정된 약속으로 교체합니다.
+                    yaksokList.set(i, updatedYaksok);
+                    break;
+                }
+            }
+
+            // 4. 변경된 리스트를 JSON으로 변환하여 다시 로컬에 저장합니다.
+            SharedPreferences.Editor editor = getPreference(context).edit();
+            String json = new Gson().toJson(yaksokList);
+            editor.putString(KEY_YAKSOK_LiST, json);
+            editor.apply();
+        }
+    }
+
     // 저장된 모든 NotificationYaksok 목록 가져오기
     public static List<NotificationYaksok> getNotificationList(Context context){
         String json = getPreference(context).getString(KEY_NOTIFICATION_LIST, null);
