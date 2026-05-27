@@ -27,7 +27,7 @@ public class ShowAddMedicationList extends BottomSheetDialogFragment {
         });
 
         btnEnvelope.setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), CreatePrescription.class));
+            startActivity(new Intent(getContext(), PaperEnvelopeActivity.class));
             dismiss();
         });
 

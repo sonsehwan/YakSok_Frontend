@@ -16,6 +16,20 @@ public class PillRequest implements Serializable {
         this.dosage = "";       // 초기 입력값
     }
 
+    public PillRequest(String image, int dailyFrequency, String name) {
+        this.image = image;
+        this.name = name;
+        this.dailyFrequency = dailyFrequency;
+        this.dosage = "";
+    }
+
+    public PillRequest(String image, int dailyFrequency, String dosage, String name) {
+        this.image = image;
+        this.name = name;
+        this.dailyFrequency = dailyFrequency;
+        this.dosage = dosage;
+    }
+
     // Getter 및 Setter 메서드
     public String getImage() { return image; }
     public void setImage(String image) { this.image = image; }

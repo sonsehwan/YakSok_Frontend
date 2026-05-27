@@ -16,4 +16,9 @@ public interface PillApi {
             @Query("keyword") String keyword,
             @Query("pageNo") int pageNo
     );
+
+    @GET("/api/medicine/search/pill")
+    Call<ApiResponse<MedicineSearchResponse>> searchPill(
+            @Query("keyword") String keyword
+    );
 }
