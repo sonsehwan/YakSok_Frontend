@@ -79,6 +79,12 @@ public class Settings extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_settings) {
                 return true; // 현재 화면이므로 아무것도 안 함
+            }else if(itemId == R.id.nav_drugstore){
+                Intent intent = new Intent(Settings.this, DrugStoreList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
             }
             return false;
         });

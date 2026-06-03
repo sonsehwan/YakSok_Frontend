@@ -72,6 +72,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.mlkit:text-recognition-korean:16.0.1")
+    implementation("org.projectlombok:lombok:1.18.46")
 
     implementation("com.google.firebase:firebase-ai")
 

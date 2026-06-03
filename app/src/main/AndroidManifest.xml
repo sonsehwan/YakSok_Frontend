@@ -21,6 +21,9 @@
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".DrugStoreList"
+            android:exported="false" />
+        <activity
             android:name=".LoadingDialog"
             android:exported="false" />
         <activity

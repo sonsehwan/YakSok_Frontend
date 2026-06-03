@@ -88,6 +88,12 @@ public class YaksokList extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 finish();
                 return true;
+            }else if(itemId == R.id.nav_drugstore){
+                Intent intent = new Intent(YaksokList.this, DrugStoreList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
             }
             return false;
         });
