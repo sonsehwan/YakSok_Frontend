@@ -58,12 +58,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PaperEnvelopeActivity extends AppCompatActivity {
+public class CreatePaperEnvelope extends AppCompatActivity {
     private ActivityResultLauncher<String> galleryLauncher;
     private ActivityResultLauncher<Intent> searchLauncher;
 
@@ -77,6 +78,7 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
     private RadioButton rb_before, rb_after, rb_anytime;
     private FrameLayout btnAddPill;
     private Button btnRegister;
+    private LoadingDialog loadingDialog;
 
     // 선택된 약 목록 리사이클러뷰 관련
     private RecyclerView rvSelectedPills;
@@ -94,12 +96,14 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
         setupSearchLauncher();
         setupTimePickerLogic();
 
+        loadingDialog = new LoadingDialog(this);
+
         // 2. 기본 클릭 이벤트 설정
         ivBack.setOnClickListener(v -> finish());
         inputStartDate.setOnClickListener(v -> showDatePicker());
 
         btnAddPill.setOnClickListener(v -> {
-            Intent intent = new Intent(PaperEnvelopeActivity.this, MedicineSearchActivity.class);
+            Intent intent = new Intent(CreatePaperEnvelope.this, MedicineSearchActivity.class);
             searchLauncher.launch(intent);
         });
 
@@ -291,6 +295,8 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
 
     // ========================================================================
     private void analyzeTextWithGemini(Uri imageUri) {
+        loadingDialog.show();
+
         String promptText = "너는 약봉투 도우미 AI야. 첨부된 '약봉투 이미지 원본'에서 정확한 약물 정보 리스트와 투약 시간을 추출해줘. 오직 JSON 형식으로만 반환해.\n\n" +
                 "포맷 예시: {\"medicationRecords\": [{\"dosageTime\": \"식전 30분\", \"pillList\": [{\"name\":\"써스펜정\",\"dose\":\"1\",\"frequency\":\"3\",\"days\":\"3\"}]}]}" +
                 "dosageTime은 약봉투 이미지에 동그라미나 체크표시로 확인할 수 있게 해둔 것을 골라야하고 식전으로 시작하는 것은 식전 30분으로 데이터를 넣고 식후로 시작하는 것은 식후 30분으로 데이터를 넣고 나머지는 직후로 넣는다."+
@@ -323,19 +329,23 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Throwable t) {
                     Log.e("Firebase_AI", "AI 분석 실패", t);
-                    Toast.makeText(PaperEnvelopeActivity.this, "AI 분석 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreatePaperEnvelope.this, "AI 분석 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
                 }
             }, ContextCompat.getMainExecutor(this));
 
         } catch (java.io.FileNotFoundException e) {
             Log.e("Image_Error", "이미지 파일을 찾을 수 없습니다.", e);
             Toast.makeText(this, "이미지 파일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
         } catch (java.io.IOException e) {
             Log.e("Image_Error", "이미지 처리에 실패했습니다.", e);
             Toast.makeText(this, "이미지 처리에 실패했습니다.", Toast.LENGTH_SHORT).show();
+            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
         } catch (Exception e) {
             Log.e("Firebase_Setup_Error", "모델 초기화 실패", e);
             Toast.makeText(this, "AI 모델을 준비하는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
         }
     }
 
@@ -362,6 +372,9 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
                     // 기존에 수동으로 등록된 약이 있다면 초기화 (처방전 스캔 기준 덮어쓰기)
                     selectedPills.clear();
 
+                    int totalPills = medicineArray.length();
+                    AtomicInteger completedCalls = new AtomicInteger(0);
+
                     // 모든 약 데이터를 돌며 가장 큰 days(투약일 수)와 frequency 추출 & 리스트에 등록
                     for(int i = 0; i < medicineArray.length(); i++) {
                         JSONObject med = medicineArray.getJSONObject(i);
@@ -373,6 +386,8 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
 
                         final int finalFreq = medFreq;
                         final String finalDosage = medDosage;
+
+                        if(i == 0) firstMedName = medName;
 
                         api.searchPill(medName).enqueue(new Callback<ApiResponse<MedicineSearchResponse>>() {
                             @Override
@@ -388,11 +403,17 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
                                         updateRegisterButtonState();
                                     }
                                 }
+                                if (completedCalls.incrementAndGet() == totalPills) {
+                                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                                }
                             }
 
                             @Override
                             public void onFailure(Call<ApiResponse<MedicineSearchResponse>> call, Throwable t) {
                                 Log.e("API_ERROR", "네트워크 오류: " + t.getMessage());
+                                if (completedCalls.incrementAndGet() == totalPills) {
+                                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                                }
                             }
                         });
 
@@ -452,12 +473,21 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
                     }
 
                     Toast.makeText(this, "처방전 정보 자동 입력 완료!", Toast.LENGTH_SHORT).show();
+                }else {
+                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                    Toast.makeText(this, "약봉투에서 약 정보를 찾지 못했습니다.", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                Toast.makeText(this, "약봉투에서 정보를 찾지 못했습니다.", Toast.LENGTH_SHORT).show();
             }
 
         } catch (Exception e) {
             Log.e("Gemini_Parsing_Error", "응답 데이터 파싱 실패", e);
             Toast.makeText(this, "AI가 처방전을 명확히 식별하지 못했습니다.", Toast.LENGTH_SHORT).show();
+
+            // 구멍 1 방어: AI가 요상한 포맷으로 대답해서 파싱 에러 났을 때 무조건 종료
+            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
         }
     }
 
@@ -509,21 +539,21 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
 
                         if(yaksokId != null) {
                             yaksok.setId(yaksokId);
-                            SprefsManager.addYaksok(PaperEnvelopeActivity.this, yaksok);
+                            SprefsManager.addYaksok(CreatePaperEnvelope.this, yaksok);
 
                             List<NotificationYaksok> allNotifications = saveYaksokResponse.getNotifications();
-                            SprefsManager.setNotifications(PaperEnvelopeActivity.this, allNotifications);
+                            SprefsManager.setNotifications(CreatePaperEnvelope.this, allNotifications);
 
-                            Toast.makeText(PaperEnvelopeActivity.this, "약속이 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreatePaperEnvelope.this, "약속이 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(PaperEnvelopeActivity.this, MainActivity.class);
+                            Intent intent = new Intent(CreatePaperEnvelope.this, MainActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
-                            Toast.makeText(PaperEnvelopeActivity.this, "서버와의 통신 오류: 약속 ID 없음", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreatePaperEnvelope.this, "서버와의 통신 오류: 약속 ID 없음", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(PaperEnvelopeActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreatePaperEnvelope.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     handleErrorResponse(response);
@@ -532,7 +562,7 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ApiResponse<SaveYaksokResponse>> call, Throwable t) {
-                Toast.makeText(PaperEnvelopeActivity.this, "네트워크 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreatePaperEnvelope.this, "네트워크 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -563,16 +593,16 @@ public class PaperEnvelopeActivity extends AppCompatActivity {
                     if (data != null) {
                         Log.d("API_SUCCESS", "약 이름: " + data.getName());
                     } else {
-                        Toast.makeText(PaperEnvelopeActivity.this, "해당 약 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreatePaperEnvelope.this, "해당 약 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(PaperEnvelopeActivity.this, "데이터 로드 실패", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreatePaperEnvelope.this, "데이터 로드 실패", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<MedicineSearchResponse>> call, Throwable t) {
-                Toast.makeText(PaperEnvelopeActivity.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreatePaperEnvelope.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

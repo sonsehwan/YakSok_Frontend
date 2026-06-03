@@ -21,9 +21,11 @@
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".PaperEnvelopeActivity"
+            android:name=".LoadingDialog"
             android:exported="false" />
-        <!--  -->
+        <activity
+            android:name=".CreatePaperEnvelope"
+            android:exported="false" /> <!--  -->
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
