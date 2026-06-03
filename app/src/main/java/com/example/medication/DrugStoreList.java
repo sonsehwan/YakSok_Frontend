@@ -1,5 +1,6 @@
 package com.example.medication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import com.example.medication.model.DrugStore;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.DrugStoreApi;
 import com.example.medication.network.NetworkClient;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ public class DrugStoreList extends AppCompatActivity {
     private RecyclerView rvDrugstoreList;
     private DrugStoreAdapter adapter;
     private ImageView ivBack;
+    BottomNavigationView bottomNavigationView;
 
     private LoadingDialog loadingDialog;
 
@@ -50,10 +53,38 @@ public class DrugStoreList extends AppCompatActivity {
         // 화면이 켜지면 하드코딩된 위치 값으로 즉시 약국 목록을 가져옵니다.
         loadingDialog.show();
         fetchDrugStoresFromServer();
+
+        bottomNavigationView.setSelectedItemId(R.id.nav_drugstore);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                Intent intent = new Intent(DrugStoreList.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_history) {
+                Intent intent = new Intent(DrugStoreList.this, YaksokList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (itemId == R.id.nav_settings) {
+                Intent intent = new Intent(DrugStoreList.this, Settings.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            }else return itemId == R.id.nav_drugstore;
+        });
     }
 
     private void initViews() {
         ivBack = findViewById(R.id.iv_back);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         rvDrugstoreList = findViewById(R.id.rv_drugstore_list);
         rvDrugstoreList.setLayoutManager(new LinearLayoutManager(this));
 
