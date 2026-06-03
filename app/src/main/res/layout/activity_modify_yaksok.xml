@@ -43,6 +43,8 @@
         android:layout_height="wrap_content"
         android:text="삭제"
         app:layout_constraintBottom_toBottomOf="@+id/tv_header_title"
+        android:backgroundTint="#FFEB3B"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
