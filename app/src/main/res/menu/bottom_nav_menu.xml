@@ -9,6 +9,10 @@
         android:icon="@drawable/ic_calendar"
         android:title="약속" />
     <item
+        android:id="@+id/nav_drugstore"
+        android:icon="@drawable/ic_map"
+        android:title="약국" />
+    <item
         android:id="@+id/nav_settings"
         android:icon="@drawable/ic_settings"
         android:title="설정" />

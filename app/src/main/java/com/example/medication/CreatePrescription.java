@@ -85,11 +85,12 @@ public class CreatePrescription extends AppCompatActivity {
     private RadioGroup rgDosageTime;
     private FrameLayout btnAddPill;
     private Button btnRegister;
-
+    private LoadingDialog loadingDialog;
     // 선택된 약 목록 리사이클러뷰 관련
     private RecyclerView rvSelectedPills;
     private AddMedicationSettingAdapter settingAdapter;
     private final List<PillRequest> selectedPills = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +102,8 @@ public class CreatePrescription extends AppCompatActivity {
         setupRecyclerView();
         setupSearchLauncher();
         setupTimePickerLogic();
+
+        loadingDialog = new LoadingDialog(this);
 
         // 2. 기본 클릭 이벤트 설정
         ivBack.setOnClickListener(v -> finish());
@@ -299,6 +302,7 @@ public class CreatePrescription extends AppCompatActivity {
     // =========================================================================
 
     private void recognizeTextFromImage(Uri imageUri) {
+        loadingDialog.show();
         try {
             InputImage image = InputImage.fromFilePath(this, imageUri);
             TextRecognizer recognizer = TextRecognition.getClient(new KoreanTextRecognizerOptions.Builder().build());
@@ -314,16 +318,19 @@ public class CreatePrescription extends AppCompatActivity {
                         } catch (IOException e) {
                             Log.e("Image_Error", "비트맵 변환 실패", e);
                             Toast.makeText(this, "이미지 처리에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
                         }
                     })
                     .addOnFailureListener(e -> {
                         Log.e("MLKit", "텍스트 인식 실패", e);
                         Toast.makeText(this, "글자를 읽어내는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
                     });
 
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this, "이미지 파일을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
         }
     }
 
@@ -352,18 +359,21 @@ public class CreatePrescription extends AppCompatActivity {
                     String resultText = result.getText();
                     Log.d("Firebase_AI", resultText);
                     parseAndDisplayGeminiResult(resultText);
+                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
                     Log.e("Firebase_AI", "AI 분석 실패", t);
                     Toast.makeText(CreatePrescription.this, "AI 분석 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
                 }
             }, ContextCompat.getMainExecutor(this));
 
         } catch (Exception e) {
             Log.e("Firebase_Setup_Error", "모델 초기화 실패", e);
             Toast.makeText(this, "AI 모델을 준비하는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
         }
     }
 

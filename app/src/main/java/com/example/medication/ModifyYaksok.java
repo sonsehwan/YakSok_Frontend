@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -52,7 +53,7 @@ public class ModifyYaksok extends AppCompatActivity {
     private CheckBox cbMorning, cbLunch, cbDinner;
     private RadioGroup rgDosageTime;
     private FrameLayout btnAddPill;
-    private Button btnRegister;
+    private Button btnRegister, btnDelete;
 
     // 선택된 약 목록 리사이클러뷰 관련
     private RecyclerView rvSelectedPills;
@@ -87,6 +88,10 @@ public class ModifyYaksok extends AppCompatActivity {
         });
 
         originalYaksok = (Yaksok)getIntent().getSerializableExtra("YAKSOK_DATA");
+
+        btnDelete.setOnClickListener(v -> {
+            if(originalYaksok != null) showDeleteConfirmDialog(originalYaksok);
+        });
 
         if(originalYaksok != null){
             populateViews(originalYaksok);
@@ -380,6 +385,41 @@ public class ModifyYaksok extends AppCompatActivity {
         dialog.show();
     }
 
+    private void showDeleteConfirmDialog(Yaksok yaksok) {
+        Long id = yaksok.getId();
+        new AlertDialog.Builder(this)
+                .setTitle("약속 삭제")
+                .setMessage("'" + yaksok.getTitle() + "' 약속을 삭제하시겠습니까?\n관련된 모든 정보(복약, 알림)가 함께 삭제됩니다.")
+                .setPositiveButton("삭제", (dialog, which) -> {
+                    deleteYaksokFromServer(id);
+                    Intent intent = new Intent(ModifyYaksok.this, YaksokList.class);
+                    startActivity(intent);
+                })
+                .setNegativeButton("취소", null)
+                .show();
+    }
+
+    private void deleteYaksokFromServer(Long yaksokId) {
+        YaksokApi api = NetworkClient.getYaksokApi();
+
+        api.deleteYaksok(yaksokId).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ModifyYaksok.this, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ModifyYaksok.this, "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                Log.e("YaksokList", "삭제 통신 실패: " + t.getMessage());
+                Toast.makeText(ModifyYaksok.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void initViews() {
         ivBack = findViewById(R.id.iv_back);
         inputStartDate = findViewById(R.id.input_start_date);
@@ -395,6 +435,7 @@ public class ModifyYaksok extends AppCompatActivity {
         rgDosageTime = findViewById(R.id.rg_dosage_time);
         btnAddPill = findViewById(R.id.btn_add_pill);
         btnRegister = findViewById(R.id.btn_register);
+        btnDelete = findViewById(R.id.btn_delete);
         rvSelectedPills = findViewById(R.id.rv_selected_pills);
     }
 
