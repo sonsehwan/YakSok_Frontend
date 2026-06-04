@@ -88,7 +88,6 @@ public class DrugStoreList extends AppCompatActivity {
         rvDrugstoreList = findViewById(R.id.rv_drugstore_list);
         rvDrugstoreList.setLayoutManager(new LinearLayoutManager(this));
 
-        // ⭐️ 핵심 해결 방법: 에러가 나지 않도록 '빈 어댑터'를 먼저 장착해 둡니다.
         adapter = new DrugStoreAdapter(new ArrayList<>(), (drugStore, position) -> {
             Toast.makeText(DrugStoreList.this, drugStore.getDutyName() + " 약국을 선택했습니다.", Toast.LENGTH_SHORT).show();
         });

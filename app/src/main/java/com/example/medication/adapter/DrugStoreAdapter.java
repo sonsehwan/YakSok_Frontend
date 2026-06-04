@@ -39,7 +39,15 @@ public class DrugStoreAdapter extends RecyclerView.Adapter<DrugStoreAdapter.View
         DrugStore item = items.get(position);
 
         holder.tvName.setText(item.getDutyName());
-        holder.tvHours.setText(item.getStartTime() + " ~ " + item.getEndTime());
+
+        String fstartTime = item.getStartTime().substring(0,2);
+        String lstartTime = item.getStartTime().substring(2);
+        String finalStartTime = fstartTime + ":" + lstartTime;
+
+        String fendTime = item.getEndTime().substring(0,2);
+        String lendTime = item.getEndTime().substring(2);
+        String finalEndTime = fendTime + ":" + lendTime;
+        holder.tvHours.setText("영업시간: " + finalStartTime + " ~ " + finalEndTime);
         //holder.tvDistance.setText(item.getDistance() + "m");
     }
 
