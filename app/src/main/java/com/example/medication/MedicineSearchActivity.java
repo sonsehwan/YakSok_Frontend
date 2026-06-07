@@ -74,7 +74,9 @@ public class MedicineSearchActivity extends AppCompatActivity {
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 if(layoutManager == null) return;
 
+                // 실제 화면에 보이는 리스트이 맨 마지막 아이템의 위치
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                // 현재 리스트의 실제 아이템 총량
                 int totalItemCount = layoutManager.getItemCount();
 
                 // 리스트 바닥에서 5개 전 아이템이 보일 때 다음 페이지 로드
