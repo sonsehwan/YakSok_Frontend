@@ -11,20 +11,31 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.medication.R;
 import com.example.medication.model.DrugStore;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DrugStoreAdapter extends RecyclerView.Adapter<DrugStoreAdapter.ViewHolder> {
 
-    private List<DrugStore> items;
+    private final List<DrugStore> items = new ArrayList<>();
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(DrugStore drugStore, int position);
+        void onItemClick(DrugStore drugStore);
     }
 
-    public DrugStoreAdapter(List<DrugStore> items, OnItemClickListener listener) {
-        this.items = items;
+    public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
+    }
+
+    public void addItems(List<DrugStore> newItems) {
+        int startPosition = items.size();
+        items.addAll(newItems);
+        notifyItemRangeInserted(startPosition, items.size());
+    }
+
+    public void clearItems() {
+        items.clear();
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -49,21 +60,20 @@ public class DrugStoreAdapter extends RecyclerView.Adapter<DrugStoreAdapter.View
         String finalEndTime = fendTime + ":" + lendTime;
         holder.tvHours.setText("영업시간: " + finalStartTime + " ~ " + finalEndTime);
         //holder.tvDistance.setText(item.getDistance() + "m");
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(item);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return items != null ? items.size() : 0;
+        return items.size();
     }
-
-    public void updateData(List<DrugStore> newItems) {
-        this.items = newItems;
-        notifyDataSetChanged();
-    }
-
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvHours, tvDistance;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_drugstore_name);

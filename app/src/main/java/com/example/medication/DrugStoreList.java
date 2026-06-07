@@ -19,7 +19,6 @@ import com.example.medication.network.DrugStoreApi;
 import com.example.medication.network.NetworkClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -32,8 +31,10 @@ public class DrugStoreList extends AppCompatActivity {
     private DrugStoreAdapter adapter;
     private ImageView ivBack;
     BottomNavigationView bottomNavigationView;
-
     private LoadingDialog loadingDialog;
+
+    private int currentPage = 1;
+    private boolean isLoading = false;
 
     // 하드코딩된 내 위치 (예: 서울시청)
     private double currentLat = 37.5220056247758;
@@ -52,7 +53,7 @@ public class DrugStoreList extends AppCompatActivity {
 
         // 화면이 켜지면 하드코딩된 위치 값으로 즉시 약국 목록을 가져옵니다.
         loadingDialog.show();
-        fetchDrugStoresFromServer();
+        fetchDrugStoresFromServer(true);
 
         bottomNavigationView.setSelectedItemId(R.id.nav_drugstore);
 
@@ -88,29 +89,65 @@ public class DrugStoreList extends AppCompatActivity {
         rvDrugstoreList = findViewById(R.id.rv_drugstore_list);
         rvDrugstoreList.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new DrugStoreAdapter(new ArrayList<>(), (drugStore, position) -> {
+        setupRecyclerView();
+    }
+
+    private void setupRecyclerView() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rvDrugstoreList.setLayoutManager(layoutManager);
+
+        adapter = new DrugStoreAdapter();
+        adapter.setOnItemClickListener(drugStore -> {
             Toast.makeText(DrugStoreList.this, drugStore.getDutyName() + " 약국을 선택했습니다.", Toast.LENGTH_SHORT).show();
         });
         rvDrugstoreList.setAdapter(adapter);
+
+        rvDrugstoreList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0) {
+                    int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                    int totalItemCount = layoutManager.getItemCount();
+
+                    // 리스트 바닥에서 5개 전 아이템이 보일 때 다음 페이지 로드
+                    if (!isLoading && lastVisibleItemPosition >= totalItemCount - 5) {
+                        fetchDrugStoresFromServer(false);
+                    }
+                }
+            }
+        });
     }
 
     private void setupListeners() {
         ivBack.setOnClickListener(v -> finish());
     }
 
-    private void fetchDrugStoresFromServer() {
+    private void fetchDrugStoresFromServer(Boolean isInitialLoad) {
+        if(isLoading) return;
+        isLoading = true;
+
+        if(isInitialLoad){
+            currentPage = 1;
+            adapter.clearItems();
+        } else {
+            currentPage++;
+        }
+
         DrugStoreApi api = NetworkClient.getDrugStoreApi();
 
-        api.getCloseDrugstores(String.valueOf(currentLat), String.valueOf(currentLng))
+        api.getCloseDrugstores(String.valueOf(currentLat), String.valueOf(currentLng), currentPage)
                 .enqueue(new Callback<ApiResponse<List<DrugStore>>>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse<List<DrugStore>>> call, @NonNull Response<ApiResponse<List<DrugStore>>> response) {
                         if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
 
+                        isLoading = false;
                         if (response.isSuccessful() && response.body() != null) {
                             List<DrugStore> apiList = response.body().getData();
                             if (apiList != null && !apiList.isEmpty()) {
-                                displayDrugStores(apiList); // 리사이클러뷰에 데이터 채워넣기
+                                adapter.addItems(apiList);
                             } else {
                                 Toast.makeText(DrugStoreList.this, "주변에 문을 연 약국이 없습니다.", Toast.LENGTH_SHORT).show();
                             }
@@ -122,15 +159,10 @@ public class DrugStoreList extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse<List<DrugStore>>> call, @NonNull Throwable t) {
                         if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                        isLoading = false;
                         Log.e("DrugStoreList", "API Error: " + t.getMessage());
                         Toast.makeText(DrugStoreList.this, "네트워크 통신 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    private void displayDrugStores(List<DrugStore> apiList) {
-        if (adapter != null) {
-            adapter.updateData(apiList);
-        }
     }
 }

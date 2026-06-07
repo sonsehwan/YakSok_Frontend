@@ -14,6 +14,7 @@ public interface DrugStoreApi {
     @GET("/api/drugstore/closelist")
     Call<ApiResponse<List<DrugStore>>> getCloseDrugstores(
             @Query("latitude") String latitude,
-            @Query("longitude") String longitude
+            @Query("longitude") String longitude,
+            @Query("page") int page
     );
 }
