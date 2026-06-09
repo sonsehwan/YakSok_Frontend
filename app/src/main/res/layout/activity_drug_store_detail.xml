@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/iv_detail_back"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_arrow_back"
+        android:contentDescription="뒤로가기"
+        android:layout_marginBottom="10dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F0F0F0"
+        />
+
+    <TextView
+        android:id="@+id/tv_detail_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="약국 이름"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F0F0F0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="주소"
+        android:textColor="#000000"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/tv_detail_addr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:padding="10dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_yellow_border"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="전화번호"
+        android:textColor="#000000"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/tv_detail_tel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:padding="10dp"
+        android:layout_marginBottom="16dp"
+        android:textColor="#000000"
+        android:background="@drawable/bg_yellow_border"
+        android:autoLink="phone"
+        android:textColorLink="#000000"
+        android:linksClickable="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="영업시간"
+        android:textColor="#000000"
+
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/tv_detail_hours"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:padding="10dp"
+        android:background="@drawable/bg_yellow_border"
+        android:layout_marginBottom="16dp"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="위치"
+        android:textColor="#000000"
+        android:textSize="20sp"/>
+</LinearLayout>
