@@ -1,14 +1,19 @@
 package com.example.medication;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +22,9 @@ import com.example.medication.model.DrugStore;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.DrugStoreApi;
 import com.example.medication.network.NetworkClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
@@ -35,10 +43,12 @@ public class DrugStoreList extends AppCompatActivity {
 
     private int currentPage = 1;
     private boolean isLoading = false;
+    private FusedLocationProviderClient fusedLocationClient;
+    private ActivityResultLauncher<String[]> locationPermissionLauncher;
 
     // 하드코딩된 내 위치 (예: 서울시청)
-    private double currentLat = 37.5220056247758;
-    private double currentLng = 126.83028754332358;
+    private double currentLat;
+    private double currentLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +58,14 @@ public class DrugStoreList extends AppCompatActivity {
 
         initViews();
         setupListeners();
-
         loadingDialog = new LoadingDialog(this);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        registerPermissionLauncher();
+        checkPermissionAndFetchLocation();
 
         // 화면이 켜지면 하드코딩된 위치 값으로 즉시 약국 목록을 가져옵니다.
         loadingDialog.show();
-        fetchDrugStoresFromServer(true);
 
         bottomNavigationView.setSelectedItemId(R.id.nav_drugstore);
 
@@ -83,6 +95,59 @@ public class DrugStoreList extends AppCompatActivity {
         });
     }
 
+    private void checkPermissionAndFetchLocation(){
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            fetchCurrentLocation();
+        }else{
+            locationPermissionLauncher.launch(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            });
+        }
+    }
+
+    private void registerPermissionLauncher(){
+        locationPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    Boolean fineLocationGranted = result.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false);
+                    if(fineLocationGranted != null && fineLocationGranted){
+                        fetchCurrentLocation();
+                    }else{
+                        Toast.makeText(DrugStoreList.this, "위치 권한을 허용해주세요.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
+    private void fetchCurrentLocation(){
+        loadingDialog.show();
+
+        try{
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                    .addOnSuccessListener(this, location -> {
+                        if (location != null) {
+                            currentLat = location.getLatitude();
+                            currentLng = location.getLongitude();
+
+                            Log.d("위치 정보", "위도: " + currentLat + ", 경도: " + currentLng);
+
+                            fetchDrugStoresFromServer(true);
+                        }else{
+                            loadingDialog.dismiss();
+                            Toast.makeText(this, "위치 신호를 잡을 수 없습니다. 탁 트인 곳으로 이동해주세요.", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(this,e -> {
+                        loadingDialog.dismiss();
+                        Toast.makeText(this, "위치 신호를 잡을 수 없습니다. 탁 트인 곳으로 이동해주세요.", Toast.LENGTH_SHORT).show();
+                    });
+        }catch (SecurityException e){
+            e.printStackTrace();
+            loadingDialog.dismiss();
+        }
+    }
+
     private void initViews() {
         ivBack = findViewById(R.id.iv_back);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -96,9 +161,11 @@ public class DrugStoreList extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rvDrugstoreList.setLayoutManager(layoutManager);
 
-        adapter = new DrugStoreAdapter();
+        adapter = new DrugStoreAdapter(currentLat, currentLng);
         adapter.setOnItemClickListener(drugStore -> {
-            Toast.makeText(DrugStoreList.this, drugStore.getDutyName() + " 약국을 선택했습니다.", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(DrugStoreList.this, DrugStoreDetail.class);
+            intent.putExtra("drugStore", drugStore);
+            startActivity(intent);
         });
         rvDrugstoreList.setAdapter(adapter);
 
@@ -147,6 +214,8 @@ public class DrugStoreList extends AppCompatActivity {
                         if (response.isSuccessful() && response.body() != null) {
                             List<DrugStore> apiList = response.body().getData();
                             if (apiList != null && !apiList.isEmpty()) {
+
+                                adapter.updateLocation(currentLat, currentLng);
                                 adapter.addItems(apiList);
                             } else {
                                 Toast.makeText(DrugStoreList.this, "주변에 문을 연 약국이 없습니다.", Toast.LENGTH_SHORT).show();

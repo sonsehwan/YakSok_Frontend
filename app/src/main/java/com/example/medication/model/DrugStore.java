@@ -1,6 +1,8 @@
 package com.example.medication.model;
 
-public class DrugStore {
+import java.io.Serializable;
+
+public class DrugStore implements Serializable{
 
     private String dutyName; // 약국 이름
     private String dutyAddr; // 약국 주소
