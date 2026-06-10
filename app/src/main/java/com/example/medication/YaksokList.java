@@ -32,6 +32,7 @@ public class YaksokList extends AppCompatActivity {
     private RecyclerView rvYaksokList;
     private YaksokListAdapter adapter;
     private ImageView ivBack;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,8 @@ public class YaksokList extends AppCompatActivity {
         // 리사이클러뷰 설정
         rvYaksokList = findViewById(R.id.rv_yaksok_list);
         rvYaksokList.setLayoutManager(new LinearLayoutManager(this));
+
+        bottomNav = findViewById(R.id.bottom_navigation);
 
         // 어댑터 초기화 (클릭 리스너를 통해 다이얼로그 호출)
         adapter = new YaksokListAdapter(new ArrayList<>(), new YaksokListAdapter.OnItemClickListener() {
@@ -159,5 +162,11 @@ public class YaksokList extends AppCompatActivity {
                 Toast.makeText(YaksokList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.setSelectedItemId(R.id.nav_history);
     }
 }

@@ -64,14 +64,8 @@ public class DrugStoreAdapter extends RecyclerView.Adapter<DrugStoreAdapter.View
 
         holder.tvName.setText(item.getDutyName());
 
-        String fstartTime = item.getStartTime().substring(0,2);
-        String lstartTime = item.getStartTime().substring(2);
-        String finalStartTime = fstartTime + ":" + lstartTime;
 
-        String fendTime = item.getEndTime().substring(0,2);
-        String lendTime = item.getEndTime().substring(2);
-        String finalEndTime = fendTime + ":" + lendTime;
-        holder.tvHours.setText("영업시간: " + finalStartTime + " ~ " + finalEndTime);
+        holder.tvHours.setText(formatTime(item.getStartTime(), item.getEndTime()));
 
         String distance = calculateDistance(myLat, myLng, item);
         holder.tvDistance.setText(distance);
@@ -109,5 +103,17 @@ public class DrugStoreAdapter extends RecyclerView.Adapter<DrugStoreAdapter.View
             e.printStackTrace();
             return "거리를 알 수 없음";
         }
+    }
+
+    private String formatTime(String startTime, String endTime) {
+        String fstartTime = startTime.substring(0,2);
+        String lstartTime = startTime.substring(2);
+        String finalStartTime = fstartTime + ":" + lstartTime;
+
+        String fendTime = endTime.substring(0,2);
+        String lendTime = endTime.substring(2);
+        String finalEndTime = fendTime + ":" + lendTime;
+
+        return "영업시간: " + finalStartTime + " ~ " + finalEndTime;
     }
 }

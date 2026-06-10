@@ -22,6 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".DrugStoreDetail"
             android:exported="false" />

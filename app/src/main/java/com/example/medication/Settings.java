@@ -60,6 +60,7 @@ public class Settings extends AppCompatActivity {
             Intent intent = new Intent(Settings.this,WipActivity.class);
             startActivity(intent);
         });
+        bottomNav.setSelectedItemId(R.id.nav_settings);
 
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -140,5 +141,11 @@ public class Settings extends AppCompatActivity {
         llShare = findViewById(R.id.ll_share);
         llGeneral = findViewById(R.id.ll_general);
         bottomNav = findViewById(R.id.bottom_navigation);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.setSelectedItemId(R.id.nav_settings);
     }
 }

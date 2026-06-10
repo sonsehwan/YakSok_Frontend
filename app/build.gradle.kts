@@ -74,6 +74,8 @@ dependencies {
     implementation("com.google.mlkit:text-recognition-korean:16.0.1")
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.firebase:firebase-ai")
+    implementation("com.kakao.sdk:v2-all:2.23.4")
+    implementation("com.kakao.maps.open:android:2.12.8")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

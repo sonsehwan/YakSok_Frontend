@@ -38,7 +38,7 @@ public class DrugStoreList extends AppCompatActivity {
     private RecyclerView rvDrugstoreList;
     private DrugStoreAdapter adapter;
     private ImageView ivBack;
-    BottomNavigationView bottomNavigationView;
+    private BottomNavigationView bottomNavigationView;
     private LoadingDialog loadingDialog;
 
     private int currentPage = 1;
@@ -66,8 +66,6 @@ public class DrugStoreList extends AppCompatActivity {
 
         // 화면이 켜지면 하드코딩된 위치 값으로 즉시 약국 목록을 가져옵니다.
         loadingDialog.show();
-
-        bottomNavigationView.setSelectedItemId(R.id.nav_drugstore);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -115,6 +113,7 @@ public class DrugStoreList extends AppCompatActivity {
                         fetchCurrentLocation();
                     }else{
                         Toast.makeText(DrugStoreList.this, "위치 권한을 허용해주세요.", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                     }
                 }
         );
@@ -233,5 +232,11 @@ public class DrugStoreList extends AppCompatActivity {
                         Toast.makeText(DrugStoreList.this, "네트워크 통신 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.nav_drugstore);
     }
 }
