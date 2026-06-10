@@ -26,6 +26,7 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.kakao.sdk.common.util.Utility;
 
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setupDate();
         setNickName();
+
+        String keyHash = Utility.INSTANCE.getKeyHash(this);
+        Log.d("KEY_HASH i9nQaOt3ocAUy+P1UAWmDGU7niY=", keyHash);
 
         notificationYaksokList = new ArrayList<>();
         rvNotification.setLayoutManager(new LinearLayoutManager(this));
