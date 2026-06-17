@@ -4,6 +4,8 @@ import static com.example.medication.util.SprefsManager.getUserEmail;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,8 +36,9 @@ import ua.naiksoftware.stomp.StompClient;
 
 public class ChattingRoom extends AppCompatActivity {
 
-    private static final String TAG = "ChattingRoome";
-    // 주의: 백엔드 서버의 실제 IP 주소와 포트를 입력해야 합니다! (NetworkClient의 BASE_URL과 일치하게 맞추세요)
+    private static final String TAG = "ChattingRoom";
+
+    // 백엔드 서버의 실제 IP 주소와 포트를 입력
     private static final String WEBSOCKET_URL = "ws://54.116.63.204:8081/ws-stomp";
 
     private Long roomId;
@@ -47,7 +52,7 @@ public class ChattingRoom extends AppCompatActivity {
     private RecyclerView rvMessages;
     private ChattingRoomAdapter chattingRoomAdapter;
     private EditText etMessage;
-    TextView tvRoomName;
+    private TextView tvRoomName;
     private Button btnSend;
 
     @Override
@@ -55,9 +60,29 @@ public class ChattingRoom extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting_room);
 
+        // 상태바 / 하단 네비게이션 바 색상 설정
+        getWindow().setStatusBarColor(Color.parseColor("#FFEB3B"));
+        getWindow().setNavigationBarColor(Color.WHITE);
+
+        // Android 10 이상에서 네비게이션 바 대비 효과 제거
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
+
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+        // 상태바 아이콘을 어둡게 표시
+        windowInsetsController.setAppearanceLightStatusBars(true);
+
+        // Android 8.0 이상에서 하단 네비게이션 아이콘을 어둡게 표시
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            windowInsetsController.setAppearanceLightNavigationBars(true);
+        }
+
         initViews();
 
-        // 1. Intent에서 방 정보 꺼내기
+        // Intent에서 방 정보 꺼내기
         Intent intent = getIntent();
         roomId = intent.getLongExtra("roomId", -1);
         roomName = intent.getStringExtra("roomName");
@@ -71,54 +96,63 @@ public class ChattingRoom extends AppCompatActivity {
         }
 
         tvRoomName.setText(roomName != null ? roomName : "상담방");
+
         chattingRoomAdapter = new ChattingRoomAdapter(myEmail);
+
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
         rvMessages.setAdapter(chattingRoomAdapter);
 
         loadPreviousMessages();
 
-        // 3. 소켓 연결 시작
+        // 소켓 연결 시작
         connectStomp();
 
-        // 4. 전송 버튼 클릭 이벤트
+        // 전송 버튼 클릭 이벤트
         btnSend.setOnClickListener(v -> {
             String text = etMessage.getText().toString().trim();
+
             if (!text.isEmpty()) {
                 sendMessage(text);
-                etMessage.setText(""); // 전송 후 입력창 비우기
+                etMessage.setText("");
             }
         });
     }
 
     private void loadPreviousMessages() {
-        NetworkClient.getChatApi().getPreviousMessages(roomId).enqueue(new Callback<ApiResponse<List<ChatMessage>>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<List<ChatMessage>>> call, Response<ApiResponse<List<ChatMessage>>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<ChatMessage> pastMessages = response.body().getData();
+        NetworkClient.getChatApi().getPreviousMessages(roomId)
+                .enqueue(new Callback<ApiResponse<List<ChatMessage>>>() {
+                    @Override
+                    public void onResponse(
+                            Call<ApiResponse<List<ChatMessage>>> call,
+                            Response<ApiResponse<List<ChatMessage>>> response
+                    ) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<ChatMessage> pastMessages = response.body().getData();
 
-                    if (pastMessages != null && !pastMessages.isEmpty()) {
-                        for (ChatMessage msg : pastMessages) {
-                            chattingRoomAdapter.addMessage(msg);
+                            if (pastMessages != null && !pastMessages.isEmpty()) {
+                                for (ChatMessage msg : pastMessages) {
+                                    chattingRoomAdapter.addMessage(msg);
+                                }
+
+                                rvMessages.scrollToPosition(chattingRoomAdapter.getItemCount() - 1);
+
+                                Log.d(TAG, "과거 메시지 " + pastMessages.size() + "개 로드 완료");
+                            }
+                        } else {
+                            Log.e(TAG, "과거 메시지 조회 실패: " + response.code());
                         }
-                        rvMessages.scrollToPosition(chattingRoomAdapter.getItemCount() - 1);
-                        Log.d(TAG, "과거 메시지 " + pastMessages.size() + "개 로드 완료");
                     }
-                } else {
-                    Log.e(TAG, "과거 메시지 조회 실패: " + response.code());
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ApiResponse<List<ChatMessage>>> call, Throwable t) {
-                Log.e(TAG, "네트워크 통신 오류 (과거 메시지): ", t);
-            }
-        });
+                    @Override
+                    public void onFailure(Call<ApiResponse<List<ChatMessage>>> call, Throwable t) {
+                        Log.e(TAG, "네트워크 통신 오류 (과거 메시지): ", t);
+                    }
+                });
     }
 
     @SuppressLint("CheckResult")
     private void connectStomp() {
-        // STOMP 클라이언트 생성 (OkHttp 기반)
+        // STOMP 클라이언트 생성
         mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, WEBSOCKET_URL);
 
         // 연결 상태 모니터링
@@ -126,11 +160,13 @@ public class ChattingRoom extends AppCompatActivity {
             switch (lifecycleEvent.getType()) {
                 case OPENED:
                     Log.d(TAG, "STOMP 연결 성공!");
-                    subscribeToRoom(); // 연결 성공 시 방 구독 시작
+                    subscribeToRoom();
                     break;
+
                 case ERROR:
                     Log.e(TAG, "STOMP 연결 오류", lifecycleEvent.getException());
                     break;
+
                 case CLOSED:
                     Log.d(TAG, "STOMP 연결 종료");
                     break;
@@ -142,18 +178,15 @@ public class ChattingRoom extends AppCompatActivity {
     }
 
     private void subscribeToRoom() {
-        // 서버의 ChatController가 데이터를 뿌려주는 목적지 주소
         String topicPath = "/sub/chat/room/" + roomId;
 
         mTopicDisposable = mStompClient.topic(topicPath)
                 .subscribe(topicMessage -> {
-                    // 서버로부터 넘어온 JSON 메세지를 ChatMessage 객체로 변환
-                    ChatMessage receivedMessage = gson.fromJson(topicMessage.getPayload(), ChatMessage.class);
+                    ChatMessage receivedMessage =
+                            gson.fromJson(topicMessage.getPayload(), ChatMessage.class);
 
-                    // 안드로이드 UI는 반드시 메인 스레드에서 업데이트 해야 합니다!
                     runOnUiThread(() -> {
                         chattingRoomAdapter.addMessage(receivedMessage);
-                        // 새 메시지가 오면 리스트의 맨 끝(가장 아래)으로 스크롤
                         rvMessages.scrollToPosition(chattingRoomAdapter.getItemCount() - 1);
                     });
                 }, throwable -> {
@@ -163,11 +196,9 @@ public class ChattingRoom extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void sendMessage(String text) {
-        // 서버로 보낼 DTO 조립
         ChatMessage chatMessage = new ChatMessage(String.valueOf(roomId), myEmail, text);
         String jsonPayload = gson.toJson(chatMessage);
 
-        // 서버의 @MessageMapping("/chat/message")를 향해 쏜다!
         mStompClient.send("/pub/chat/message", jsonPayload)
                 .subscribe(() -> {
                     Log.d(TAG, "메시지 전송 성공!");
@@ -179,20 +210,20 @@ public class ChattingRoom extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 메모리 누수 방지: 액티비티가 꺼지면 소켓 연결도 깔끔하게 끊어줍니다.
+
         if (mTopicDisposable != null && !mTopicDisposable.isDisposed()) {
             mTopicDisposable.dispose();
         }
+
         if (mStompClient != null) {
             mStompClient.disconnect();
         }
     }
 
-    private void initViews(){
+    private void initViews() {
         tvRoomName = findViewById(R.id.tv_room_name);
         rvMessages = findViewById(R.id.rv_chat_messages);
         etMessage = findViewById(R.id.et_message);
         btnSend = findViewById(R.id.btn_send);
     }
-
 }

@@ -24,6 +24,7 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".ChattingRoom"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".DrugStoreDetail"
