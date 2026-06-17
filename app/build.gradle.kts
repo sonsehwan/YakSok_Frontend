@@ -76,6 +76,9 @@ dependencies {
     implementation("com.google.firebase:firebase-ai")
     implementation("com.kakao.sdk:v2-all:2.23.4")
     implementation("com.kakao.maps.open:android:2.12.8")
+    implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
