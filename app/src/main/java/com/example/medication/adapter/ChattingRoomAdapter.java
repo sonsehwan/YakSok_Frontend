@@ -12,11 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.medication.R;
 import com.example.medication.model.ChatMessage;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapter.ChatViewHolder> {
 
@@ -44,8 +41,7 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapte
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatMessage msg = messageList.get(position);
 
-        // 현재 시간을 포맷팅 (서버에서 받은 시간이 있다면 그것을 우선으로 쓰는 것이 좋습니다)
-        String timeString = new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date());
+        String timeString;
 
         if (msg.getSender().equals(myEmail)) {
             // [내가 보낸 메시지일 경우]
@@ -54,7 +50,7 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapte
 
             holder.tvMyName.setText(msg.getSender());
             holder.tvMyMessage.setText(msg.getMessage());
-            holder.tvMyTime.setText(timeString);
+            //holder.tvMyTime.setText(timeString);
         } else {
             // [상대방이 보낸 메시지일 경우]
             holder.llOtherChat.setVisibility(View.VISIBLE);
@@ -62,7 +58,7 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapte
 
             holder.tvOtherName.setText(msg.getSender()); // 보낸 사람 이메일 또는 이름
             holder.tvOtherMessage.setText(msg.getMessage());
-            holder.tvOtherTime.setText(timeString);
+            //holder.tvOtherTime.setText(timeString);
         }
     }
 

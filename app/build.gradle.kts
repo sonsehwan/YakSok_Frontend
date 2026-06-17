@@ -44,7 +44,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    // 💡 추가: 라이브러리 간 파일 이름 충돌을 무시하는 설정
     packaging {
         resources.excludes.add("META-INF/INDEX.LIST")
         resources.excludes.add("META-INF/DEPENDENCIES")
