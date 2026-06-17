@@ -3,18 +3,30 @@ package com.example.medication.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.R;
 import com.example.medication.model.ChatMessage;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapter.MessageViewHolder> {
+public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapter.ChatViewHolder> {
+
     private List<ChatMessage> messageList = new ArrayList<>();
+    private String myEmail;
+
+    // 내 이메일을 전달받아 내가 보낸 메시지인지 판별합니다.
+    public ChattingRoomAdapter(String myEmail) {
+        this.myEmail = myEmail;
+    }
 
     public void addMessage(ChatMessage msg) {
         messageList.add(msg);
@@ -23,18 +35,35 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapte
 
     @NonNull
     @Override
-    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // 안드로이드 기본 제공 레이아웃(simple_list_item_1)을 임시로 사용합니다.
-        // 나중에는 내가 보낸 메시지(오른쪽 말풍선), 남이 보낸 메시지(왼쪽 말풍선) 전용 XML을 만들어 연결하시면 됩니다!
-        View view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
-        return new MessageViewHolder(view);
+    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, parent, false);
+        return new ChatViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatMessage msg = messageList.get(position);
-        // "보낸사람: 메세지내용" 형식으로 출력
-        holder.tvText.setText(msg.getSender() + " : " + msg.getMessage());
+
+        // 현재 시간을 포맷팅 (서버에서 받은 시간이 있다면 그것을 우선으로 쓰는 것이 좋습니다)
+        String timeString = new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date());
+
+        if (msg.getSender().equals(myEmail)) {
+            // [내가 보낸 메시지일 경우]
+            holder.llMyChat.setVisibility(View.VISIBLE);
+            holder.llOtherChat.setVisibility(View.GONE);
+
+            holder.tvMyName.setText(msg.getSender());
+            holder.tvMyMessage.setText(msg.getMessage());
+            holder.tvMyTime.setText(timeString);
+        } else {
+            // [상대방이 보낸 메시지일 경우]
+            holder.llOtherChat.setVisibility(View.VISIBLE);
+            holder.llMyChat.setVisibility(View.GONE);
+
+            holder.tvOtherName.setText(msg.getSender()); // 보낸 사람 이메일 또는 이름
+            holder.tvOtherMessage.setText(msg.getMessage());
+            holder.tvOtherTime.setText(timeString);
+        }
     }
 
     @Override
@@ -42,11 +71,23 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapte
         return messageList.size();
     }
 
-    class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView tvText;
-        public MessageViewHolder(@NonNull View itemView) {
+    static class ChatViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout llOtherChat, llMyChat;
+        TextView tvMyName, tvOtherName, tvOtherMessage, tvOtherTime;
+        TextView tvMyMessage, tvMyTime;
+
+        public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvText = itemView.findViewById(android.R.id.text1);
+            llOtherChat = itemView.findViewById(R.id.ll_other_chat);
+            llMyChat = itemView.findViewById(R.id.ll_my_chat);
+
+            tvOtherName = itemView.findViewById(R.id.tv_other_name);
+            tvOtherMessage = itemView.findViewById(R.id.tv_other_message);
+            tvOtherTime = itemView.findViewById(R.id.tv_other_time);
+
+            tvMyName = itemView.findViewById(R.id.tv_my_name);
+            tvMyMessage = itemView.findViewById(R.id.tv_my_message);
+            tvMyTime = itemView.findViewById(R.id.tv_my_time);
         }
     }
 }

@@ -17,9 +17,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.adapter.ChattingRoomAdapter;
 import com.example.medication.model.ChatMessage;
+import com.example.medication.model.response.ApiResponse;
+import com.example.medication.network.NetworkClient;
 import com.google.gson.Gson;
 
+import java.util.List;
+
 import io.reactivex.disposables.Disposable;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
 
@@ -64,9 +71,11 @@ public class ChattingRoom extends AppCompatActivity {
         }
 
         tvRoomName.setText(roomName != null ? roomName : "상담방");
-        chattingRoomAdapter = new ChattingRoomAdapter();
+        chattingRoomAdapter = new ChattingRoomAdapter(myEmail);
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
         rvMessages.setAdapter(chattingRoomAdapter);
+
+        loadPreviousMessages();
 
         // 3. 소켓 연결 시작
         connectStomp();
@@ -77,6 +86,32 @@ public class ChattingRoom extends AppCompatActivity {
             if (!text.isEmpty()) {
                 sendMessage(text);
                 etMessage.setText(""); // 전송 후 입력창 비우기
+            }
+        });
+    }
+
+    private void loadPreviousMessages() {
+        NetworkClient.getChatApi().getPreviousMessages(roomId).enqueue(new Callback<ApiResponse<List<ChatMessage>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<ChatMessage>>> call, Response<ApiResponse<List<ChatMessage>>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<ChatMessage> pastMessages = response.body().getData();
+
+                    if (pastMessages != null && !pastMessages.isEmpty()) {
+                        for (ChatMessage msg : pastMessages) {
+                            chattingRoomAdapter.addMessage(msg);
+                        }
+                        rvMessages.scrollToPosition(chattingRoomAdapter.getItemCount() - 1);
+                        Log.d(TAG, "과거 메시지 " + pastMessages.size() + "개 로드 완료");
+                    }
+                } else {
+                    Log.e(TAG, "과거 메시지 조회 실패: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<ChatMessage>>> call, Throwable t) {
+                Log.e(TAG, "네트워크 통신 오류 (과거 메시지): ", t);
             }
         });
     }

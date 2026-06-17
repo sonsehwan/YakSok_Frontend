@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFEB3B"/> <!-- 카카오톡 노란색 배경 -->
+    <corners
+        android:radius="14dp"
+        android:topRightRadius="4dp"/> <!-- 말풍선 꼬리 느낌을 위해 오른쪽 위만 덜 둥글게 -->
+</shape>
