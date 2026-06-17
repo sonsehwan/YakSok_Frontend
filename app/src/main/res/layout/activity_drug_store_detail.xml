@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 최상단 부모를 세로형 LinearLayout으로 설정하여 내부 요소를 수직 배치합니다. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp"
     android:background="#FFFFFF">
 
     <ImageView
@@ -12,100 +13,132 @@
         android:layout_height="40dp"
         android:src="@drawable/ic_arrow_back"
         android:contentDescription="뒤로가기"
-        android:layout_marginBottom="10dp"/>
+        android:layout_margin="10dp"/>
 
-    <View
+    <!-- 1. 스크롤 뷰: 높이를 0dp로 두고 weight를 1로 설정하여 하단 버튼 영역을 제외한 모든 공간을 가득 채우게 합니다. -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#F0F0F0"
-        />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/tv_detail_name"
+        <!-- 기존 본문 레이아웃 (패딩 값 유지) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#F0F0F0" />
+
+            <TextView
+                android:id="@+id/tv_detail_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="약국 이름"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#F0F0F0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="주소"
+                android:textColor="#000000"
+                android:layout_marginTop="10dp"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/tv_detail_addr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:padding="10dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_yellow_border"
+                android:textColor="#000000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전화번호"
+                android:textColor="#000000"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/tv_detail_tel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:padding="10dp"
+                android:layout_marginBottom="16dp"
+                android:textColor="#000000"
+                android:background="@drawable/bg_yellow_border"
+                android:autoLink="phone"
+                android:textColorLink="#000000"
+                android:linksClickable="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="영업시간"
+                android:textColor="#000000"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/tv_detail_hours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:padding="10dp"
+                android:background="@drawable/bg_yellow_border"
+                android:layout_marginBottom="16dp"
+                android:textColor="#000000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="위치"
+                android:textColor="#000000"
+                android:textSize="20sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_yellow_border"
+                android:padding="3dp">
+
+                <com.kakao.vectormap.MapView
+                    android:id="@+id/map_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 2. 하단 고정 버튼: 스크롤 뷰 바깥에 존재하므로 스크롤 여부와 무관하게 항상 화면 최하단에 노출됩니다. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_finish"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="16dp"
+        android:text="채팅하기"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="#000000"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:text="약국 이름"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#F0F0F0" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="주소"
-        android:textColor="#000000"
-        android:layout_marginTop="10dp"
-        android:textSize="20sp"/>
-    <TextView
-        android:id="@+id/tv_detail_addr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:padding="10dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/bg_yellow_border"
-        android:textColor="#000000"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="전화번호"
-        android:textColor="#000000"
-        android:textSize="20sp"/>
-    <TextView
-        android:id="@+id/tv_detail_tel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:padding="10dp"
-        android:layout_marginBottom="16dp"
-        android:textColor="#000000"
-        android:background="@drawable/bg_yellow_border"
-        android:autoLink="phone"
-        android:textColorLink="#000000"
-        android:linksClickable="true"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="영업시간"
-        android:textColor="#000000"
-
-        android:textSize="20sp"/>
-    <TextView
-        android:id="@+id/tv_detail_hours"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:padding="10dp"
-        android:background="@drawable/bg_yellow_border"
-        android:layout_marginBottom="16dp"
-        android:textColor="#000000"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="위치"
-        android:textColor="#000000"
-        android:textSize="20sp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_yellow_border"
-        android:padding="3dp">
-
-        <com.kakao.vectormap.MapView
-        android:id="@+id/map_view"
-        android:layout_width="match_parent"
-        android:layout_height="300dp" />
-    </LinearLayout>
+        app:backgroundTint="#FFEB3B"
+        app:cornerRadius="12dp" />
 </LinearLayout>

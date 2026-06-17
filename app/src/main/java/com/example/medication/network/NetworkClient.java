@@ -14,6 +14,7 @@ public class NetworkClient {
     private static Retrofit pillRetrofit = null;
     private static Retrofit yaksokRetrofit = null;
     private static Retrofit drugStoreRetrofit = null;
+    private static Retrofit chatRetrofit = null;
 
     private static OkHttpClient getHttpClient() {
         return new OkHttpClient.Builder()
@@ -85,5 +86,20 @@ public class NetworkClient {
             }
         }
         return drugStoreRetrofit.create(DrugStoreApi.class);
+    }
+
+    public static ChatApi getChatApi() {
+        if (chatRetrofit == null) {
+            try {
+                chatRetrofit = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)
+                        .client(getHttpClient())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+            } catch (Exception e) {
+                android.util.Log.e("NetworkClient", "Retrofit 초기화 실패: " + e.getMessage());
+            }
+        }
+        return chatRetrofit.create(ChatApi.class);
     }
 }

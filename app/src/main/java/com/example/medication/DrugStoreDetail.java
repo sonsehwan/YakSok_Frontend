@@ -1,8 +1,11 @@
 package com.example.medication;
 
+import static com.example.medication.util.SprefsManager.getUserEmail;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -10,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.medication.databinding.ActivityDrugStoreDetailBinding;
 import com.example.medication.model.DrugStore;
+import com.example.medication.model.request.ChatRoomRequest;
+import com.example.medication.model.response.ApiResponse;
+import com.example.medication.model.response.ChatRoomResponse;
+import com.example.medication.network.NetworkClient;
 import com.kakao.vectormap.KakaoMap;
 import com.kakao.vectormap.KakaoMapReadyCallback;
 import com.kakao.vectormap.KakaoMapSdk;
@@ -19,6 +26,10 @@ import com.kakao.vectormap.camera.CameraUpdateFactory;
 import com.kakao.vectormap.label.LabelOptions;
 import com.kakao.vectormap.label.LabelStyle;
 import com.kakao.vectormap.label.LabelStyles;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DrugStoreDetail extends AppCompatActivity {
 
@@ -45,6 +56,52 @@ public class DrugStoreDetail extends AppCompatActivity {
         binding.tvDetailAddr.setText(drugStore.getDutyAddr());
         binding.tvDetailTel.setText(drugStore.getDutyTel1());
         binding.tvDetailHours.setText(formatTime(drugStore.getStartTime(), drugStore.getEndTime()));
+
+        binding.btnFinish.setOnClickListener(v -> {
+            // TODO: 실제 서비스에서는 SharedPreferences 등에서 로그인한 유저 이메일을 꺼내와야 합니다.
+            // 일단 백엔드 테스트용으로 매핑해둔 "test2@naver.com"을 하드코딩해서 넘겨보겠습니다.
+            String userEmail = getUserEmail(this);
+            String hpid = drugStore.getHpid();
+
+            if (hpid == null) {
+                Toast.makeText(DrugStoreDetail.this, "약국 정보(ID)를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            ChatRoomRequest request = new ChatRoomRequest(userEmail, hpid);
+
+            // Retrofit 통신 시작
+            NetworkClient.getChatApi().enterChatRoom(request).enqueue(new Callback<ApiResponse<ChatRoomResponse>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<ChatRoomResponse>> call, Response<ApiResponse<ChatRoomResponse>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+
+                        ChatRoomResponse roomResponse = (ChatRoomResponse) response.body().getData();
+                        Long roomId = roomResponse.getRoomId();
+
+                        Intent chatIntent = new Intent(DrugStoreDetail.this, ChattingRoom.class);
+                        chatIntent.putExtra("roomId", roomId);
+                        chatIntent.putExtra("roomName", drugStore.getDutyName());
+                        startActivity(chatIntent);
+
+                    } else {
+                        try {
+                            String errorBody = response.errorBody() != null ? response.errorBody().string() : "에러 내용 없음";
+                            Log.e("ChatApiError", "서버 에러 상세: " + errorBody);
+                            Toast.makeText(DrugStoreDetail.this, "실패 원인: " + errorBody, Toast.LENGTH_LONG).show();
+                            Log.e("ChatApiError", "서버 에러 상세: " + errorBody);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<ChatRoomResponse>> call, Throwable t) {
+                    Toast.makeText(DrugStoreDetail.this, "네트워크 통신 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
 
     }
 

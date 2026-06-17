@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class DrugStore implements Serializable{
 
+    private String hpid; // 약국id
     private String dutyName; // 약국 이름
     private String dutyAddr; // 약국 주소
     private String dutyTel1; // 약국 전화번호
@@ -12,7 +13,8 @@ public class DrugStore implements Serializable{
 
     private String latitude; // 약국 위도
     private String longitude; // 약국 경도
-    public DrugStore(String dutyName, String dutyAddr, String dutyTel1, String startTime, String endTime, String latitude, String longitude) {
+    public DrugStore(String hpid, String dutyName, String dutyAddr, String dutyTel1, String startTime, String endTime, String latitude, String longitude) {
+        this.hpid = hpid;
         this.dutyName = dutyName;
         this.dutyAddr = dutyAddr;
         this.dutyTel1 = dutyTel1;
@@ -20,6 +22,14 @@ public class DrugStore implements Serializable{
         this.endTime = endTime;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public String getHpid() {
+        return hpid;
+    }
+
+    public void setHpid(String hpid) {
+        this.hpid = hpid;
     }
 
     public String getDutyName() {
