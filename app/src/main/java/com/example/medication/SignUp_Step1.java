@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,10 +29,9 @@ import retrofit2.Response;
 
 public class SignUp_Step1 extends AppCompatActivity {
 
-    private InputView inputEmail;
-    private InputView inputPw;
-    private InputView inputCheckPw;
-    private InputView inputNickName;
+    private InputView inputEmail, inputPw, inputCheckPw, inputNickName;
+    private RadioGroup rgRole;
+
     private Button btnFinish;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +102,10 @@ public class SignUp_Step1 extends AppCompatActivity {
         String email = inputEmail.getText();
         String pw = inputPw.getText();
         String nickName = inputNickName.getText();
+        String role = rgRole.getCheckedRadioButtonId() == R.id.rb_normal ? "NORMAL" : "PHARMACY";
 
-        UserRequest request = new UserRequest(email, pw, nickName);
+
+        UserRequest request = new UserRequest(email, pw, nickName, role);
 
         UserApi api = NetworkClient.getApi();
         api.signUp(request).enqueue(new Callback<ApiResponse<Void>>() {
@@ -172,5 +174,6 @@ public class SignUp_Step1 extends AppCompatActivity {
         inputCheckPw = findViewById(R.id.input_check_pw);
         inputNickName = findViewById(R.id.input_nickname);
         btnFinish = findViewById(R.id.btn_finish);
+        rgRole = findViewById(R.id.rg_role);
     }
 }

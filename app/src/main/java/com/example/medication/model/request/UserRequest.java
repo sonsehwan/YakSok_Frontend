@@ -6,6 +6,7 @@ public class UserRequest {
     private String password;
     private String nickname;
     private String fcmToken;
+    private String role;
 
     public String getEmail() {
         return email;
@@ -39,9 +40,15 @@ public class UserRequest {
         this.fcmToken = fcmToken;
     }
 
-    public UserRequest(String email, String password, String nickname) {
+    public String getRole() { return role; }
+
+    public void setRole(String role) { this.role = role; }
+
+
+    public UserRequest(String email, String password, String nickname, String role) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.role = role;
     }
 }

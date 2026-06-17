@@ -34,11 +34,50 @@
         tools:layout_editor_absoluteY="69dp"
         tools:ignore="MissingConstraints" />
 
+    <RadioGroup
+        android:id="@+id/rg_role"
+        android:layout_width="360dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_yellow_border"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:layout_marginTop="20dp"
+        android:weightSum="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+
+        <RadioButton
+            android:id="@+id/rb_normal"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_square_check_box"
+            android:button="@null"
+            android:gravity="center"
+            android:text="일반 유저"
+            android:textColor="@color/black" />
+
+        <RadioButton
+            android:id="@+id/rb_pharmacy"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_square_check_box"
+            android:button="@null"
+            android:gravity="center"
+            android:text="약사"
+            android:textColor="@color/black" />
+
+    </RadioGroup>
+
     <com.example.medication.InputView
         android:id="@+id/input_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="20dp"
         android:inputType="textEmailAddress"
         android:nextFocusDown="@id/input_pw"
@@ -49,7 +88,7 @@
         app:iconSrc="@drawable/ic_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/rg_role" />
 
     <com.example.medication.InputView
         android:id="@+id/input_pw"
@@ -100,6 +139,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_nickname" />
+        app:layout_constraintTop_toBottomOf="@+id/input_check_pw" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
