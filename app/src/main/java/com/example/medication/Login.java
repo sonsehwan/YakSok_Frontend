@@ -56,8 +56,8 @@ public class Login extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> startLogin());
 
         tvGoSignUp.setOnClickListener(v -> {
-            Intent intent = new Intent(Login.this, SignUp_Step1.class);
-            startActivity(intent);
+            SignUpTypeBottomSheet sheet = new SignUpTypeBottomSheet();
+            sheet.show(getSupportFragmentManager(), "sign_up_type");
         });
     }
 

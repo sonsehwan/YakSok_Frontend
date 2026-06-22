@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,13 +29,12 @@ import retrofit2.Response;
 public class SignUp_Step1 extends AppCompatActivity {
 
     private InputView inputEmail, inputPw, inputCheckPw, inputNickName;
-    private RadioGroup rgRole;
 
     private Button btnFinish;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sign_up_step1);
+        setContentView(R.layout.sign_up);
 
         initViews();
 
@@ -48,7 +46,10 @@ public class SignUp_Step1 extends AppCompatActivity {
             return null;
         });
 
-        btnFinish.setOnClickListener(v -> {startSignUp();});
+        Intent intent = getIntent();
+        String type = intent.getStringExtra("SignUp_Type");
+
+        btnFinish.setOnClickListener(v -> {startSignUp(type);});
     }
 
     @Override
@@ -88,7 +89,7 @@ public class SignUp_Step1 extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
 
-    private void startSignUp(){
+    private void startSignUp(String type){
         boolean isEmailVaild = inputEmail.isValid();
         boolean isPwVaild = inputPw.isValid();
         boolean isCheckPw = inputCheckPw.isValid();
@@ -102,7 +103,7 @@ public class SignUp_Step1 extends AppCompatActivity {
         String email = inputEmail.getText();
         String pw = inputPw.getText();
         String nickName = inputNickName.getText();
-        String role = rgRole.getCheckedRadioButtonId() == R.id.rb_normal ? "NORMAL" : "PHARMACY";
+        String role = type;
 
 
         UserRequest request = new UserRequest(email, pw, nickName, role);
@@ -174,6 +175,5 @@ public class SignUp_Step1 extends AppCompatActivity {
         inputCheckPw = findViewById(R.id.input_check_pw);
         inputNickName = findViewById(R.id.input_nickname);
         btnFinish = findViewById(R.id.btn_finish);
-        rgRole = findViewById(R.id.rg_role);
     }
 }

@@ -23,9 +23,12 @@
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ChattingRoom"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".AddressSearch"
             android:exported="false" />
+        <activity
+            android:name=".ChattingRoom"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".DrugStoreDetail"
             android:exported="false" />
