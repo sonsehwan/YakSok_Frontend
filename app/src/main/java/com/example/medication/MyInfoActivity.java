@@ -32,9 +32,7 @@ public class MyInfoActivity extends AppCompatActivity {
 
     private ImageView ivBack;
     private InputView inputNickname;
-    private Button btnChangePw;
-    private Button btnSaveInfo;
-    private Button btnWithdraw;
+    private Button btnChangePw, btnSaveInfo, btnWithdraw, btnFindDrugStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +43,7 @@ public class MyInfoActivity extends AppCompatActivity {
         inputNickname = findViewById(R.id.input_nickname);
         btnChangePw = findViewById(R.id.btn_change_pw);
         btnSaveInfo = findViewById(R.id.btn_save_info);
+        btnFindDrugStore = findViewById(R.id.btn_find_drugstore);
         btnWithdraw = findViewById(R.id.btn_withdraw);
         btnWithdraw.setOnClickListener(v -> showWithdrawConfirmDialog());
 
@@ -62,6 +61,11 @@ public class MyInfoActivity extends AppCompatActivity {
 
         btnChangePw.setOnClickListener(v->{
             Intent intent = new Intent(this, ModifyPassword.class);
+            startActivity(intent);
+        });
+
+        btnFindDrugStore.setOnClickListener(view -> {
+            Intent intent = new Intent(this, FindDrugStore.class);
             startActivity(intent);
         });
     }

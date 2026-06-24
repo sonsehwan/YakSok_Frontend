@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:gravity="center"
-        android:text="내 정보 관리"
+        android:text="약국 찾기"
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -47,50 +47,23 @@
         app:layout_constraintTop_toBottomOf="@id/tv_header_title" />
 
     <!-- 입력 폼 영역 -->
-    <TextView
-        android:id="@+id/tv_label_nickname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="24dp"
-        android:text="닉네임"
-        android:textColor="#333333"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_divider" />
 
-    <com.example.medication.InputView
-        android:id="@+id/input_nickname"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="15dp"
-
-        android:imeOptions="actionDone"
-        android:inputType="text"
-        app:helperText="2~10자의 한글, 영문, 숫자만 사용 가능합니다."
-        app:hintText="닉네임을 입력하세요."
-        app:iconSrc="@drawable/ic_user"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_label_nickname"
-        app:validationType="nickname" />
 
     <TextView
-        android:id="@+id/tv_label_password"
+        android:id="@+id/tv_label_first_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        android:text="비밀번호"
+        android:text="주소(시도)"
         android:textColor="#333333"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_nickname" />
+        app:layout_constraintTop_toBottomOf="@+id/view_divider" />
 
     <LinearLayout
-        android:id="@+id/ll_info_password"
+        android:id="@+id/ll_first_address"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -100,57 +73,35 @@
         android:background="@drawable/bg_yellow_border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_label_password">
+        app:layout_constraintTop_toBottomOf="@+id/tv_label_first_address">
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:padding="5dp"
-
-            app:srcCompat="@drawable/ic_lock" />
-
-        <TextView
-            android:id="@+id/et_password_info"
+        <EditText
+            android:id="@+id/et_first_address"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_marginStart="10dp"
-            android:text="비밀번호"
-            android:textSize="16sp"
+            android:hint="예시: 서울시"
+            android:textSize="15sp"
             android:textColor="#000000"
             android:gravity="center_vertical" />
-
-        <Button
-            android:id="@+id/btn_change_pw"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#FFEB3B"
-            android:minWidth="60dp"
-            android:paddingHorizontal="12dp"
-            android:text="변경"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_label_drugstore"
+        android:id="@+id/tv_label_second_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        android:text="약국"
+        android:text="주소(시군구)"
         android:textColor="#333333"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_info_password" />
+        app:layout_constraintTop_toBottomOf="@+id/ll_first_address" />
 
     <LinearLayout
-        android:id="@+id/ll_find_drugstore"
+        android:id="@+id/ll_second_address"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="23dp"
@@ -159,73 +110,84 @@
         android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_label_drugstore">
+        app:layout_constraintTop_toBottomOf="@+id/tv_label_second_address">
 
-        <ImageView
-            android:id="@+id/iv_map"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:padding="5dp"
-
-            app:srcCompat="@drawable/ic_map" />
-
-        <TextView
-            android:id="@+id/tv_drugstore"
+        <EditText
+            android:id="@+id/et_second_address"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="약국 등록"
+            android:hint="예시: 강남구"
             android:textColor="#000000"
-            android:textSize="16sp" />
-
-        <Button
-            android:id="@+id/btn_find_drugstore"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#FFEB3B"
-            android:minWidth="60dp"
-            android:paddingHorizontal="12dp"
-            android:text="찾기"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
+            android:textSize="15sp" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_withdraw"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="12dp"
-        android:backgroundTint="#FF3B30"
-        android:text="회원 탈퇴"
-        android:textColor="@color/white"
-        android:textSize="16sp"
+    <TextView
+        android:id="@+id/tv_label_drugstore_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="약국 이름"
+        android:textColor="#333333"
+        android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn_save_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_second_address" />
+
+    <LinearLayout
+        android:id="@+id/ll_drugstore_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="23dp"
+        android:background="@drawable/bg_yellow_border"
+        android:orientation="horizontal"
+        android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_label_drugstore_name">
 
+        <EditText
+            android:id="@+id/et_drugstore_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:hint="예시: 우리약국"
+            android:textColor="#000000"
+            android:textSize="15sp" />
+    </LinearLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_drugstore_list"
+        android:layout_width="match_parent"
+        android:layout_height="330dp"
+        android:layout_marginHorizontal="23dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_yellow_border"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_drugstore_name"
+        tools:listitem="@layout/item_simple_drugstore" />
 
-    <!-- 수정하기 버튼 -->
     <Button
-        android:id="@+id/btn_save_info"
+        android:id="@+id/btn_find_drugstore"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="23dp"
+        android:layout_marginTop="4dp"
         android:backgroundTint="#FFEB3B"
-        android:text="수정하기"
+        android:text="약국 조회"
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.45"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

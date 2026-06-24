@@ -6,6 +6,7 @@
 
         <!-- 앱 화면이 상단바를 차지하지 않게 설정 -->
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="Theme.Medication" parent="Base.Theme.Medication" />

@@ -209,6 +209,9 @@ public class DrugStoreList extends AppCompatActivity {
                     public void onResponse(@NonNull Call<ApiResponse<List<DrugStore>>> call, @NonNull Response<ApiResponse<List<DrugStore>>> response) {
                         if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
 
+                        Log.d("DrugStoreAPI", "요청 URL: " + call.request().url());
+                        Log.d("DrugStoreAPI", "응답 코드: " + response.code());
+
                         isLoading = false;
                         if (response.isSuccessful() && response.body() != null) {
                             List<DrugStore> apiList = response.body().getData();

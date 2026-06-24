@@ -20,14 +20,14 @@ public class SignUpTypeBottomSheet extends BottomSheetDialogFragment {
         TextView drugStore_type = view.findViewById(R.id.drugStore_type);
 
         user_type.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), SignUp_Step1.class);
+            Intent intent = new Intent(getContext(), SignUp_Normal.class);
             intent.putExtra("SignUp_Type", "NORMAL");
             startActivity(intent);
             dismiss();
         });
 
         drugStore_type.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), SignUp_Step1.class);
+            Intent intent = new Intent(getContext(), SignUp_Normal.class);
             intent.putExtra("SignUp_Type", "PHARMACY");
             startActivity(intent);
             dismiss();

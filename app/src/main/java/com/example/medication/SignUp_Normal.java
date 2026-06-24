@@ -26,7 +26,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignUp_Step1 extends AppCompatActivity {
+public class SignUp_Normal extends AppCompatActivity {
 
     private InputView inputEmail, inputPw, inputCheckPw, inputNickName;
 
@@ -34,7 +34,7 @@ public class SignUp_Step1 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sign_up);
+        setContentView(R.layout.activity_sign_up_drugstore);
 
         initViews();
 
@@ -118,7 +118,7 @@ public class SignUp_Step1 extends AppCompatActivity {
 
                     if(result.isBusinessSuccess()){
                         Log.d("SignUp", result.getMessage());
-                        Intent intent = new Intent(SignUp_Step1.this, Login.class);
+                        Intent intent = new Intent(SignUp_Normal.this, Login.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
