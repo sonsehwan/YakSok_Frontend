@@ -130,7 +130,7 @@
 
     <!-- 2. 하단 고정 버튼: 스크롤 뷰 바깥에 존재하므로 스크롤 여부와 무관하게 항상 화면 최하단에 노출됩니다. -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_finish"
+        android:id="@+id/btn_start_chatting"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginHorizontal="20dp"

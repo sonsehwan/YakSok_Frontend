@@ -1,5 +1,6 @@
 package com.example.medication;
 
+import static com.example.medication.util.SprefsManager.getUser;
 import static com.example.medication.util.SprefsManager.getUserEmail;
 
 import android.content.Intent;
@@ -16,6 +17,7 @@ import com.example.medication.model.DrugStore;
 import com.example.medication.model.request.ChatRoomRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.ChatRoomResponse;
+import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.kakao.vectormap.KakaoMap;
 import com.kakao.vectormap.KakaoMapReadyCallback;
@@ -26,6 +28,8 @@ import com.kakao.vectormap.camera.CameraUpdateFactory;
 import com.kakao.vectormap.label.LabelOptions;
 import com.kakao.vectormap.label.LabelStyle;
 import com.kakao.vectormap.label.LabelStyles;
+
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,14 +61,25 @@ public class DrugStoreDetail extends AppCompatActivity {
         binding.tvDetailTel.setText(drugStore.getDutyTel1());
         binding.tvDetailHours.setText(formatTime(drugStore.getStartTime(), drugStore.getEndTime()));
 
-        binding.btnFinish.setOnClickListener(v -> {
-            // TODO: 실제 서비스에서는 SharedPreferences 등에서 로그인한 유저 이메일을 꺼내와야 합니다.
-            // 일단 백엔드 테스트용으로 매핑해둔 "test2@naver.com"을 하드코딩해서 넘겨보겠습니다.
+        binding.btnStartChatting.setOnClickListener(v -> {
+            UserResponse currentUser = getUser(this);
+            String userRole = currentUser.getRole();
+            String userDrugStoreHpid = null;
+            // 로그인 회원이 약사일 경우
+            if(Objects.equals(userRole, "NORMAL")){
+                userDrugStoreHpid = currentUser.getMyDrugStore().getHpid();
+            }
             String userEmail = getUserEmail(this);
             String hpid = drugStore.getHpid();
 
             if (hpid == null) {
                 Toast.makeText(DrugStoreDetail.this, "약국 정보(ID)를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            //Objects에서 equals로 비교하면 userEmail도 null확인을 해준다.
+            if(Objects.equals(userEmail, hpid)){
+                Toast.makeText(DrugStoreDetail.this, "자신의 약국에 채팅을 시작할 수 없습니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
