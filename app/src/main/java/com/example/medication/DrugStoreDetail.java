@@ -66,8 +66,10 @@ public class DrugStoreDetail extends AppCompatActivity {
             String userRole = currentUser.getRole();
             String userDrugStoreHpid = null;
             // 로그인 회원이 약사일 경우
-            if(Objects.equals(userRole, "NORMAL")){
+            if(Objects.equals(userRole, "DRUGSTORE")){
                 userDrugStoreHpid = currentUser.getMyDrugStore().getHpid();
+                Log.d("userDrugStoreHpid", userDrugStoreHpid);
+                Log.d("drugStoreHpid", drugStore.getHpid());
             }
             String userEmail = getUserEmail(this);
             String hpid = drugStore.getHpid();
@@ -78,7 +80,7 @@ public class DrugStoreDetail extends AppCompatActivity {
             }
 
             //Objects에서 equals로 비교하면 userEmail도 null확인을 해준다.
-            if(Objects.equals(userEmail, hpid)){
+            if(Objects.equals(userDrugStoreHpid, hpid)){
                 Toast.makeText(DrugStoreDetail.this, "자신의 약국에 채팅을 시작할 수 없습니다.", Toast.LENGTH_SHORT).show();
                 return;
             }

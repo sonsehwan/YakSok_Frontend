@@ -9,24 +9,16 @@ public class UserResponse {
 
     @SerializedName("email")
     private String email;
-
     @SerializedName("password")
     private String password;
-
     @SerializedName("nickname")
     private String nickname;
-
     private String gender;
-
     private LocalDate birthdate;
-
-
     private Boolean penaltyEnable = false;
-
     private Boolean isLocked = false;
-
     private String role;
-
+    @SerializedName("myDrugStore")
     private DrugStore myDrugStore;
 
     public String getEmail() {

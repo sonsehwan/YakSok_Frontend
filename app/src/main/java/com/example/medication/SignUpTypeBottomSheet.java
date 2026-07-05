@@ -28,7 +28,7 @@ public class SignUpTypeBottomSheet extends BottomSheetDialogFragment {
 
         drugStore_type.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), SignUp_Normal.class);
-            intent.putExtra("SignUp_Type", "PHARMACY");
+            intent.putExtra("SignUp_Type", "DRUGSTORE");
             startActivity(intent);
             dismiss();
         });

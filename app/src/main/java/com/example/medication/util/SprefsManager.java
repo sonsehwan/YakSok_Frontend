@@ -7,9 +7,14 @@ import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.UserResponse;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +29,15 @@ public class SprefsManager {
     private static final String KEY_YAKSOK_LiST = "yaksok_list";
     private static final String KEY_NOTIFICATION_LIST = "notification_list";
 
+    private static Gson getGson() {
+        return new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, typeOfSrc, context) ->
+                        new com.google.gson.JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE)))
+                .registerTypeAdapter(LocalDate.class, (JsonDeserializer<LocalDate>) (json, type, context) ->
+                        LocalDate.parse(json.getAsString(), DateTimeFormatter.ISO_LOCAL_DATE))
+                .create();
+    }
+
     //저장소를 불러온다.(저장소가 없으면 만들어서 전달한다.)
     private static SharedPreferences getPreference(Context context){
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -33,7 +47,7 @@ public class SprefsManager {
     public static void setUserInfo(Context context, UserResponse user){
         SharedPreferences.Editor editor = getPreference(context).edit();
 
-        Gson gson = new Gson();
+        Gson gson = getGson();
         String json = gson.toJson(user);
 
         editor.putString(KEY_USER_DATA, json);
@@ -81,7 +95,7 @@ public class SprefsManager {
             return new ArrayList<>();
         }
         Type type = new TypeToken<List<Yaksok>>(){}.getType();
-        return new Gson().fromJson(json, type);
+        return getGson().fromJson(json, type);
     }
 
     // 새로 등록한 약속을 기존 목록에 추가
@@ -90,7 +104,7 @@ public class SprefsManager {
         yaksokList.add(yaksok);
 
         SharedPreferences.Editor editor = getPreference(context).edit();
-        String json = new Gson().toJson(yaksokList);
+        String json = getGson().toJson(yaksokList);
         editor.putString(KEY_YAKSOK_LiST, json);
         editor.apply();
     }
@@ -111,7 +125,7 @@ public class SprefsManager {
 
             // 4. 변경된 리스트를 JSON으로 변환하여 다시 로컬에 저장합니다.
             SharedPreferences.Editor editor = getPreference(context).edit();
-            String json = new Gson().toJson(yaksokList);
+            String json = getGson().toJson(yaksokList);
             editor.putString(KEY_YAKSOK_LiST, json);
             editor.apply();
         }
@@ -124,7 +138,7 @@ public class SprefsManager {
             return new ArrayList<>();
         }
         Type type = new TypeToken<List<NotificationYaksok>>(){}.getType();
-        return new Gson().fromJson(json, type);
+        return getGson().fromJson(json, type);
     }
 
     // 새로운 알림 리스트로 싹 변경
@@ -132,7 +146,7 @@ public class SprefsManager {
         SharedPreferences.Editor editor = getPreference(context).edit();
 
         // 새로운 전체 리스트를 JSON으로 변환
-        String json = new Gson().toJson(newNotifications);
+        String json = getGson().toJson(newNotifications);
 
         // 기존 데이터를 덮어쓰고 저장
         editor.putString(KEY_NOTIFICATION_LIST, json);
@@ -145,7 +159,7 @@ public class SprefsManager {
         currentList.addAll(newNotifications);
 
         SharedPreferences.Editor editor = getPreference(context).edit();
-        String json = new Gson().toJson(currentList);
+        String json = getGson().toJson(currentList);
         editor.putString(KEY_NOTIFICATION_LIST, json);
         editor.apply();
     }

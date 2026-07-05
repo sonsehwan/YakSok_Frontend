@@ -1,5 +1,7 @@
 package com.example.medication;
 
+import static com.example.medication.util.SprefsManager.getUser;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -132,9 +134,16 @@ public class FindDrugStore extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     ApiResponse<UserResponse> apiResponse = response.body();
                     UserResponse user = apiResponse.getData(); // 응답 구조에서 유저 꺼내기
+                    if(user == null){
+                        Log.d("DrugStoreAPI", "유저 정보가 없습니다.");
+                        return;
+                    }
 
                     // 로컬에 유저 정보 갱신
                     SprefsManager.setUserInfo(FindDrugStore.this, user);
+                    UserResponse saveUser = getUser(FindDrugStore.this);
+                    String userHdip = saveUser.getMyDrugStore().getHpid();
+                    Log.d("새로 저장한 유저", userHdip);
                 } else {
                     showToast("서버로부터 결과를 가져오지 못했습니다.");
                 }
