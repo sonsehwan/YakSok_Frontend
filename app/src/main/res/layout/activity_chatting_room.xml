@@ -49,10 +49,20 @@
         android:background="#FFFFFF"
         android:elevation="8dp">
 
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:text="+"
+            android:textSize="30dp"
+            android:gravity="center"
+            android:background="@drawable/bg_yellow"/>
+
+
         <EditText
             android:id="@+id/et_message"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:hint="메시지를 입력하세요"
             android:paddingStart="18dp"

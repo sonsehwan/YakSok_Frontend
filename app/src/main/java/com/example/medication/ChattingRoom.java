@@ -196,7 +196,7 @@ public class ChattingRoom extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void sendMessage(String text) {
-        ChatMessage chatMessage = new ChatMessage(String.valueOf(roomId), myEmail, text);
+        ChatMessage chatMessage = new ChatMessage(String.valueOf(roomId), myEmail, ChatMessage.MessageType.TEXT, text);
         String jsonPayload = gson.toJson(chatMessage);
 
         mStompClient.send("/pub/chat/message", jsonPayload)

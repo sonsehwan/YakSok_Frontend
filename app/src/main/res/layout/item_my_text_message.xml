@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_my_text_message"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="end"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_my_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="내 이름"
+        android:textSize="13sp"
+        android:textColor="#555555"
+        android:layout_gravity="end"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- 시간과 채팅 내용 묶음 (수평 정렬) -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="end">
+
+        <TextView
+            android:id="@+id/tv_my_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginEnd="6dp"
+            android:text="07:10"
+            android:textSize="11sp"
+            android:textColor="#888888"/>
+
+        <TextView
+            android:id="@+id/tv_my_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="240dp"
+            android:background="@drawable/bg_message_send"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
+            android:text="내가 보낸 메시지 내용"
+            android:textColor="#000000"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_other_yaksok_share_message"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start"
+    android:orientation="vertical">
+
+    <!-- 보낸 사람 이름 -->
+    <TextView
+        android:id="@+id/tv_other_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="상대방 이름"
+        android:textSize="13sp"
+        android:textColor="#555555"
+        android:layout_marginBottom="4dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_message_receive"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/tv_yaksok_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="240dp"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="10dp"
+                android:text="OOO이 약속을 공유하였습니다. \n약속을 확인해 보세요."
+                android:textColor="#000000"
+                android:textSize="15sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_other_yaksok"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
+                android:text="확인하기"
+                android:textSize="17dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_other_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="6dp"
+            android:text="07:10"
+            android:textSize="11sp"
+            android:textColor="#888888"/>
+    </LinearLayout>
+</LinearLayout>
