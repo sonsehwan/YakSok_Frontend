@@ -54,7 +54,6 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_register"
         app:layout_constraintTop_toBottomOf="@id/tv_header_title">
 
         <LinearLayout
@@ -64,29 +63,15 @@
             android:paddingBottom="40dp">
 
             <!-- 복용날짜 섹션 -->
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_label_date"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="24dp">
-
-                <TextView
-                    android:id="@+id/tv_label_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="약속 명칭 *"
-                    android:textColor="#333333"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="*는 필수 항목이에요!"
-                    android:textColor="#7C4DFF"
-                    android:textSize="12sp" />
-            </RelativeLayout>
+                android:layout_marginStart="20dp"
+                android:text="약속 명칭"
+                android:textColor="#333333"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <!-- 카드 별명 섹션 -->
 
@@ -95,6 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
+                app:isReadOnly="true"
                 app:hintText="약속 별명" />
 
             <TextView
@@ -102,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:text="투약 시작 날짜 *"
+                android:text="투약 시작 날짜"
                 android:textColor="#333333"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -123,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:text="투약일 수 *"
+                android:text="투약일 수"
                 android:textColor="#333333"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -134,6 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
                 android:inputType="number"
+                app:isReadOnly="true"
                 app:hintText="숫자만 입력해주세요. (예: 3일 -> 3)" />
 
             <TextView
@@ -142,7 +129,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
-                android:text="투약 횟수 *"
+                android:text="투약 횟수"
                 android:textColor="#333333"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -168,6 +155,7 @@
                     android:button="@null"
                     android:gravity="center"
                     android:layout_marginEnd="5dp"
+                    android:enabled="false"
                     android:background="@drawable/selector_square_check_box"
                     android:textColor="@color/black" />
 
@@ -181,6 +169,7 @@
                     android:button="@null"
                     android:gravity="center"
                     android:layout_marginHorizontal="2dp"
+                    android:enabled="false"
                     android:background="@drawable/selector_square_check_box"
                     android:textColor="@color/black" />
 
@@ -194,6 +183,7 @@
                     android:button="@null"
                     android:gravity="center"
                     android:layout_marginStart="5dp"
+                    android:enabled="false"
                     android:background="@drawable/selector_square_check_box"
                     android:textColor="@color/black" />
 
@@ -250,7 +240,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
-                android:text="투약 시간대 *"
+                android:text="투약 시간대"
                 android:textColor="#333333"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -276,6 +266,7 @@
                     android:background="@drawable/selector_square_check_box"
                     android:gravity="center"
                     android:layout_marginEnd="5dp"
+                    android:enabled="false"
                     android:textColor="@color/black" />
 
                 <RadioButton
@@ -287,6 +278,7 @@
                     android:button="@null"
                     android:background="@drawable/selector_square_check_box"
                     android:gravity="center"
+                    android:enabled="false"
                     android:layout_marginHorizontal="2dp"
                     android:textColor="@color/black" />
 
@@ -299,12 +291,11 @@
                     android:button="@null"
                     android:background="@drawable/selector_square_check_box"
                     android:gravity="center"
+                    android:enabled="false"
                     android:layout_marginStart="5dp"
                     android:textColor="@color/black" />
 
             </RadioGroup>
-
-
 
             <!-- 구분선 -->
             <View
@@ -319,7 +310,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="24dp"
-                android:text="약 선택 *"
+                android:text="약 리스트"
                 android:textColor="#333333"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -333,44 +324,7 @@
                 android:layout_marginTop="8dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_add_medication_setting"/>
-
-            <!-- 약 추가 버튼 (점선 테두리) -->
-            <FrameLayout
-                android:id="@+id/btn_add_pill"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_dashed_border"
-                android:clickable="true"
-                android:focusable="true">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="+ 약 추가"
-                    android:textColor="#7C4DFF"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <!-- 하단 등록 버튼 -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_register"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="수정"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:backgroundTint="#E0E0E0"
-        app:cornerRadius="12dp"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

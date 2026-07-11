@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,7 +58,7 @@ public class YaksokList extends AppCompatActivity {
         adapter = new YaksokListAdapter(new ArrayList<>(), new YaksokListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Yaksok yaksok, int position) {
-                Intent intent = new Intent(YaksokList.this, ModifyYaksok.class);
+                Intent intent = new Intent(YaksokList.this, DetailYaksok.class);
 
                 intent.putExtra("YAKSOK_DATA", yaksok);
 
@@ -124,41 +123,6 @@ public class YaksokList extends AppCompatActivity {
             @Override
             public void onFailure(Call<ApiResponse<List<Yaksok>>> call, Throwable t) {
                 Log.e("YaksokList", "API 통신 실패: " + t.getMessage());
-                Toast.makeText(YaksokList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    // 아이템 삭제 확인 다이얼로그 띄우기
-    private void showDeleteConfirmDialog(Yaksok yaksok, int position) {
-        new AlertDialog.Builder(this)
-                .setTitle("약속 삭제")
-                .setMessage("'" + yaksok.getTitle() + "' 약속을 삭제하시겠습니까?\n관련된 모든 정보(복약, 알림)가 함께 삭제됩니다.")
-                .setPositiveButton("삭제", (dialog, which) -> {
-                    deleteYaksokFromServer(yaksok.getId(), position);
-                })
-                .setNegativeButton("취소", null)
-                .show();
-    }
-
-    // 서버에 삭제 요청 후 UI 갱신
-    private void deleteYaksokFromServer(Long yaksokId, int position) {
-        YaksokApi api = NetworkClient.getYaksokApi();
-
-        api.deleteYaksok(yaksokId).enqueue(new Callback<ApiResponse<Void>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
-                if (response.isSuccessful()) {
-                    adapter.removeItem(position); // 성공 시 리스트 UI에서 바로 제거
-                    Toast.makeText(YaksokList.this, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(YaksokList.this, "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                Log.e("YaksokList", "삭제 통신 실패: " + t.getMessage());
                 Toast.makeText(YaksokList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });

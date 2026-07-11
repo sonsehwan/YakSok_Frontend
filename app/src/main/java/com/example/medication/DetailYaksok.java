@@ -1,14 +1,11 @@
 package com.example.medication;
 
-import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -16,28 +13,19 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.adapter.AddMedicationSettingAdapter;
-import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
-import com.example.medication.model.request.CreateYakSokRequest;
 import com.example.medication.model.request.PillRequest;
 import com.example.medication.model.response.ApiResponse;
-import com.example.medication.model.response.SaveYaksokResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
-import com.example.medication.util.SprefsManager;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,8 +41,6 @@ public class DetailYaksok extends AppCompatActivity {
     private LinearLayout llDasage;
     private CheckBox cbMorning, cbLunch, cbDinner;
     private RadioGroup rgDosageTime;
-    private FrameLayout btnAddPill;
-    private Button btnRegister, btnDelete;
 
     // 선택된 약 목록 리사이클러뷰 관련
     private RecyclerView rvSelectedPills;
@@ -66,36 +52,18 @@ public class DetailYaksok extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_modify_yaksok);
+        setContentView(R.layout.activity_detail_yaksok);
 
         initViews();
         setupRecyclerView();
-        setupSearchLauncher();
         setupTimePickerLogic();
 
         originalYaksok = (Yaksok)getIntent().getSerializableExtra("YAKSOK_DATA");
 
         ivBack.setOnClickListener(v -> finish());
-        inputStartDate.setOnClickListener(v -> showDatePicker());
 
         ivMenu.setOnClickListener(view -> {
             showMenu(view, originalYaksok);
-        });
-
-        // 약 추가 버튼 클릭 시 검색 화면 이동
-        btnAddPill.setOnClickListener(v -> {
-            Intent intent = new Intent(DetailYaksok.this, MedicineSearchActivity.class);
-            searchLauncher.launch(intent);
-        });
-
-        // 약속 수정 버튼
-        btnRegister.setOnClickListener(v -> {
-            if(!validateInput()) return;
-            startModifyYaksok();
-        });
-
-        btnDelete.setOnClickListener(v -> {
-            if(originalYaksok != null) showDeleteConfirmDialog(originalYaksok);
         });
 
         if(originalYaksok != null){
@@ -114,7 +82,6 @@ public class DetailYaksok extends AppCompatActivity {
             selectedPills.clear();
             selectedPills.addAll(yaksok.getPills());
             settingAdapter.notifyDataSetChanged();
-            updateRegisterButtonState();
         }
 
         if (yaksok.isTakeMorning()) {
@@ -241,153 +208,11 @@ public class DetailYaksok extends AppCompatActivity {
         return true;
     }
 
-    private void startModifyYaksok(){
-        String startDate = inputStartDate.getText();
-        String title = inputTitle.getText();
-        int prescriptionDays = Integer.parseInt(inputPrescriptionDays.getText());
-
-        boolean takeMorning = cbMorning.isChecked();
-        boolean takeLunch = cbLunch.isChecked();
-        boolean takeDinner = cbDinner.isChecked();
-
-        // 체크되지 않은 알림 시간은 null로 전송
-        String timeMorning = takeMorning ? inputSetMorningTime.getText() : null;
-        String timeLunch = takeLunch ? inputSetLunchTime.getText() : null;
-        String timeDinner = takeDinner ? inputSetDinnerTime.getText() : null;
-
-        int selectedId = rgDosageTime.getCheckedRadioButtonId();
-        String dosageTime = "";
-        if(selectedId == R.id.rb_before) dosageTime = "식전 30분";
-        else if(selectedId == R.id.rb_after) dosageTime = "식후 30분";
-        else if(selectedId == R.id.rb_anytime) dosageTime = "직후";
-
-        CreateYakSokRequest request = new CreateYakSokRequest(
-                SprefsManager.getUserEmail(this),
-                title,
-                startDate,
-                prescriptionDays,
-                takeMorning,
-                takeLunch,
-                takeDinner,
-                dosageTime,
-                timeMorning,
-                timeLunch,
-                timeDinner,
-                selectedPills);
-
-        YaksokApi api = NetworkClient.getYaksokApi();
-
-        api.updateYaksok(originalYaksok.getId(), request).enqueue(new Callback<ApiResponse<SaveYaksokResponse>>() {
-            @Override
-            public void onResponse(@NonNull Call<ApiResponse<SaveYaksokResponse>> call, @NonNull Response<ApiResponse<SaveYaksokResponse>> response) {
-                if(response.isSuccessful() && response.body() != null){
-                    ApiResponse<SaveYaksokResponse> result = response.body();
-
-                    SaveYaksokResponse saveYaksokResponse = result.getData();
-
-                    if(result.isBusinessSuccess()){
-                        Yaksok yaksok = saveYaksokResponse.getYaksok();
-                        Long yaksokId = yaksok.getId();
-
-                        if(yaksokId != null) {
-                            yaksok.setId(yaksokId);
-
-                            SprefsManager.updateYaksok(DetailYaksok.this, yaksok);
-
-                            List<NotificationYaksok> allNotifications = saveYaksokResponse.getNotifications();
-
-                            SprefsManager.setNotifications(DetailYaksok.this, allNotifications);
-
-                            showToast("약속이 성공적으로 수정되었습니다.");
-
-                            Intent intent = new Intent(DetailYaksok.this, MainActivity.class);
-                            // 수정한 내용이 확실하게 반영된 상태로 메인 화면을 새로고침 띄우기 위한 플래그 추가
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            showToast("서버와의 통신 중에 문제가 발생하였습니다. 죄송합니다.");
-                            Log.e("ModifyYaksokError", "약속ID를 가져오는데 실패하였습니다.");
-                        }
-                    } else {
-                        showToast(result.getMessage());
-                    }
-                } else {
-                    handleErrorResponse(response);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<SaveYaksokResponse>> call, Throwable t) {
-                showToast("네트워크 연결을 확인해주세요.");
-            }
-        });
-    }
-
-    private void handleErrorResponse(Response<?> response) {
-        try {
-            if (response.errorBody() != null) {
-                String errorJson = response.errorBody().string();
-                JSONObject jsonObject = new JSONObject(errorJson);
-                // message 키가 있으면 출력, 없으면 전체 에러 내용 출력
-                String message = jsonObject.optString("message", errorJson);
-                showToast("서버 에러: " + message);
-                Log.e("서버 에러: ", message);
-            } else {
-                showToast("서버 오류: " + response.code());
-            }
-        } catch (Exception e) {
-            showToast("네트워크 오류 발생");
-        }
-    }
-    private void setupSearchLauncher() {
-        searchLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        String medicineName = result.getData().getStringExtra("SELECTED_MEDICINE_NAME");
-                        String medicineImage = result.getData().getStringExtra("SELECTED_MEDICINE_IMAGE");
-
-                        if (medicineName != null) {
-                            selectedPills.add(new PillRequest(medicineImage, medicineName));
-                            settingAdapter.notifyItemInserted(selectedPills.size() - 1);
-                            updateRegisterButtonState();
-                        }
-                    }
-                }
-        );
-    }
 
     private void setupRecyclerView() {
         settingAdapter = new AddMedicationSettingAdapter(selectedPills);
         rvSelectedPills.setLayoutManager(new LinearLayoutManager(this));
         rvSelectedPills.setAdapter(settingAdapter);
-
-        settingAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() { updateRegisterButtonState(); }
-            @Override
-            public void onItemRangeRemoved(int start, int count) { updateRegisterButtonState(); }
-        });
-    }
-
-    private void updateRegisterButtonState() {
-        if (!selectedPills.isEmpty()) {
-            btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFFEB3B));
-            btnRegister.setTextColor(0xFF000000);
-        } else {
-            btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE0E0E0));
-            btnRegister.setTextColor(0xFFFFFFFF);
-        }
-    }
-
-    private void showDatePicker() {
-        Calendar cal = Calendar.getInstance();
-        DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-            String dateStr = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month + 1, dayOfMonth);
-            inputStartDate.setText(dateStr);
-        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-        dialog.show();
     }
 
     private void showDeleteConfirmDialog(Yaksok yaksok) {
@@ -443,6 +268,7 @@ public class DetailYaksok extends AppCompatActivity {
             }
             return false;
         });
+        menu.show();
     }
 
     private void initViews() {
@@ -459,8 +285,6 @@ public class DetailYaksok extends AppCompatActivity {
         inputSetLunchTime = findViewById(R.id.input_set_lunch_time);
         inputSetDinnerTime = findViewById(R.id.input_set_dinner_time);
         rgDosageTime = findViewById(R.id.rg_dosage_time);
-        btnAddPill = findViewById(R.id.btn_add_pill);
-        btnRegister = findViewById(R.id.btn_register);
         rvSelectedPills = findViewById(R.id.rv_selected_pills);
     }
 

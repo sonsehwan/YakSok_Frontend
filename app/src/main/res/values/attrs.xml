@@ -21,5 +21,6 @@
         <!-- 표준 안드로이드 속성을 커스텀 뷰에서도 사용할 수 있도록 추가 -->
         <attr name="android:inputType"/>
         <attr name="android:imeOptions"/>
+        <attr name="android:enabled" />
     </declare-styleable>
 </resources>

@@ -46,6 +46,10 @@
             android:name=".ModifyYaksok"
             android:exported="false" />
 
+        <activity
+            android:name=".DetailYaksok"
+            android:exported="false"/>
+
         <receiver
             android:name=".NotificationActionReceiver"
             android:exported="false" />
