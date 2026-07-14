@@ -64,19 +64,14 @@ public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.Vi
         });
     }
 
-    public void removeItem(int position) {
-        items.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, items.size());
-    }
-
     @Override
     public int getItemCount() {
         return items != null ? items.size() : 0;
     }
 
     public void updateData(List<Yaksok> newItems) {
-        this.items = newItems;
+        this.items.clear();
+        this.items.addAll(newItems);
         notifyDataSetChanged();
     }
 

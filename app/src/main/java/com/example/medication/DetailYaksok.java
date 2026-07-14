@@ -222,8 +222,9 @@ public class DetailYaksok extends AppCompatActivity {
                 .setMessage("'" + yaksok.getTitle() + "' 약속을 삭제하시겠습니까?\n관련된 모든 정보(복약, 알림)가 함께 삭제됩니다.")
                 .setPositiveButton("삭제", (dialog, which) -> {
                     deleteYaksokFromServer(id);
-                    Intent intent = new Intent(DetailYaksok.this, YaksokList.class);
-                    startActivity(intent);
+                    Intent intent = new Intent();
+                    setResult(RESULT_OK, intent);
+                    finish();
                 })
                 .setNegativeButton("취소", null)
                 .show();

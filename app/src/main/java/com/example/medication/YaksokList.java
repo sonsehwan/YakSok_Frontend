@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +34,17 @@ public class YaksokList extends AppCompatActivity {
     private YaksokListAdapter adapter;
     private ImageView ivBack;
     private BottomNavigationView bottomNav;
+
+    private final ActivityResultLauncher<Intent> detailActivityLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                // 디테일 화면에서 RESULT_OK 신호를 보내며 종료했다면 (즉, 삭제가 발생했다면)
+                if (result.getResultCode() == RESULT_OK) {
+                    // 리스트를 다시 서버에서 불러오거나 갱신합니다.
+                    fetchYaksokList();
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +75,7 @@ public class YaksokList extends AppCompatActivity {
 
                 intent.putExtra("YAKSOK_DATA", yaksok);
 
-                startActivity(intent);
+                detailActivityLauncher.launch(intent);
             }
         });
         rvYaksokList.setAdapter(adapter);
