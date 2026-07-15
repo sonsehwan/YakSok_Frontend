@@ -46,7 +46,6 @@ public class DrugStoreList extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
     private ActivityResultLauncher<String[]> locationPermissionLauncher;
 
-    // 하드코딩된 내 위치 (예: 서울시청)
     private double currentLat;
     private double currentLng;
 

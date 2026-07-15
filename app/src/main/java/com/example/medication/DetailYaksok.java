@@ -1,6 +1,5 @@
 package com.example.medication;
 
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,13 +11,12 @@ import android.widget.PopupMenu;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.adapter.AddMedicationSettingAdapter;
+import com.example.medication.adapter.DetailYaksokMedicationAdapter;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.PillRequest;
 import com.example.medication.model.response.ApiResponse;
@@ -27,7 +25,6 @@ import com.example.medication.network.YaksokApi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,9 +41,8 @@ public class DetailYaksok extends AppCompatActivity {
 
     // 선택된 약 목록 리사이클러뷰 관련
     private RecyclerView rvSelectedPills;
-    private AddMedicationSettingAdapter settingAdapter;
+    private DetailYaksokMedicationAdapter settingAdapter;
     private final List<PillRequest> selectedPills = new ArrayList<>();
-    private ActivityResultLauncher<Intent> searchLauncher;
     private Yaksok originalYaksok;
 
     @Override
@@ -56,7 +52,6 @@ public class DetailYaksok extends AppCompatActivity {
 
         initViews();
         setupRecyclerView();
-        setupTimePickerLogic();
 
         originalYaksok = (Yaksok)getIntent().getSerializableExtra("YAKSOK_DATA");
 
@@ -112,105 +107,8 @@ public class DetailYaksok extends AppCompatActivity {
         }
     }
 
-    private void setupTimePickerLogic(){
-        // 아침 체크박스 로직
-        cbMorning.setOnCheckedChangeListener((button, isChecked) -> {
-            inputSetMorningTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-        });
-        inputSetMorningTime.setOnClickListener(v -> showTimePicker(inputSetMorningTime, 8, 0));
-
-        // 점심 체크박스 로직
-        cbLunch.setOnCheckedChangeListener((button, isChecked) -> {
-            inputSetLunchTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-        });
-        inputSetLunchTime.setOnClickListener(v -> showTimePicker(inputSetLunchTime, 12, 0));
-
-        // 저녁 체크박스 로직
-        cbDinner.setOnCheckedChangeListener((button, isChecked) -> {
-            inputSetDinnerTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-        });
-        inputSetDinnerTime.setOnClickListener(v -> showTimePicker(inputSetDinnerTime, 18, 0));
-    }
-
-    private void showTimePicker(InputView targetInputView, int defaultHour, int defaultMinute) {
-        int hour = defaultHour;
-        int minute = defaultMinute;
-
-        String currentTimeStr = targetInputView.getText();
-
-        // 현재 입력된 텍스트가 있으면 파싱하여 다이얼로그 초기값으로 설정
-        if (currentTimeStr != null && !currentTimeStr.isEmpty()) {
-            try {
-                String[] parts = currentTimeStr.split(" ");
-                if(parts.length == 2) {
-                    String amPm = parts[0];
-                    String[] timeParts = parts[1].split(":");
-
-                    int parsedHour = Integer.parseInt(timeParts[0]);
-                    int parsedMinute = Integer.parseInt(timeParts[1]);
-
-                    if (amPm.equals("오후") && parsedHour < 12) parsedHour += 12;
-                    else if (amPm.equals("오전") && parsedHour == 12) parsedHour = 0;
-
-                    hour = parsedHour;
-                    minute = parsedMinute;
-                }
-            } catch (Exception e) {
-                Log.e("TimePicker", "기존 시간 파싱 실패: " + e.getMessage());
-            }
-        }
-
-        TimePickerDialog dialog = new TimePickerDialog(this, (view, hourOfDay, minuteOfHour) -> {
-            String amPm = hourOfDay < 12 ? "오전" : "오후";
-            int displayHour = hourOfDay % 12;
-            if (displayHour == 0) displayHour = 12;
-
-            String timeStr = String.format(Locale.getDefault(), "%s %02d:%02d", amPm, displayHour, minuteOfHour);
-            targetInputView.setText(timeStr);
-        }, hour, minute, false);
-
-        dialog.show();
-    }
-
-    private boolean validateInput() {
-        if (!inputStartDate.isValid() || !inputTitle.isValid() || !inputPrescriptionDays.isValid()) {
-            showToast("필수 항목을 모두 입력해주세요.");
-            return false;
-        }
-
-        if(!cbMorning.isChecked() && !cbLunch.isChecked() && !cbDinner.isChecked()){
-            llDasage.setBackgroundResource(R.drawable.bg_error_border);
-            showToast("투약 횟수를 선택해주세요.");
-            return false;
-        } else {
-            llDasage.setBackgroundResource(R.drawable.bg_yellow_border);
-        }
-
-        if(rgDosageTime.getCheckedRadioButtonId() == -1){
-            rgDosageTime.setBackgroundResource(R.drawable.bg_error_border);
-            showToast("투약 시간을 선택해주세요.");
-            return false;
-        } else {
-            rgDosageTime.setBackgroundResource(R.drawable.bg_yellow_border);
-        }
-
-        if (selectedPills.isEmpty()) {
-            showToast("최소 한 개 이상의 약을 추가해주세요.");
-            return false;
-        }
-
-        for(PillRequest pill : selectedPills){
-            if(pill.getDosage() == null || pill.getDosage().isEmpty()){
-                showToast(pill.getName() +"의 투약량을 입력해주세요.");
-                return false;
-            }
-        }
-        return true;
-    }
-
-
     private void setupRecyclerView() {
-        settingAdapter = new AddMedicationSettingAdapter(selectedPills);
+        settingAdapter = new DetailYaksokMedicationAdapter(selectedPills);
         rvSelectedPills.setLayoutManager(new LinearLayoutManager(this));
         rvSelectedPills.setAdapter(settingAdapter);
     }
@@ -267,6 +165,9 @@ public class DetailYaksok extends AppCompatActivity {
             else if(id == R.id.yaksok_delete){
                 showDeleteConfirmDialog(yaksok);
                 return true;
+            }
+            else if(id == R.id.yaksok_modify){
+
             }
             return false;
         });

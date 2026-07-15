@@ -4,6 +4,9 @@
         android:id="@+id/yaksok_share"
         android:title="공유" />
     <item
+        android:id="@+id/yaksok_modify"
+        android:title="수정" />
+    <item
         android:id="@+id/yaksok_delete"
         android:title="삭제" />
 </menu>
