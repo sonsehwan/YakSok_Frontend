@@ -52,7 +52,7 @@ public class Settings extends AppCompatActivity {
         });
 
         llShare.setOnClickListener(v -> {
-            Intent intent = new Intent(Settings.this, WipActivity.class);
+            Intent intent = new Intent(Settings.this, SharingPage.class);
             startActivity(intent);
         });
 
