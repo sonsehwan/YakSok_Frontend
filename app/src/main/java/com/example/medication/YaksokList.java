@@ -3,7 +3,6 @@ package com.example.medication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -32,7 +31,6 @@ public class YaksokList extends AppCompatActivity {
 
     private RecyclerView rvYaksokList;
     private YaksokListAdapter adapter;
-    private ImageView ivBack;
     private BottomNavigationView bottomNav;
 
     private final ActivityResultLauncher<Intent> detailActivityLauncher = registerForActivityResult(
@@ -57,9 +55,6 @@ public class YaksokList extends AppCompatActivity {
     }
 
     private void initViews() {
-        // 뒤로가기 버튼 설정
-        ivBack = findViewById(R.id.iv_back);
-        ivBack.setOnClickListener(v -> finish());
 
         // 리사이클러뷰 설정
         rvYaksokList = findViewById(R.id.rv_yaksok_list);

@@ -9,22 +9,6 @@
     android:fitsSystemWindows="true"
     tools:context=".YaksokList">
 
-    <ImageView
-        android:id="@+id/iv_back"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:contentDescription="뒤로가기 버튼"
-        android:focusable="true"
-        android:padding="4dp"
-        android:src="@drawable/ic_arrow_back"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_header_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_header_title"
-        tools:ignore="TouchTargetSizeCheck" />
-
     <TextView
         android:id="@+id/tv_header_title"
         android:layout_width="wrap_content"

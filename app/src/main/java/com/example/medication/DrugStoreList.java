@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -37,7 +36,6 @@ public class DrugStoreList extends AppCompatActivity {
 
     private RecyclerView rvDrugstoreList;
     private DrugStoreAdapter adapter;
-    private ImageView ivBack;
     private BottomNavigationView bottomNavigationView;
     private LoadingDialog loadingDialog;
 
@@ -56,7 +54,6 @@ public class DrugStoreList extends AppCompatActivity {
         setContentView(R.layout.drug_store_list);
 
         initViews();
-        setupListeners();
         loadingDialog = new LoadingDialog(this);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -147,7 +144,6 @@ public class DrugStoreList extends AppCompatActivity {
     }
 
     private void initViews() {
-        ivBack = findViewById(R.id.iv_back);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         rvDrugstoreList = findViewById(R.id.rv_drugstore_list);
         rvDrugstoreList.setLayoutManager(new LinearLayoutManager(this));
@@ -183,10 +179,6 @@ public class DrugStoreList extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void setupListeners() {
-        ivBack.setOnClickListener(v -> finish());
     }
 
     private void fetchDrugStoresFromServer(Boolean isInitialLoad) {
