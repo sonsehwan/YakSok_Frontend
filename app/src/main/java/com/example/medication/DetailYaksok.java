@@ -11,6 +11,8 @@ import android.widget.PopupMenu;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -45,6 +47,8 @@ public class DetailYaksok extends AppCompatActivity {
     private final List<PillRequest> selectedPills = new ArrayList<>();
     private Yaksok originalYaksok;
 
+    private ActivityResultLauncher<Intent> modifyLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +56,21 @@ public class DetailYaksok extends AppCompatActivity {
 
         initViews();
         setupRecyclerView();
+
+        modifyLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Yaksok updatedYaksok = (Yaksok) result.getData().getSerializableExtra("UPDATED_YAKSOK");
+                        if (updatedYaksok != null) {
+                            originalYaksok = updatedYaksok;
+                            populateViews(originalYaksok); // 화면 내용 갱신
+                            disableAllInteractions(); // 다시 읽기 전용 모드로 잠금
+                            setResult(RESULT_OK); // 홈 화면의 리스트도 갱신될 수 있도록 RESULT_OK 설정
+                        }
+                    }
+                }
+        );
 
         originalYaksok = (Yaksok)getIntent().getSerializableExtra("YAKSOK_DATA");
 
@@ -63,6 +82,7 @@ public class DetailYaksok extends AppCompatActivity {
 
         if(originalYaksok != null){
             populateViews(originalYaksok);
+            disableAllInteractions();
         }else{
             showToast("약속 정보를 불러올 수 없습니다.");
         }
@@ -104,6 +124,23 @@ public class DetailYaksok extends AppCompatActivity {
             } else { // 직후
                 rgDosageTime.check(R.id.rb_anytime);
             }
+        }
+    }
+
+    private void disableAllInteractions() {
+        cbMorning.setEnabled(false);
+        cbLunch.setEnabled(false);
+        cbDinner.setEnabled(false);
+
+        inputSetMorningTime.setClickable(false);
+        inputSetMorningTime.setFocusable(false);
+        inputSetLunchTime.setClickable(false);
+        inputSetLunchTime.setFocusable(false);
+        inputSetDinnerTime.setClickable(false);
+        inputSetDinnerTime.setFocusable(false);
+
+        for (int i = 0; i < rgDosageTime.getChildCount(); i++) {
+            rgDosageTime.getChildAt(i).setEnabled(false);
         }
     }
 
@@ -162,12 +199,15 @@ public class DetailYaksok extends AppCompatActivity {
                 showToast("구현 예정입니다.");
                 return true;
             }
+            else if(id == R.id.yaksok_modify) {
+                Intent intent = new Intent(DetailYaksok.this, ModifyYaksok.class);
+                intent.putExtra("YAKSOK_DATA", yaksok);
+                modifyLauncher.launch(intent);
+                return true;
+            }
             else if(id == R.id.yaksok_delete){
                 showDeleteConfirmDialog(yaksok);
                 return true;
-            }
-            else if(id == R.id.yaksok_modify){
-
             }
             return false;
         });
