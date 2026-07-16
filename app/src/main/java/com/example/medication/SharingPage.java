@@ -33,7 +33,7 @@ public class SharingPage extends AppCompatActivity {
         });
 
         llFriend.setOnClickListener(v -> {
-            Intent intent = new Intent(SharingPage.this, WipActivity.class);
+            Intent intent = new Intent(SharingPage.this, FriendList.class);
             startActivity(intent);
         });
 

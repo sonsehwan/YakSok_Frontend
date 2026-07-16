@@ -118,6 +118,10 @@
         <activity
             android:name=".SharingPage"
             android:exported="false" />
+
+        <activity
+            android:name=".FriendList"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -3,9 +3,10 @@ package com.example.medication.model.response;
 import com.example.medication.model.DrugStore;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class UserResponse {
+public class UserResponse implements Serializable {
 
     @SerializedName("email")
     private String email;
