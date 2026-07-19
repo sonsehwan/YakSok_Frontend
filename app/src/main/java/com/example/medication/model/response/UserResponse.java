@@ -8,6 +8,8 @@ import java.time.LocalDate;
 
 public class UserResponse implements Serializable {
 
+    @SerializedName("id")
+    private Long id;
     @SerializedName("email")
     private String email;
     @SerializedName("password")
@@ -21,6 +23,9 @@ public class UserResponse implements Serializable {
     private String role;
     @SerializedName("myDrugStore")
     private DrugStore myDrugStore;
+
+    public Long getId(){ return id;}
+    public void setId(Long id){ this.id = id; }
 
     public String getEmail() {
         return email;
