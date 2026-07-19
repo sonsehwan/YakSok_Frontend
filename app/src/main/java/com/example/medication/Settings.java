@@ -99,10 +99,10 @@ public class Settings extends AppCompatActivity {
                     // 1. 세션 데이터(Sprefs) 삭제
                     SprefsManager.clearUserInfo(Settings.this);
 
+                    finishAffinity();
                     Intent intent = new Intent(Settings.this, Login.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
-
                     finish();
                 })
                 .setNegativeButton("취소", null)
