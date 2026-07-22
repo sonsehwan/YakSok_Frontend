@@ -1,14 +1,19 @@
 package com.example.medication;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -19,11 +24,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.adapter.DetailYaksokMedicationAdapter;
+import com.example.medication.adapter.FriendListAdapter;
 import com.example.medication.model.Yaksok;
+import com.example.medication.model.request.FriendChatRoomRequest;
 import com.example.medication.model.request.PillRequest;
 import com.example.medication.model.response.ApiResponse;
+import com.example.medication.model.response.ChatRoomResponse;
+import com.example.medication.model.response.FriendListDto;
+import com.example.medication.model.response.FriendResponseDto;
+import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
+import com.example.medication.util.SprefsManager;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -187,6 +200,121 @@ public class DetailYaksok extends AppCompatActivity {
         });
     }
 
+    // 공유할 친구를 고르는 다이얼로그
+    private void showFriendPickerDialog(Yaksok yaksok) {
+        UserResponse me = SprefsManager.getUser(this);
+        if (me == null || me.getId() == null) {
+            showToast("로그인 정보를 불러올 수 없습니다.");
+            return;
+        }
+
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_select_friend);
+
+        if (dialog.getWindow() != null) {
+            // 기본 창 배경을 없애야 둥근 모서리 밖으로 검은 모서리가 보이지 않는다
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(
+                    (int) (getResources().getDisplayMetrics().widthPixels * 0.88),
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        RecyclerView rvFriend = dialog.findViewById(R.id.rv_select_friend);
+        TextView tvEmpty = dialog.findViewById(R.id.tv_empty);
+
+        FriendListAdapter adapter = new FriendListAdapter(new ArrayList<>(), (friend, position) -> {
+            dialog.dismiss();
+            openChatRoomAndShare(friend, yaksok);
+        });
+
+        rvFriend.setLayoutManager(new LinearLayoutManager(this));
+        rvFriend.setAdapter(adapter);
+
+        NetworkClient.getFriendApi().getFriendList(me.getId())
+                .enqueue(new Callback<ApiResponse<FriendListDto>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<FriendListDto>> call,
+                                           Response<ApiResponse<FriendListDto>> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().getData() != null) {
+                            List<FriendResponseDto> friends = response.body().getData().getFriends();
+                            adapter.updateData(friends);
+                            tvEmpty.setVisibility(
+                                    (friends == null || friends.isEmpty()) ? View.VISIBLE : View.GONE);
+                        } else {
+                            showToast("친구 목록을 불러오지 못했습니다.");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<FriendListDto>> call, Throwable t) {
+                        showToast("네트워크 오류가 발생했습니다.");
+                    }
+                });
+
+        dialog.show();
+    }
+
+    // 친구와의 채팅방을 열고, 공유 메시지를 실어 보낸다
+    private void openChatRoomAndShare(FriendResponseDto friend, Yaksok yaksok) {
+        if (yaksok.getId() == null) {
+            showToast("약속 정보를 불러올 수 없습니다.");
+            return;
+        }
+
+        String myEmail = SprefsManager.getUserEmail(this);
+        FriendChatRoomRequest request = new FriendChatRoomRequest(myEmail, friend.getFriendId());
+
+        NetworkClient.getChatApi().enterFriendChatRoom(request)
+                .enqueue(new Callback<ApiResponse<ChatRoomResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<ChatRoomResponse>> call,
+                                           Response<ApiResponse<ChatRoomResponse>> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().getData() != null) {
+
+                            Intent chatIntent = new Intent(DetailYaksok.this, ChattingRoom.class);
+                            chatIntent.putExtra("roomId", response.body().getData().getRoomId());
+                            chatIntent.putExtra("roomName", friend.getNickname());
+                            chatIntent.putExtra("SHARE_YAKSOK_ID", yaksok.getId().longValue());
+                            chatIntent.putExtra("SHARE_MESSAGE", buildShareMessage(yaksok));
+                            startActivity(chatIntent);
+
+                        } else {
+                            showToast(parseErrorMessage(response, "채팅방 연결에 실패했습니다."));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<ChatRoomResponse>> call, Throwable t) {
+                        showToast("네트워크 오류가 발생했습니다.");
+                    }
+                });
+    }
+
+    private String buildShareMessage(Yaksok yaksok) {
+        String nickname = SprefsManager.getUserNickName(this);
+        return nickname + "님이 약속을 공유했습니다.\n" + yaksok.getTitle();
+    }
+
+    // 응답 원문은 로그에만 남기고, 사용자에게는 message만 보여준다.
+    private String parseErrorMessage(Response<?> response, String defaultMessage) {
+        try {
+            String errorBody = response.errorBody() != null ? response.errorBody().string() : null;
+            Log.e("DetailYaksok", "서버 에러 상세: " + errorBody);
+
+            if (errorBody != null) {
+                ApiResponse<?> error = new Gson().fromJson(errorBody, ApiResponse.class);
+                if (error != null && error.getMessage() != null) {
+                    return error.getMessage();
+                }
+            }
+        } catch (Exception e) {
+            Log.e("DetailYaksok", "에러 응답 파싱 실패", e);
+        }
+        return defaultMessage;
+    }
+
     private void showMenu(View view, Yaksok yaksok){
         PopupMenu menu = new PopupMenu(this, view);
 
@@ -196,7 +324,7 @@ public class DetailYaksok extends AppCompatActivity {
             int id = item.getItemId();
 
             if(id == R.id.yaksok_share){
-                showToast("구현 예정입니다.");
+                showFriendPickerDialog(yaksok);
                 return true;
             }
             else if(id == R.id.yaksok_modify) {

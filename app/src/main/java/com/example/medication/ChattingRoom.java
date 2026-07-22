@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +22,7 @@ import com.example.medication.adapter.ChattingRoomAdapter;
 import com.example.medication.model.ChatMessage;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
+import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -39,11 +39,14 @@ public class ChattingRoom extends AppCompatActivity {
     private static final String TAG = "ChattingRoom";
 
     // 백엔드 서버의 실제 IP 주소와 포트를 입력
-    private static final String WEBSOCKET_URL = "ws://54.116.63.204:8081/ws-stomp";
+    private static final String WEBSOCKET_URL = "ws://13.209.186.24:8080/ws-stomp";
 
     private Long roomId;
     private String roomName;
     private String myEmail;
+
+    private Long pendingShareYaksokId = null;
+    private String pendingShareMessage = null;
 
     private StompClient mStompClient;
     private Disposable mTopicDisposable;
@@ -53,7 +56,7 @@ public class ChattingRoom extends AppCompatActivity {
     private ChattingRoomAdapter chattingRoomAdapter;
     private EditText etMessage;
     private TextView tvRoomName;
-    private Button btnSend;
+    private MaterialButton btnSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +90,13 @@ public class ChattingRoom extends AppCompatActivity {
         roomId = intent.getLongExtra("roomId", -1);
         roomName = intent.getStringExtra("roomName");
 
-        myEmail = getUserEmail(this);
+        long shareYaksokId = intent.getLongExtra("SHARE_YAKSOK_ID", -1);
+        if (shareYaksokId != -1) {
+            pendingShareYaksokId = shareYaksokId;
+            pendingShareMessage = intent.getStringExtra("SHARE_MESSAGE");
+        }
 
+        myEmail = getUserEmail(this);
         if (roomId == -1) {
             Toast.makeText(this, "잘못된 접근입니다.", Toast.LENGTH_SHORT).show();
             finish();
@@ -194,6 +202,27 @@ public class ChattingRoom extends AppCompatActivity {
                 }, throwable -> {
                     Log.e(TAG, "구독 중 에러 발생", throwable);
                 });
+
+        // 구독이 끝난 뒤에 보내야 내가 보낸 메시지도 화면에 표시된다
+        sendPendingShareMessage();
+    }
+
+    @SuppressLint("CheckResult")
+    private void sendPendingShareMessage() {
+        if (pendingShareYaksokId == null) return;
+
+        ChatMessage chatMessage = new ChatMessage(
+                String.valueOf(roomId), myEmail,
+                ChatMessage.MessageType.SHARE_YAKSOK,
+                pendingShareMessage, pendingShareYaksokId);
+
+        // 재연결 시 중복 전송되지 않도록 보내기 전에 비운다
+        pendingShareYaksokId = null;
+        pendingShareMessage = null;
+
+        mStompClient.send("/pub/chat/message", gson.toJson(chatMessage))
+                .subscribe(() -> Log.d(TAG, "약속 공유 메시지 전송 성공"),
+                        throwable -> Log.e(TAG, "약속 공유 메시지 전송 실패", throwable));
     }
 
     @SuppressLint("CheckResult")
