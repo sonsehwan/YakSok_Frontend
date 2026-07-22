@@ -97,7 +97,9 @@ public class ChattingRoom extends AppCompatActivity {
 
         tvRoomName.setText(roomName != null ? roomName : "상담방");
 
-        chattingRoomAdapter = new ChattingRoomAdapter(myEmail);
+        chattingRoomAdapter = new ChattingRoomAdapter(myEmail, yaksokId -> {
+            Toast.makeText(this, "약속 " + yaksokId + " 열기 (미구현)", Toast.LENGTH_SHORT).show();
+        });
 
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
         rvMessages.setAdapter(chattingRoomAdapter);

@@ -3,7 +3,6 @@ package com.example.medication.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,18 +10,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.R;
 import com.example.medication.model.ChatMessage;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapter.ChatViewHolder> {
+public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<ChatMessage> messageList = new ArrayList<>();
-    private String myEmail;
+    // 보낸 사람(나/상대) x 메시지 종류(텍스트/약속 공유) = 4가지
+    private static final int VIEW_TYPE_MY_TEXT = 1;
+    private static final int VIEW_TYPE_OTHER_TEXT = 2;
+    private static final int VIEW_TYPE_MY_SHARE = 3;
+    private static final int VIEW_TYPE_OTHER_SHARE = 4;
+
+    public interface OnYaksokClickListener {
+        void onYaksokClick(Long yaksokId);
+    }
+
+    private final List<ChatMessage> messageList = new ArrayList<>();
+    private final String myEmail;
+    private final OnYaksokClickListener listener;
 
     // 내 이메일을 전달받아 내가 보낸 메시지인지 판별합니다.
-    public ChattingRoomAdapter(String myEmail) {
+    public ChattingRoomAdapter(String myEmail, OnYaksokClickListener listener) {
         this.myEmail = myEmail;
+        this.listener = listener;
     }
 
     public void addMessage(ChatMessage msg) {
@@ -30,36 +42,74 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapte
         notifyItemInserted(messageList.size() - 1);
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        ChatMessage msg = messageList.get(position);
+
+        boolean isMine = msg.getSender() != null && msg.getSender().equals(myEmail);
+        boolean isShare = msg.getType() == ChatMessage.MessageType.SHARE_YAKSOK;
+
+        if (isMine) {
+            return isShare ? VIEW_TYPE_MY_SHARE : VIEW_TYPE_MY_TEXT;
+        }
+        return isShare ? VIEW_TYPE_OTHER_SHARE : VIEW_TYPE_OTHER_TEXT;
+    }
+
     @NonNull
     @Override
-    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, parent, false);
-        return new ChatViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        switch (viewType) {
+            case VIEW_TYPE_MY_TEXT:
+                return new MyTextViewHolder(
+                        inflater.inflate(R.layout.item_my_text_message, parent, false));
+            case VIEW_TYPE_OTHER_TEXT:
+                return new OtherTextViewHolder(
+                        inflater.inflate(R.layout.item_other_text_message, parent, false));
+            case VIEW_TYPE_MY_SHARE:
+                return new MyShareViewHolder(
+                        inflater.inflate(R.layout.item_my_yaksok_share_message, parent, false));
+            default:
+                return new OtherShareViewHolder(
+                        inflater.inflate(R.layout.item_other_yaksok_share_message, parent, false));
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ChatMessage msg = messageList.get(position);
 
-        String timeString;
+        if (holder instanceof MyTextViewHolder) {
+            MyTextViewHolder h = (MyTextViewHolder) holder;
+            h.tvName.setText(msg.getSender());
+            h.tvMessage.setText(msg.getMessage());
 
-        if (msg.getSender().equals(myEmail)) {
-            // [내가 보낸 메시지일 경우]
-            holder.llMyChat.setVisibility(View.VISIBLE);
-            holder.llOtherChat.setVisibility(View.GONE);
+        } else if (holder instanceof OtherTextViewHolder) {
+            OtherTextViewHolder h = (OtherTextViewHolder) holder;
+            h.tvName.setText(msg.getSender());
+            h.tvMessage.setText(msg.getMessage());
 
-            holder.tvMyName.setText(msg.getSender());
-            holder.tvMyMessage.setText(msg.getMessage());
-            //holder.tvMyTime.setText(timeString);
-        } else {
-            // [상대방이 보낸 메시지일 경우]
-            holder.llOtherChat.setVisibility(View.VISIBLE);
-            holder.llMyChat.setVisibility(View.GONE);
+        } else if (holder instanceof MyShareViewHolder) {
+            MyShareViewHolder h = (MyShareViewHolder) holder;
+            h.tvName.setText(msg.getSender());
+            h.tvYaksokName.setText(msg.getMessage());
+            bindYaksokButton(h.btnYaksok, msg);
 
-            holder.tvOtherName.setText(msg.getSender()); // 보낸 사람 이메일 또는 이름
-            holder.tvOtherMessage.setText(msg.getMessage());
-            //holder.tvOtherTime.setText(timeString);
+        } else if (holder instanceof OtherShareViewHolder) {
+            OtherShareViewHolder h = (OtherShareViewHolder) holder;
+            h.tvName.setText(msg.getSender());
+            h.tvYaksokName.setText(msg.getMessage());
+            bindYaksokButton(h.btnYaksok, msg);
         }
+    }
+
+    private void bindYaksokButton(MaterialButton button, ChatMessage msg) {
+        button.setOnClickListener(v -> {
+            if (listener != null && msg.getYaksokId() != null) {
+                listener.onYaksokClick(msg.getYaksokId());
+            }
+        });
     }
 
     @Override
@@ -67,23 +117,51 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<ChattingRoomAdapte
         return messageList.size();
     }
 
-    static class ChatViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout llOtherChat, llMyChat;
-        TextView tvMyName, tvOtherName, tvOtherMessage, tvOtherTime;
-        TextView tvMyMessage, tvMyTime;
+    static class MyTextViewHolder extends RecyclerView.ViewHolder {
+        TextView tvName, tvMessage, tvTime;
 
-        public ChatViewHolder(@NonNull View itemView) {
+        MyTextViewHolder(@NonNull View itemView) {
             super(itemView);
-            llOtherChat = itemView.findViewById(R.id.ll_other_chat);
-            llMyChat = itemView.findViewById(R.id.ll_my_chat);
+            tvName = itemView.findViewById(R.id.tv_my_name);
+            tvMessage = itemView.findViewById(R.id.tv_my_message);
+            tvTime = itemView.findViewById(R.id.tv_my_time);
+        }
+    }
 
-            tvOtherName = itemView.findViewById(R.id.tv_other_name);
-            tvOtherMessage = itemView.findViewById(R.id.tv_other_message);
-            tvOtherTime = itemView.findViewById(R.id.tv_other_time);
+    static class OtherTextViewHolder extends RecyclerView.ViewHolder {
+        TextView tvName, tvMessage, tvTime;
 
-            tvMyName = itemView.findViewById(R.id.tv_my_name);
-            tvMyMessage = itemView.findViewById(R.id.tv_my_message);
-            tvMyTime = itemView.findViewById(R.id.tv_my_time);
+        OtherTextViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvName = itemView.findViewById(R.id.tv_other_name);
+            tvMessage = itemView.findViewById(R.id.tv_other_message);
+            tvTime = itemView.findViewById(R.id.tv_other_time);
+        }
+    }
+
+    static class MyShareViewHolder extends RecyclerView.ViewHolder {
+        TextView tvName, tvYaksokName, tvTime;
+        MaterialButton btnYaksok;
+
+        MyShareViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvName = itemView.findViewById(R.id.tv_my_name);
+            tvYaksokName = itemView.findViewById(R.id.tv_yaksok_name);
+            tvTime = itemView.findViewById(R.id.tv_my_time);
+            btnYaksok = itemView.findViewById(R.id.btn_other_yaksok);
+        }
+    }
+
+    static class OtherShareViewHolder extends RecyclerView.ViewHolder {
+        TextView tvName, tvYaksokName, tvTime;
+        MaterialButton btnYaksok;
+
+        OtherShareViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvName = itemView.findViewById(R.id.tv_other_name);
+            tvYaksokName = itemView.findViewById(R.id.tv_yaksok_name);
+            tvTime = itemView.findViewById(R.id.tv_other_time);
+            btnYaksok = itemView.findViewById(R.id.btn_other_yaksok);
         }
     }
 }
