@@ -19,6 +19,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.ChatRoomResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
+import com.google.gson.Gson;
 import com.kakao.vectormap.KakaoMap;
 import com.kakao.vectormap.KakaoMapReadyCallback;
 import com.kakao.vectormap.KakaoMapSdk;
@@ -65,11 +66,16 @@ public class DrugStoreDetail extends AppCompatActivity {
             UserResponse currentUser = getUser(this);
             String userRole = currentUser.getRole();
             String userDrugStoreHpid = null;
+
             // 로그인 회원이 약사일 경우
             if(Objects.equals(userRole, "DRUGSTORE")){
-                userDrugStoreHpid = currentUser.getMyDrugStore().getHpid();
-                Log.d("userDrugStoreHpid", userDrugStoreHpid);
-                Log.d("drugStoreHpid", drugStore.getHpid());
+                DrugStore myStore = currentUser.getMyDrugStore();
+                // 약국 회원이어도 아직 약국을 등록하지 않았으면 null이다.
+                if (myStore != null) {
+                    userDrugStoreHpid = myStore.getHpid();
+                    Log.d("userDrugStoreHpid", userDrugStoreHpid);
+                    Log.d("drugStoreHpid", drugStore.getHpid());
+                }
             }
             String userEmail = getUserEmail(this);
             String hpid = drugStore.getHpid();
@@ -102,14 +108,22 @@ public class DrugStoreDetail extends AppCompatActivity {
                         startActivity(chatIntent);
 
                     } else {
+                        // 응답 원문은 로그에만 남기고, 사용자에게는 message만 보여준다.
+                        String errorMessage = "채팅방 연결에 실패했습니다.";
                         try {
-                            String errorBody = response.errorBody() != null ? response.errorBody().string() : "에러 내용 없음";
+                            String errorBody = response.errorBody() != null ? response.errorBody().string() : null;
                             Log.e("ChatApiError", "서버 에러 상세: " + errorBody);
-                            Toast.makeText(DrugStoreDetail.this, "실패 원인: " + errorBody, Toast.LENGTH_LONG).show();
-                            Log.e("ChatApiError", "서버 에러 상세: " + errorBody);
+
+                            if (errorBody != null) {
+                                ApiResponse<?> error = new Gson().fromJson(errorBody, ApiResponse.class);
+                                if (error != null && error.getMessage() != null) {
+                                    errorMessage = error.getMessage();
+                                }
+                            }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Log.e("ChatApiError", "에러 응답 파싱 실패", e);
                         }
+                        Toast.makeText(DrugStoreDetail.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 }
 
