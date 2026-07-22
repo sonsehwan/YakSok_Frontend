@@ -22,6 +22,7 @@ import com.example.medication.util.SprefsManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,6 +46,14 @@ public class FindDrugStore extends AppCompatActivity {
         });
 
         binding.btnFindDrugstore.setOnClickListener(v -> {
+            UserResponse currentUser = getUser(this);
+
+            // 약국 회원만 약국을 등록할 수 있다.
+            if (currentUser == null || !Objects.equals(currentUser.getRole(), "DRUGSTORE")) {
+                showToast("유저회원은 약국 등록을 할 수 없습니다.");
+                return;
+            }
+
             String firstAddress = binding.etFirstAddress.getText().toString().trim();
             String secondAddress = binding.etSecondAddress.getText().toString().trim();
             String drugstoreName = binding.etDrugstoreName.getText().toString().trim();
