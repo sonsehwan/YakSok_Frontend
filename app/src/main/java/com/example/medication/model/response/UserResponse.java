@@ -4,7 +4,6 @@ import com.example.medication.model.DrugStore;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 
 public class UserResponse implements Serializable {
 
@@ -17,7 +16,7 @@ public class UserResponse implements Serializable {
     @SerializedName("nickname")
     private String nickname;
     private String gender;
-    private LocalDate birthdate;
+    private String birthdate;
     private Boolean penaltyEnable = false;
     private Boolean isLocked = false;
     private String role;
@@ -43,7 +42,7 @@ public class UserResponse implements Serializable {
         return gender;
     }
 
-    public LocalDate getBirthdate() {
+    public String getBirthdate() {
         return birthdate;
     }
     public Boolean getPenaltyEnable() {
