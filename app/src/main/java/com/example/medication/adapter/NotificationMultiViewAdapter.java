@@ -119,7 +119,7 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
             h.cbDone.setOnClickListener(v -> {
                 h.cbDone.setChecked(data.isTaken());
 
-                int currentPos = holder.getAdapterPosition();
+                int currentPos = holder.getBindingAdapterPosition();
                 if (currentPos != RecyclerView.NO_POSITION) {
                     showConfirmDialog(h.itemView.getContext(), currentPos, noti, h);
                 }

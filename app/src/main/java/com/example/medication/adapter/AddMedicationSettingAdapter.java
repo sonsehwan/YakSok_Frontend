@@ -66,7 +66,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
         holder.etDosage.addTextChangedListener(holder.dosageWatcher);
 
         holder.btnFreqPlus.setOnClickListener(v -> {
-            int currentPos = holder.getAdapterPosition();
+            int currentPos = holder.getBindingAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION) {
                 item.setDailyFrequency(item.getDailyFrequency() + 1);
                 notifyItemChanged(currentPos);
@@ -74,7 +74,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
         });
 
         holder.btnFreqMinus.setOnClickListener(v -> {
-            int currentPos = holder.getAdapterPosition();
+            int currentPos = holder.getBindingAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION && item.getDailyFrequency() > 1) {
                 item.setDailyFrequency(item.getDailyFrequency() - 1);
                 notifyItemChanged(currentPos);
@@ -82,7 +82,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
         });
 
         holder.btnRemove.setOnClickListener(v -> {
-            int currentPos = holder.getAdapterPosition();
+            int currentPos = holder.getBindingAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION) {
                 items.remove(currentPos);
                 notifyItemRemoved(currentPos);
