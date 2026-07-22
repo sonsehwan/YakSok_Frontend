@@ -12,8 +12,11 @@ import com.example.medication.R;
 import com.example.medication.model.ChatMessage;
 import com.google.android.material.button.MaterialButton;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -82,25 +85,40 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (holder instanceof MyTextViewHolder) {
             MyTextViewHolder h = (MyTextViewHolder) holder;
-            h.tvName.setText(msg.getSender());
+            h.tvName.setText(msg.getSenderNickname());
             h.tvMessage.setText(msg.getMessage());
+            h.tvTime.setText(formatTime(msg.getCreatedAt()));
 
         } else if (holder instanceof OtherTextViewHolder) {
             OtherTextViewHolder h = (OtherTextViewHolder) holder;
-            h.tvName.setText(msg.getSender());
+            h.tvName.setText(msg.getSenderNickname());
             h.tvMessage.setText(msg.getMessage());
+            h.tvTime.setText(formatTime(msg.getCreatedAt()));
 
         } else if (holder instanceof MyShareViewHolder) {
             MyShareViewHolder h = (MyShareViewHolder) holder;
-            h.tvName.setText(msg.getSender());
+            h.tvName.setText(msg.getSenderNickname());
             h.tvYaksokName.setText(msg.getMessage());
+            h.tvTime.setText(formatTime(msg.getCreatedAt()));
             bindYaksokButton(h.btnYaksok, msg);
 
         } else if (holder instanceof OtherShareViewHolder) {
             OtherShareViewHolder h = (OtherShareViewHolder) holder;
-            h.tvName.setText(msg.getSender());
+            h.tvName.setText(msg.getSenderNickname());
             h.tvYaksokName.setText(msg.getMessage());
+            h.tvTime.setText(formatTime(msg.getCreatedAt()));
             bindYaksokButton(h.btnYaksok, msg);
+        }
+    }
+
+    // 서버가 준 ISO-8601 문자열을 "오후 7:10" 형태로 바꾼다
+    private String formatTime(String createdAt) {
+        if (createdAt == null || createdAt.isEmpty()) return "";
+        try {
+            LocalDateTime time = LocalDateTime.parse(createdAt);
+            return time.format(DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN));
+        } catch (Exception e) {
+            return "";
         }
     }
 
