@@ -22,6 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".AddressSearch"
             android:exported="false" />
@@ -45,10 +46,9 @@
         <activity
             android:name=".ModifyYaksok"
             android:exported="false" />
-
         <activity
             android:name=".DetailYaksok"
-            android:exported="false"/>
+            android:exported="false" />
 
         <receiver
             android:name=".NotificationActionReceiver"
@@ -86,12 +86,9 @@
         <activity
             android:name=".CreateDirectSchedule"
             android:exported="false" />
-
         <activity
             android:name=".FindDrugStore"
-            android:exported="false" />
-
-        <!-- 로그인 -->
+            android:exported="false" /> <!-- 로그인 -->
         <activity
             android:name=".Login"
             android:exported="true">
@@ -100,25 +97,19 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- 회원가입 -->
+        </activity> <!-- 회원가입 -->
         <activity
             android:name=".SignUp_Normal"
             android:exported="true" />
         <activity
             android:name=".SignUp_DrugStore"
-            android:exported="true" />
-
-        <!-- 메인화면 -->
+            android:exported="true" /> <!-- 메인화면 -->
         <activity
             android:name=".MainActivity"
             android:exported="true" />
-
         <activity
             android:name=".SharingPage"
             android:exported="false" />
-
         <activity
             android:name=".FriendList"
             android:exported="false" />
