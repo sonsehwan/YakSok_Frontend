@@ -2,6 +2,7 @@ package com.example.medication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,8 @@ public class FriendList extends AppCompatActivity {
     private RecyclerView rvYaksokList;
     private FriendListAdapter adapter;
 
+    private ImageView btnBack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,12 +28,11 @@ public class FriendList extends AppCompatActivity {
         setContentView(R.layout.activity_friend_list);
 
         initViews();
+        setRecyclerView();
 //        fetchFriendList();
     }
 
-    private void initViews() {
-
-        // 리사이클러뷰 설정
+    private void setRecyclerView() {
         rvYaksokList = findViewById(R.id.rv_yaksok_list);
         rvYaksokList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -43,6 +45,12 @@ public class FriendList extends AppCompatActivity {
             }
         });
         rvYaksokList.setAdapter(adapter);
+    }
+
+    private void initViews() {
+        btnBack = findViewById(R.id.iv_back);
+    }
+
 
         // 약속 리스트 데이터 불러오기
 //    private void fetchFriendList() {
@@ -70,5 +78,4 @@ public class FriendList extends AppCompatActivity {
 //            }
 //        });
 //    }
-    }
 }
