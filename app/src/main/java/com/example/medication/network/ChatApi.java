@@ -2,6 +2,7 @@ package com.example.medication.network;
 
 import com.example.medication.model.ChatMessage;
 import com.example.medication.model.request.ChatRoomRequest;
+import com.example.medication.model.request.FriendChatRoomRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.ChatRoomResponse;
 
@@ -17,6 +18,9 @@ public interface ChatApi {
 
     @POST("/api/chat/room")
     Call<ApiResponse<ChatRoomResponse>> enterChatRoom(@Body ChatRoomRequest request);
+
+    @POST("/api/chat/room/friend")
+    Call<ApiResponse<ChatRoomResponse>> enterFriendChatRoom(@Body FriendChatRoomRequest request);
 
     @GET("/api/chat/room/{roomId}/messages")
     Call<ApiResponse<List<ChatMessage>>> getPreviousMessages(@Path("roomId") Long roomId);
