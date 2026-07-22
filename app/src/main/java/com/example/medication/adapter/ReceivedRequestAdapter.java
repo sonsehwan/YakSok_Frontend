@@ -3,26 +3,27 @@ package com.example.medication.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.R;
-import com.example.medication.model.response.FriendResponseDto;
+import com.example.medication.model.response.ReceivedFriendRequestDto;
 
 import java.util.List;
 
-public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.ViewHolder> {
+public class ReceivedRequestAdapter extends RecyclerView.Adapter<ReceivedRequestAdapter.ViewHolder> {
 
-    private List<FriendResponseDto> items;
-    private OnItemClickListener listener;
+    private final List<ReceivedFriendRequestDto> items;
+    private final OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(FriendResponseDto friend, int position);
+        void onAnswer(ReceivedFriendRequestDto request, boolean accept);
     }
 
-    public FriendListAdapter(List<FriendResponseDto> items, OnItemClickListener listener) {
+    public ReceivedRequestAdapter(List<ReceivedFriendRequestDto> items, OnItemClickListener listener) {
         this.items = items;
         this.listener = listener;
     }
@@ -30,24 +31,21 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_received_request, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        FriendResponseDto item = items.get(position);
+        ReceivedFriendRequestDto item = items.get(position);
 
-        holder.tvFriendName.setText(item.getNickname());
-        holder.tvFriendEmail.setText(item.getEmail());
+        holder.tvNickname.setText(item.getNickname());
+        holder.tvEmail.setText(item.getEmail());
         holder.tvAvatar.setText(initialOf(item.getNickname()));
 
-        holder.itemView.setOnClickListener(v -> {
-            int pos = holder.getBindingAdapterPosition();
-            if (listener != null && pos != RecyclerView.NO_POSITION) {
-                listener.onItemClick(item, pos);
-            }
-        });
+        holder.btnAccept.setOnClickListener(v -> listener.onAnswer(item, true));
+        holder.btnReject.setOnClickListener(v -> listener.onAnswer(item, false));
     }
 
     // 닉네임 첫 글자를 아바타에 표시
@@ -61,7 +59,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         return items != null ? items.size() : 0;
     }
 
-    public void updateData(List<FriendResponseDto> newItems) {
+    public void updateData(List<ReceivedFriendRequestDto> newItems) {
         this.items.clear();
         if (newItems != null) {
             this.items.addAll(newItems);
@@ -70,13 +68,16 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvFriendName, tvFriendEmail, tvAvatar;
+        TextView tvNickname, tvEmail, tvAvatar;
+        Button btnAccept, btnReject;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvFriendName = itemView.findViewById(R.id.tv_time_friend_name);
-            tvFriendEmail = itemView.findViewById(R.id.tv_friend_email);
+            tvNickname = itemView.findViewById(R.id.tv_nickname);
+            tvEmail = itemView.findViewById(R.id.tv_email);
             tvAvatar = itemView.findViewById(R.id.tv_avatar);
+            btnAccept = itemView.findViewById(R.id.btn_accept);
+            btnReject = itemView.findViewById(R.id.btn_reject);
         }
     }
 }
