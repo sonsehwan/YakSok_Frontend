@@ -21,6 +21,7 @@ import com.example.medication.model.DrugStore;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.DrugStoreApi;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.util.InsetsUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
@@ -52,6 +53,7 @@ public class DrugStoreList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.drug_store_list);
+        InsetsUtil.applySystemBarPadding(findViewById(R.id.main));
 
         initViews();
         loadingDialog = new LoadingDialog(this);

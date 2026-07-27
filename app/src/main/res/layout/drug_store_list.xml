@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    android:fitsSystemWindows="true"
-    tools:context=".YaksokList">
+    tools:context=".DrugStoreList">
 
     <TextView
         android:id="@+id/tv_header_title"
@@ -47,7 +46,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/bg_bottom_nav"
         android:elevation="12dp"
         app:itemIconSize="24dp"

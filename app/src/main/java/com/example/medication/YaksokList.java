@@ -17,6 +17,7 @@ import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
+import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -49,6 +50,7 @@ public class YaksokList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_yaksok_list);
+        InsetsUtil.applySystemBarPadding(findViewById(R.id.main));
 
         initViews();
         fetchYaksokList();
