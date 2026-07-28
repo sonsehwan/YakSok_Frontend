@@ -139,6 +139,6 @@
         android:textColor="@android:color/black"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:backgroundTint="#FFEB3B"
+        app:backgroundTint="@color/brand_surface"
         app:cornerRadius="12dp" />
 </LinearLayout>

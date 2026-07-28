@@ -148,7 +148,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
-                    app:backgroundTint="#FFEB3B"
+                    app:backgroundTint="@color/brand_surface"
                     android:textColor="@color/black"
                     android:text="확인하기"
                     android:textSize="17dp" />

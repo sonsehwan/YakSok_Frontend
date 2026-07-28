@@ -44,7 +44,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:src="@android:drawable/ic_menu_close_clear_cancel"
-                app:tint="#CCCCCC" />
+                app:tint="@color/neutral_400" />
         </RelativeLayout>
 
 

@@ -26,7 +26,7 @@
                 android:thicknessRatio="15"
                 android:useLevel="true">
                 <!-- 메인 포인트 컬러: 레몬 노랑 -->
-                <solid android:color="#FFEB3B" />
+                <solid android:color="@color/brand_surface" />
             </shape>
         </rotate>
     </item>

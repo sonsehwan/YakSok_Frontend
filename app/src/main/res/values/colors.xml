@@ -2,4 +2,36 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- 앰버 램프: 50이 가장 밝고 900이 가장 어둡다. -->
+    <color name="amber_50">#FFFBEB</color>
+    <color name="amber_100">#FEF3C7</color>
+    <color name="amber_200">#FDE68A</color>
+    <color name="amber_300">#FCD34D</color>
+    <color name="amber_400">#FBBF24</color>
+    <color name="amber_500">#F59E0B</color>
+    <color name="amber_600">#D97706</color>
+    <color name="amber_700">#B45309</color>
+    <color name="amber_900">#78350F</color>
+
+    <!-- 노랑과 어울리도록 회색도 따뜻한 계열로 맞춘다. -->
+    <color name="neutral_200">#E7E5E4</color>
+    <color name="neutral_300">#D6D3D1</color>
+    <color name="neutral_400">#A8A29E</color>
+    <color name="neutral_600">#57534E</color>
+    <color name="neutral_800">#292524</color>
+
+    <!-- 역할별 이름. 앞으로 화면에서는 이 이름만 쓰면 색 변경이 이 파일 하나로 끝난다.
+         흰 배경 대비: brand_surface 1.8:1(넓은 면 전용), brand_icon 3.2:1(아이콘),
+         brand_text 5.0:1(텍스트) -->
+    <color name="brand_surface">@color/amber_400</color>
+    <color name="brand_icon">@color/amber_600</color>
+    <color name="brand_text">@color/amber_700</color>
+    <color name="brand_on_surface">@color/amber_900</color>
+    <color name="page_bg">@color/amber_50</color>
+
+    <!-- 복용 상태 -->
+    <color name="status_done">#16A34A</color>
+    <color name="status_pending">#F59E0B</color>
+    <color name="status_missed">#E11D48</color>
 </resources>

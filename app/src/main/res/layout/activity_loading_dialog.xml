@@ -10,7 +10,7 @@
     <ProgressBar
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:indeterminateTint="#FFEB3B" />
+        android:indeterminateTint="@color/brand_icon" />
     <!-- 색상은 프로젝트 테마에 맞게 변경하세요 -->
 
     <TextView

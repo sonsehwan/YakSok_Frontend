@@ -63,7 +63,7 @@
             android:textColor="#1A1A1A"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:backgroundTint="#FFEB3B"
+            app:backgroundTint="@color/brand_surface"
             app:cornerRadius="12dp"
             app:elevation="0dp" />
 

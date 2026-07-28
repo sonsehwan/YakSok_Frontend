@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,7 +65,7 @@ public class ChattingRoom extends AppCompatActivity {
         setContentView(R.layout.activity_chatting_room);
 
         // 상태바 / 하단 네비게이션 바 색상 설정
-        getWindow().setStatusBarColor(Color.parseColor("#FFEB3B"));
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.brand_surface));
         getWindow().setNavigationBarColor(Color.WHITE);
 
         // Android 10 이상에서 네비게이션 바 대비 효과 제거

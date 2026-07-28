@@ -14,7 +14,7 @@
         app:cardCornerRadius="12dp"
         app:cardElevation="2dp"
         app:strokeWidth="2dp"
-        app:strokeColor="#FFEB3B"
+        app:strokeColor="@color/brand_icon"
         app:cardBackgroundColor="@android:color/white"
         android:layout_margin="8dp">
 
@@ -29,7 +29,7 @@
                 android:id="@+id/img_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                app:tint="#FFEB3B" />
+                app:tint="@color/brand_icon" />
 
             <EditText
                 android:id="@+id/et_input"
@@ -50,7 +50,7 @@
                 android:src="@drawable/ic_visibility_off"
                 android:visibility="gone"
                 android:padding="2dp"
-                app:tint="#CCCCCC" />
+                app:tint="@color/neutral_400" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

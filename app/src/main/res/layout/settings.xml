@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@color/page_bg">
 
     <!-- 상단 바: 타이틀과 로그아웃 버튼 -->
     <TextView

@@ -106,6 +106,11 @@ public class YaksokList extends AppCompatActivity {
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 return true;
+            }else if (itemId == R.id.nav_friend){
+                Intent intent = new Intent(YaksokList.this, FriendList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                return true;
             }
             return false;
         });

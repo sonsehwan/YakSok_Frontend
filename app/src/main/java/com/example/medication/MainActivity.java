@@ -5,7 +5,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -103,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
+                return true;
+            }else if (itemId == R.id.nav_friend){
+                Intent intent = new Intent(MainActivity.this, FriendList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 return true;
             }
             return false;
@@ -251,11 +256,14 @@ public class MainActivity extends AppCompatActivity {
         tvProgressPercent.setText(percent + "%");
 
         if (percent == 0) {
-            progressMain.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF3B30"))); // 빨간색
+            progressMain.setProgressTintList(
+                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.status_missed)));
         } else if (percent == 100) {
-            progressMain.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50"))); // 초록색
+            progressMain.setProgressTintList(
+                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.status_done)));
         } else {
-            progressMain.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFEB3B"))); // 노란색
+            progressMain.setProgressTintList(
+                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.status_pending)));
         }
 
         int remain = total - done;

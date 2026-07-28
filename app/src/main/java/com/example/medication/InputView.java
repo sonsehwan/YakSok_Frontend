@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.card.MaterialCardView;
 
@@ -40,7 +41,7 @@ public class InputView extends LinearLayout {
     // 상태별 색상 상수
     private final int COLOR_ERROR = Color.parseColor("#FF0000");      // 에러 시 빨간색
     private final int COLOR_GUIDE = Color.parseColor("#999999");      // 평상시 가이드 회색
-    private final int COLOR_DEFAULT_STROKE = Color.parseColor("#FFEB3B"); // 기본 테두리 레몬 노랑
+    private final int COLOR_DEFAULT_STROKE = ContextCompat.getColor(getContext(), R.color.brand_icon);
 
     private final String idPattern = "^[a-z0-9_-]{5,20}$";
     private final String passwordPattern = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+])[A-Za-z\\d!@#$%^&*()_+]{8,16}$";

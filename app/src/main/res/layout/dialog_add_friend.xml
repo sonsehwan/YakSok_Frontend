@@ -51,7 +51,7 @@
         android:textColor="#1A1A1A"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:backgroundTint="#FFEB3B"
+        app:backgroundTint="@color/brand_surface"
         app:cornerRadius="14dp"
         app:elevation="0dp" />
 
@@ -116,7 +116,7 @@
             android:textColor="#1A1A1A"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:backgroundTint="#FFEB3B"
+            app:backgroundTint="@color/brand_surface"
             app:cornerRadius="14dp"
             app:elevation="0dp" />
     </LinearLayout>
