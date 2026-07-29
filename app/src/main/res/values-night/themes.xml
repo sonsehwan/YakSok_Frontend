@@ -1,7 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Medication" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <!-- 다크 모드에서도 라이트와 동일하게 동작하도록 맞춘다.
+         나중에 다크 모드를 제대로 지원할 때 이 파일을 되살리면 된다. -->
+    <style name="Base.Theme.Medication" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Medication" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-
+    <!-- 앱의 모든 화면이 밝은 색 기준으로 만들어져 있어 라이트로 고정한다.
+         DayNight 를 쓰면 다크 모드에서 팝업, 다이얼로그, 메뉴처럼
+         테마가 직접 그리는 부분만 어두워져 글자가 안 보이게 된다. -->
+    <style name="Base.Theme.Medication" parent="Theme.Material3.Light.NoActionBar">
         <!-- 앱 화면이 상단바를 차지하지 않게 설정 -->
         <item name="android:windowLightStatusBar">true</item>
     </style>
