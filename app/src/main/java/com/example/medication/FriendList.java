@@ -75,8 +75,6 @@ public class FriendList extends AppCompatActivity {
 
         initViews();
         setRecyclerView();
-        fetchFriendList();
-        updateRequestCount();
 
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -116,6 +114,8 @@ public class FriendList extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         bottomNav.setSelectedItemId(R.id.nav_friend);
+        fetchFriendList();
+        updateRequestCount();
     }
 
     private void initViews() {
