@@ -35,6 +35,8 @@ import retrofit2.Response;
 public class ShareYaksokDetail extends AppCompatActivity {
 
     public static final String EXTRA_YAKSOK_ID = "SHARED_YAKSOK_ID";
+    // 이미 저장한 경우
+    public static final String EXTRA_ALREADY_SAVED = "ALREADY_SAVED";
 
     private ImageView ivBack;
     private TextView tvOwner;
@@ -68,9 +70,16 @@ public class ShareYaksokDetail extends AppCompatActivity {
         }
 
         ivBack.setOnClickListener(v -> finish());
+
+        if (getIntent().getBooleanExtra(EXTRA_ALREADY_SAVED, false)) {
+            btnSave.setVisibility(View.GONE);
+        }
+
         btnSave.setOnClickListener(v -> saveSharedYaksok());
 
         loadYaksok();
+
+
     }
 
     private void initViews() {

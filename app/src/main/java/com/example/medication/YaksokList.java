@@ -148,6 +148,10 @@ public class YaksokList extends AppCompatActivity {
                 startActivity(new Intent(YaksokList.this, DrugStoreList.class));
                 return true;
             }
+            if (item.getItemId() == R.id.side_shared_yaksok) {
+                startActivity(new Intent(YaksokList.this, ShareYaksokList.class));
+                return true;
+            }
             return false;
         });
 

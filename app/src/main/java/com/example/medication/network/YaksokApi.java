@@ -52,4 +52,14 @@ public interface YaksokApi {
     // 공유받은 약속을 내 목록에 저장
     @POST("/api/shared-yaksok")
     Call<ApiResponse<Void>> saveSharedYaksok(@Body ShareYaksokRequest request);
+
+    // 저장한 공유 약속 목록
+    @GET("/api/shared-yaksok")
+    Call<ApiResponse<List<Yaksok>>> getSharedYaksokList(@Query("userEmail") String userEmail);
+
+    // 공유 목록에서 제외
+    @DELETE("/api/shared-yaksok/{yaksokId}")
+    Call<ApiResponse<Void>> deleteSharedYaksok(
+            @Path("yaksokId") Long yaksokId,
+            @Query("userEmail") String userEmail);
 }

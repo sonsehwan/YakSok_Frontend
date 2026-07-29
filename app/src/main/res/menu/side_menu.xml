@@ -5,5 +5,10 @@
             android:id="@+id/side_drugstore"
             android:icon="@drawable/ic_map"
             android:title="약국 검색" />
+
+        <item
+            android:id="@+id/side_shared_yaksok"
+            android:icon="@drawable/ic_prescription"
+            android:title="공유받은 약속" />
     </group>
 </menu>

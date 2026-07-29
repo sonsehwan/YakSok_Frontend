@@ -23,6 +23,9 @@
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ShareYaksokList"
+            android:exported="false" />
+        <activity
             android:name=".ShareYaksokDetail"
             android:exported="false" />
         <activity

@@ -17,16 +17,17 @@ import com.example.medication.model.Yaksok;
 
 import java.util.List;
 
-public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.ViewHolder> {
-
-    private List<Yaksok> items;
-    private OnItemClickListener listener;
+public class ShareYaksokListAdapter extends RecyclerView.Adapter<ShareYaksokListAdapter.ViewHolder> {
 
     public interface OnItemClickListener {
-        void onItemClick(Yaksok yaksok, int position);
+        void onItemClick(Yaksok yaksok);
+        void onItemLongClick(Yaksok yaksok);
     }
 
-    public YaksokListAdapter(List<Yaksok> items, OnItemClickListener listener) {
+    private final List<Yaksok> items;
+    private final OnItemClickListener listener;
+
+    public ShareYaksokListAdapter(List<Yaksok> items, OnItemClickListener listener) {
         this.items = items;
         this.listener = listener;
     }
@@ -34,7 +35,8 @@ public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_yaksok, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_yaksok, parent, false);
         return new ViewHolder(view);
     }
 
@@ -42,27 +44,19 @@ public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Yaksok item = items.get(position);
 
-        holder.tvTitle.setText(item.getTitle());
+        String owner = item.getOwnerNickname();
+        holder.tvTitle.setText(owner != null ? owner + "님의 " + item.getTitle() : item.getTitle());
+
         holder.tvPeriod.setText(item.getStartDate() + " 부터 " + item.getPrescriptionDays() + "일간");
 
+        // 원본을 참조하므로 상대방이 약을 먹을 때마다 이 값이 최신으로 바뀐다.
         updateProgress(holder, item.getCurrentClearNotifications(), item.getTotalNotifications());
 
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onItemClick(item, position);
-            }
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
+        holder.itemView.setOnLongClickListener(v -> {
+            listener.onItemLongClick(item);
+            return true;
         });
-    }
-
-    @Override
-    public int getItemCount() {
-        return items != null ? items.size() : 0;
-    }
-
-    public void updateData(List<Yaksok> newItems) {
-        this.items.clear();
-        this.items.addAll(newItems);
-        notifyDataSetChanged();
     }
 
     // 복약 진행률을 원형 게이지에 그린다. MainActivity 의 진행률 표시와 같은 규칙을 쓴다.
@@ -89,11 +83,16 @@ public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.Vi
         holder.progressBar.setProgressTintList(ColorStateList.valueOf(tintColor));
     }
 
+    @Override
+    public int getItemCount() {
+        return items.size();
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvPeriod, tvPercent;
         ProgressBar progressBar;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_yaksok_title);
             tvPeriod = itemView.findViewById(R.id.tv_yaksok_period);
