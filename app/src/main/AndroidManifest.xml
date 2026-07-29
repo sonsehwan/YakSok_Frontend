@@ -22,7 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medication"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".ShareYaksokDetail"
+            android:exported="false" />
         <activity
             android:name=".AddressSearch"
             android:exported="false" />

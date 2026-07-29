@@ -3,6 +3,7 @@ package com.example.medication.network;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.CreateYakSokRequest;
+import com.example.medication.model.request.ShareYaksokRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.SaveYaksokResponse;
 
@@ -43,4 +44,12 @@ public interface YaksokApi {
 
     @DELETE("api/yaksok/{id}")
     Call<ApiResponse<Void>> deleteYaksok(@Path("id") Long id);
+
+    // 약속 단일 조회 (채팅에서 공유받은 약속 확인용)
+    @GET("api/yaksok/{yaksokId}")
+    Call<ApiResponse<Yaksok>> getYaksok(@Path("yaksokId") Long yaksokId);
+
+    // 공유받은 약속을 내 목록에 저장
+    @POST("/api/shared-yaksok")
+    Call<ApiResponse<Void>> saveSharedYaksok(@Body ShareYaksokRequest request);
 }

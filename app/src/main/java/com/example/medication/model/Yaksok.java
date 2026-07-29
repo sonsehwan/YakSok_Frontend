@@ -5,6 +5,11 @@ import com.example.medication.model.request.PillRequest;
 import java.io.Serializable;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Yaksok implements Serializable {
     private Long id; // 약속 ID
     private String title; // 약속 이름
@@ -19,6 +24,7 @@ public class Yaksok implements Serializable {
     private String dosageTime; // 투약 시간대
     private List<PillRequest> pills; //복약 목록
     private String status; // 약속 상태(복용 중, 복용 완료)
+    private String ownerNickname; // 약속을 공유한 유저 이름(공유 약속 이외에는 null)
 
     public Yaksok(String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, String timeMorning, String timeLunch, String timeDinner, List<PillRequest> pills, String stauts) {
         this.title = title;
@@ -116,4 +122,7 @@ public class Yaksok implements Serializable {
     public String getStatus() { return status; }
 
     public void setStatus(String status) { this.status = status; }
+
+    public String getOwnerNickname() { return ownerNickname; }
+    public void setOwnerNickname(String ownerNickname) { this.ownerNickname = ownerNickname; }
 }

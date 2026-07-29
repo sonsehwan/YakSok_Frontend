@@ -106,8 +106,10 @@ public class ChattingRoom extends AppCompatActivity {
 
         tvRoomName.setText(roomName != null ? roomName : "상담방");
 
-        chattingRoomAdapter = new ChattingRoomAdapter(myEmail, yaksokId -> {
-            Toast.makeText(this, "약속 " + yaksokId + " 열기 (미구현)", Toast.LENGTH_SHORT).show();
+        chattingRoomAdapter = new ChattingRoomAdapter(myEmail, sharedYaksokId -> {
+            Intent shareIntent = new Intent(ChattingRoom.this, ShareYaksokDetail.class);
+            shareIntent.putExtra(ShareYaksokDetail.EXTRA_YAKSOK_ID, sharedYaksokId);
+            startActivity(shareIntent);
         });
 
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
