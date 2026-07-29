@@ -4,6 +4,9 @@ import static com.example.medication.util.SprefsManager.getUser;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -33,6 +36,27 @@ public class FindDrugStore extends AppCompatActivity {
     private FindDrugStoreAdapter adapter;
     private LoadingDialog loadingDialog;
 
+    private static final int[] SIGUNGU_ARRAYS = {
+            0,
+            R.array.sigungu_seoul,
+            R.array.sigungu_busan,
+            R.array.sigungu_daegu,
+            R.array.sigungu_incheon,
+            R.array.sigungu_gwangju,
+            R.array.sigungu_daejeon,
+            R.array.sigungu_ulsan,
+            R.array.sigungu_sejong,
+            R.array.sigungu_gyeonggi,
+            R.array.sigungu_gangwon,
+            R.array.sigungu_chungbuk,
+            R.array.sigungu_chungnam,
+            R.array.sigungu_jeonbuk,
+            R.array.sigungu_jeonnam,
+            R.array.sigungu_gyeongbuk,
+            R.array.sigungu_gyeongnam,
+            R.array.sigungu_jeju
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +64,7 @@ public class FindDrugStore extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setRecyclerView();
+        setupAddressSpinners();
 
         binding.ivBack.setOnClickListener(v -> {
             finish();
@@ -54,15 +79,19 @@ public class FindDrugStore extends AppCompatActivity {
                 return;
             }
 
-            String firstAddress = binding.etFirstAddress.getText().toString().trim();
-            String secondAddress = binding.etSecondAddress.getText().toString().trim();
+            int sidoPosition = binding.spFirstAddress.getSelectedItemPosition();
+
+            if (sidoPosition == 0 || binding.spSecondAddress.getSelectedItem() == null) {
+                showToast("지역을 선택해주세요.");
+                return;
+            }
+
+            String firstAddress = binding.spFirstAddress.getSelectedItem().toString();
+            String secondAddress = binding.spSecondAddress.getSelectedItem().toString();
+            // 약국 이름은 선택 입력이다. 비우면 해당 지역 전체가 조회된다.
             String drugstoreName = binding.etDrugstoreName.getText().toString().trim();
 
-            if(!firstAddress.isEmpty() && !secondAddress.isEmpty() && !drugstoreName.isEmpty()){
-                getSearchResult(firstAddress, secondAddress, drugstoreName);
-            }else{
-                showToast("모든 정보를 입력하세요.");
-            }
+            getSearchResult(firstAddress, secondAddress, drugstoreName);
         });
     }
     private void setRecyclerView(){
@@ -70,6 +99,32 @@ public class FindDrugStore extends AppCompatActivity {
 
         binding.rvDrugstoreList.setLayoutManager(new LinearLayoutManager(this));
         binding.rvDrugstoreList.setAdapter(adapter);
+    }
+
+    // 시/도를 고르면 그에 맞는 시군구 목록으로 두 번째 스피너를 다시 채운다.
+    private void setupAddressSpinners(){
+        ArrayAdapter<CharSequence> sidoAdapter = ArrayAdapter.createFromResource(
+                this, R.array.sido_list, R.layout.item_spinner);
+        sidoAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        binding.spFirstAddress.setAdapter(sidoAdapter);
+
+        binding.spFirstAddress.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    binding.spSecondAddress.setAdapter(null);
+                    return;
+                }
+
+                ArrayAdapter<CharSequence> sigunguAdapter = ArrayAdapter.createFromResource(
+                        FindDrugStore.this, SIGUNGU_ARRAYS[position], R.layout.item_spinner);
+                sigunguAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+                binding.spSecondAddress.setAdapter(sigunguAdapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
     }
     private void getSearchResult(String firstAddress, String secondAddress, String drugstoreName){
         if (loadingDialog == null) {

@@ -75,16 +75,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_label_first_address">
 
-        <EditText
-            android:id="@+id/et_first_address"
+        <Spinner
+            android:id="@+id/sp_first_address"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="48dp"
             android:layout_marginStart="10dp"
-            android:hint="예시: 서울시"
-            android:textSize="15sp"
-            android:textColor="#000000"
-            android:gravity="center_vertical" />
+            android:layout_weight="1" />
     </LinearLayout>
 
     <TextView
@@ -112,16 +108,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_label_second_address">
 
-        <EditText
-            android:id="@+id/et_second_address"
+        <Spinner
+            android:id="@+id/sp_second_address"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="48dp"
             android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:hint="예시: 강남구"
-            android:textColor="#000000"
-            android:textSize="15sp" />
+            android:layout_weight="1" />
     </LinearLayout>
 
     <TextView
