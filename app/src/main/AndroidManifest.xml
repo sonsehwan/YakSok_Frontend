@@ -113,6 +113,9 @@
         <activity
             android:name=".FriendList"
             android:exported="false" />
+        <activity
+            android:name=".ChatRoomList"
+            android:exported="false" />
     </application>
 
 </manifest>

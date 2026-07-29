@@ -3,12 +3,16 @@ package com.example.medication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +25,7 @@ import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +40,9 @@ public class YaksokList extends AppCompatActivity {
     private YaksokListAdapter adapter;
     private BottomNavigationView bottomNav;
     private FloatingActionButton fabScan;
+    private DrawerLayout drawerLayout;
+    private NavigationView navView;
+    private ImageView ivMenu;
 
     private final ActivityResultLauncher<Intent> detailActivityLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -55,7 +63,9 @@ public class YaksokList extends AppCompatActivity {
         InsetsUtil.applySystemBarPadding(findViewById(R.id.main));
 
         initViews();
+        setupDrawer();
         fetchYaksokList();
+        // setupDrawer 는 initViews 뒤에 호출해야 뷰가 준비된 상태가 된다.
 
         fabScan.setOnClickListener(v -> {
             ShowAddMedicationList bottomSheet = new ShowAddMedicationList();
@@ -71,6 +81,9 @@ public class YaksokList extends AppCompatActivity {
 
         bottomNav = findViewById(R.id.bottom_navigation);
         fabScan = findViewById(R.id.fab_scan);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navView = findViewById(R.id.nav_view);
+        ivMenu = findViewById(R.id.iv_menu);
 
         // 어댑터 초기화 (클릭 리스너를 통해 다이얼로그 호출)
         adapter = new YaksokListAdapter(new ArrayList<>(), new YaksokListAdapter.OnItemClickListener() {
@@ -108,8 +121,8 @@ public class YaksokList extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 finish();
                 return true;
-            }else if(itemId == R.id.nav_drugstore){
-                Intent intent = new Intent(YaksokList.this, DrugStoreList.class);
+            }else if(itemId == R.id.nav_chat){
+                Intent intent = new Intent(YaksokList.this, ChatRoomList.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
@@ -121,6 +134,33 @@ public class YaksokList extends AppCompatActivity {
                 return true;
             }
             return false;
+        });
+    }
+
+    // 상단 왼쪽 메뉴 버튼으로 사이드 메뉴를 열고, 뒤로가기로 닫는다.
+    private void setupDrawer() {
+        ivMenu.setOnClickListener(v -> drawerLayout.openDrawer(Gravity.START));
+
+        navView.setNavigationItemSelectedListener(item -> {
+            drawerLayout.closeDrawer(Gravity.START);
+
+            if (item.getItemId() == R.id.side_drugstore) {
+                startActivity(new Intent(YaksokList.this, DrugStoreList.class));
+                return true;
+            }
+            return false;
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout.isDrawerOpen(Gravity.START)) {
+                    drawerLayout.closeDrawer(Gravity.START);
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
         });
     }
 

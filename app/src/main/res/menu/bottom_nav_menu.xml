@@ -9,9 +9,9 @@
         android:icon="@drawable/ic_calendar"
         android:title="약속" />
     <item
-        android:id="@+id/nav_drugstore"
-        android:icon="@drawable/ic_map"
-        android:title="약국" />
+        android:id="@+id/nav_chat"
+        android:icon="@drawable/ic_chat"
+        android:title="채팅" />
     <item
         android:id="@+id/nav_friend"
         android:icon="@drawable/ic_people"

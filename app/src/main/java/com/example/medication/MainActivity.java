@@ -8,13 +8,17 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -27,6 +31,7 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.kakao.sdk.common.util.Utility;
 
 import java.security.MessageDigest;
@@ -46,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressMain;
     private RecyclerView rvNotification;
     private BottomNavigationView bottomNav;
+    private DrawerLayout drawerLayout;
+    private NavigationView navView;
+    private ImageView ivMenu;
 
     private NotificationMultiViewAdapter adapter;
     private List<NotificationYaksok> notificationYaksokList;
@@ -74,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
             ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
         }
 
+        setupDrawer();
+
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
@@ -91,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 return true;
-            }else if(itemId == R.id.nav_drugstore){
-                Intent intent = new Intent(MainActivity.this, DrugStoreList.class);
+            }else if(itemId == R.id.nav_chat){
+                Intent intent = new Intent(MainActivity.this, ChatRoomList.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
@@ -289,6 +299,36 @@ public class MainActivity extends AppCompatActivity {
         progressMain = findViewById(R.id.progress_main);
         rvNotification = findViewById(R.id.rv_medication);
         bottomNav = findViewById(R.id.bottom_navigation);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navView = findViewById(R.id.nav_view);
+        ivMenu = findViewById(R.id.iv_menu);
+    }
+
+    // 상단 왼쪽 메뉴 버튼으로 사이드 메뉴를 열고, 뒤로가기로 닫는다.
+    private void setupDrawer() {
+        ivMenu.setOnClickListener(v -> drawerLayout.openDrawer(Gravity.START));
+
+        navView.setNavigationItemSelectedListener(item -> {
+            drawerLayout.closeDrawer(Gravity.START);
+
+            if (item.getItemId() == R.id.side_drugstore) {
+                startActivity(new Intent(MainActivity.this, DrugStoreList.class));
+                return true;
+            }
+            return false;
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout.isDrawerOpen(Gravity.START)) {
+                    drawerLayout.closeDrawer(Gravity.START);
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
     }
 
     private void getHashKey(){

@@ -98,8 +98,8 @@ public class FriendList extends AppCompatActivity {
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 return true;
-            }else if(itemId == R.id.nav_drugstore){
-                Intent intent = new Intent(FriendList.this, DrugStoreList.class);
+            }else if(itemId == R.id.nav_chat){
+                Intent intent = new Intent(FriendList.this, ChatRoomList.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 overridePendingTransition(0, 0);

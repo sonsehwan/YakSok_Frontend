@@ -4,6 +4,7 @@ import com.example.medication.model.ChatMessage;
 import com.example.medication.model.request.ChatRoomRequest;
 import com.example.medication.model.request.FriendChatRoomRequest;
 import com.example.medication.model.response.ApiResponse;
+import com.example.medication.model.response.ChatRoomListDto;
 import com.example.medication.model.response.ChatRoomResponse;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ChatApi {
 
@@ -24,4 +26,8 @@ public interface ChatApi {
 
     @GET("/api/chat/room/{roomId}/messages")
     Call<ApiResponse<List<ChatMessage>>> getPreviousMessages(@Path("roomId") Long roomId);
+
+    // 로그인한 유저가 참여 중인 채팅방 목록
+    @GET("/api/chat/room")
+    Call<ApiResponse<List<ChatRoomListDto>>> getMyChatRooms(@Query("userEmail") String userEmail);
 }

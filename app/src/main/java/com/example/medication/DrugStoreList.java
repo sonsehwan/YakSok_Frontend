@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -25,7 +26,6 @@ import com.example.medication.util.InsetsUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
@@ -37,8 +37,8 @@ public class DrugStoreList extends AppCompatActivity {
 
     private RecyclerView rvDrugstoreList;
     private DrugStoreAdapter adapter;
-    private BottomNavigationView bottomNavigationView;
     private LoadingDialog loadingDialog;
+    private ImageView ivBack;
 
     private int currentPage = 1;
     private boolean isLoading = false;
@@ -64,37 +64,6 @@ public class DrugStoreList extends AppCompatActivity {
 
         // 화면이 켜지면 하드코딩된 위치 값으로 즉시 약국 목록을 가져옵니다.
         loadingDialog.show();
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(DrugStoreList.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            } else if (itemId == R.id.nav_history) {
-                Intent intent = new Intent(DrugStoreList.this, YaksokList.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                return true;
-            } else if (itemId == R.id.nav_settings) {
-                Intent intent = new Intent(DrugStoreList.this, Settings.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                finish();
-                return true;
-            }else if (itemId == R.id.nav_friend){
-                Intent intent = new Intent(DrugStoreList.this, FriendList.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                return true;
-            }
-            else return itemId == R.id.nav_drugstore;
-        });
     }
 
     private void checkPermissionAndFetchLocation(){
@@ -152,7 +121,10 @@ public class DrugStoreList extends AppCompatActivity {
     }
 
     private void initViews() {
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        ivBack = findViewById(R.id.iv_back);
+        // 사이드 메뉴로 진입하는 화면이라 하단 네비 대신 뒤로가기로 나간다.
+        ivBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+
         rvDrugstoreList = findViewById(R.id.rv_drugstore_list);
         rvDrugstoreList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -236,9 +208,4 @@ public class DrugStoreList extends AppCompatActivity {
                 });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bottomNavigationView.setSelectedItemId(R.id.nav_drugstore);
-    }
 }
