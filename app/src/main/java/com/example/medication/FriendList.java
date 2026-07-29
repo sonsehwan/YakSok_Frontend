@@ -33,6 +33,7 @@ import com.example.medication.model.response.UserResponse;
 import com.example.medication.model.response.UserSearchResultDto;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.util.SprefsManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -47,14 +48,16 @@ public class FriendList extends AppCompatActivity {
     private RecyclerView rvFriendList;
     private FriendListAdapter adapter;
 
-    private ImageView btnBack;
+    private ImageView btnMenu;
     private TextView btnAddFriend;
     private LinearLayout layoutFriendRequest;
     private TextView tvRequestCount;
     private TextView tvFriendCount;
     private TextView tvEmptyFriend;
+    private BottomNavigationView bottomNav;
 
     private Long loginUserId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,19 +77,58 @@ public class FriendList extends AppCompatActivity {
         setRecyclerView();
         fetchFriendList();
         updateRequestCount();
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_home) {
+                Intent intent = new Intent(FriendList.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            } else if (itemId == R.id.nav_history) {
+                Intent intent = new Intent(FriendList.this, YaksokList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (itemId == R.id.nav_settings) {
+                Intent intent = new Intent(FriendList.this, Settings.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
+            }else if(itemId == R.id.nav_drugstore){
+                Intent intent = new Intent(FriendList.this, DrugStoreList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                return true;
+            }else if (itemId == R.id.nav_friend){
+                return true;
+            }
+            return false;
+        });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.setSelectedItemId(R.id.nav_friend);
     }
 
     private void initViews() {
-        btnBack = findViewById(R.id.iv_back);
+        btnMenu = findViewById(R.id.iv_menu);
         btnAddFriend = findViewById(R.id.tv_add_friend);
         layoutFriendRequest = findViewById(R.id.layout_friend_request);
         tvRequestCount = findViewById(R.id.tv_request_count);
         tvFriendCount = findViewById(R.id.tv_friend_count);
         tvEmptyFriend = findViewById(R.id.tv_empty_friend);
 
-        btnBack.setOnClickListener(v -> finish());
         btnAddFriend.setOnClickListener(v -> showAddFriendDialog());
         layoutFriendRequest.setOnClickListener(v -> showReceivedRequestDialog());
+        bottomNav = findViewById(R.id.bottom_navigation);
     }
 
     private void setRecyclerView() {

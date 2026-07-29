@@ -27,7 +27,6 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kakao.sdk.common.util.Utility;
 
 import java.security.MessageDigest;
@@ -46,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvDate, tvGreeting, tvSummary, tvProgressPercent;
     private ProgressBar progressMain;
     private RecyclerView rvNotification;
-    private FloatingActionButton fabScan;
     private BottomNavigationView bottomNav;
 
     private NotificationMultiViewAdapter adapter;
@@ -75,11 +73,6 @@ public class MainActivity extends AppCompatActivity {
         if(animator instanceof SimpleItemAnimator){
             ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
         }
-
-        fabScan.setOnClickListener(v -> {
-            ShowAddMedicationList bottomSheet = new ShowAddMedicationList();
-            bottomSheet.show(getSupportFragmentManager(), "show_create_list");
-        });
 
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -295,7 +288,6 @@ public class MainActivity extends AppCompatActivity {
         tvProgressPercent = findViewById(R.id.tv_progress_percent);
         progressMain = findViewById(R.id.progress_main);
         rvNotification = findViewById(R.id.rv_medication);
-        fabScan = findViewById(R.id.fab_scan);
         bottomNav = findViewById(R.id.bottom_navigation);
     }
 

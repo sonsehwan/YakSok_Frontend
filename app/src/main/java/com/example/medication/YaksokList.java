@@ -20,6 +20,7 @@ import com.example.medication.network.YaksokApi;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class YaksokList extends AppCompatActivity {
     private RecyclerView rvYaksokList;
     private YaksokListAdapter adapter;
     private BottomNavigationView bottomNav;
+    private FloatingActionButton fabScan;
 
     private final ActivityResultLauncher<Intent> detailActivityLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -54,6 +56,11 @@ public class YaksokList extends AppCompatActivity {
 
         initViews();
         fetchYaksokList();
+
+        fabScan.setOnClickListener(v -> {
+            ShowAddMedicationList bottomSheet = new ShowAddMedicationList();
+            bottomSheet.show(getSupportFragmentManager(), "show_create_list");
+        });
     }
 
     private void initViews() {
@@ -63,6 +70,7 @@ public class YaksokList extends AppCompatActivity {
         rvYaksokList.setLayoutManager(new LinearLayoutManager(this));
 
         bottomNav = findViewById(R.id.bottom_navigation);
+        fabScan = findViewById(R.id.fab_scan);
 
         // 어댑터 초기화 (클릭 리스너를 통해 다이얼로그 호출)
         adapter = new YaksokListAdapter(new ArrayList<>(), new YaksokListAdapter.OnItemClickListener() {
