@@ -37,24 +37,24 @@ public class FindDrugStore extends AppCompatActivity {
     private LoadingDialog loadingDialog;
 
     private static final int[] SIGUNGU_ARRAYS = {
-            0,
-            R.array.sigungu_seoul,
-            R.array.sigungu_busan,
-            R.array.sigungu_daegu,
-            R.array.sigungu_incheon,
-            R.array.sigungu_gwangju,
-            R.array.sigungu_daejeon,
-            R.array.sigungu_ulsan,
-            R.array.sigungu_sejong,
-            R.array.sigungu_gyeonggi,
-            R.array.sigungu_gangwon,
-            R.array.sigungu_chungbuk,
-            R.array.sigungu_chungnam,
-            R.array.sigungu_jeonbuk,
-            R.array.sigungu_jeonnam,
-            R.array.sigungu_gyeongbuk,
-            R.array.sigungu_gyeongnam,
-            R.array.sigungu_jeju
+            0,                         // 0: 시/도 선택
+            R.array.sigungu_gangwon,   // 1: 강원특별자치도
+            R.array.sigungu_gyeonggi,  // 2: 경기도
+            R.array.sigungu_gyeongnam, // 3: 경상남도
+            R.array.sigungu_gyeongbuk, // 4: 경상북도
+            R.array.sigungu_gwangju,   // 5: 광주광역시
+            R.array.sigungu_daegu,     // 6: 대구광역시
+            R.array.sigungu_daejeon,   // 7: 대전광역시
+            R.array.sigungu_busan,     // 8: 부산광역시
+            R.array.sigungu_seoul,     // 9: 서울특별시
+            R.array.sigungu_sejong,    // 10: 세종특별자치시
+            R.array.sigungu_ulsan,     // 11: 울산광역시
+            R.array.sigungu_incheon,   // 12: 인천광역시
+            R.array.sigungu_jeonnam,   // 13: 전라남도
+            R.array.sigungu_jeonbuk,   // 14: 전북특별자치도
+            R.array.sigungu_jeju,      // 15: 제주특별자치도
+            R.array.sigungu_chungnam,  // 16: 충청남도
+            R.array.sigungu_chungbuk   // 17: 충청북도
     };
 
     @Override
