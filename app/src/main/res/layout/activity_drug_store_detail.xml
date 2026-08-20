@@ -112,7 +112,7 @@
                 android:textColor="#000000"
                 android:textSize="20sp"/>
 
-            <LinearLayout
+            <com.example.medication.view.MapTouchContainer
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -124,7 +124,7 @@
                     android:id="@+id/map_view"
                     android:layout_width="match_parent"
                     android:layout_height="300dp" />
-            </LinearLayout>
+            </com.example.medication.view.MapTouchContainer>
         </LinearLayout>
     </ScrollView>
 
