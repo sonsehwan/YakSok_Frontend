@@ -11,8 +11,6 @@ public class UserResponse implements Serializable {
     private Long id;
     @SerializedName("email")
     private String email;
-    @SerializedName("password")
-    private String password;
     @SerializedName("nickname")
     private String nickname;
     private String gender;
@@ -28,10 +26,6 @@ public class UserResponse implements Serializable {
 
     public String getEmail() {
         return email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getNickname() {
