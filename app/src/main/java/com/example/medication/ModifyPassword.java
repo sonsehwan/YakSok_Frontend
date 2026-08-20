@@ -41,7 +41,7 @@ public class ModifyPassword extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.modify_password);
+        setContentView(R.layout.activity_modify_password);
 
         initViews();
 

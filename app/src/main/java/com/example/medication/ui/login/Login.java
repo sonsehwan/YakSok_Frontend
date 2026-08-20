@@ -88,7 +88,7 @@ public class Login extends AppCompatActivity {
                         SprefsManager.setUserInfo(Login.this, user);
 
                         //FCM 토큰 생성 및 저장
-                        getAndSendFcmToken(user.getEmail());
+                        getAndSendFcmToken(user.getId());
 
                         Log.d("Login", result.getMessage());
 
@@ -113,7 +113,7 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private void getAndSendFcmToken(String email){
+    private void getAndSendFcmToken(Long userId){
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
@@ -122,15 +122,15 @@ public class Login extends AppCompatActivity {
                     }
                     String token = task.getResult();
                     Log.d("FcmToken", "획득한 토큰: " + token);
-                    sendTokenToServer(email, token);
+                    sendTokenToServer(userId, token);
                 });
     }
 
-    private void sendTokenToServer(String email, String token){
+    private void sendTokenToServer(Long userId, String token){
         FirebaseTokenRequest request = new FirebaseTokenRequest(token);
         UserApi api = NetworkClient.getApi();
 
-        api.updateFcmToken(email, request).enqueue(new Callback<ApiResponse<Void>>(){
+        api.updateFcmToken(userId, request).enqueue(new Callback<ApiResponse<Void>>(){
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
                 if(response.isSuccessful()) {

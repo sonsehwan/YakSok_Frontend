@@ -95,7 +95,7 @@ public class CreatePrescription extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_direct_schedule);
+        setContentView(R.layout.activity_create_direct_schedule);
 
         // 1. UI 및 컴포넌트 초기화
         initViews();

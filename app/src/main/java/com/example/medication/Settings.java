@@ -33,7 +33,7 @@ public class Settings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.settings);
+        setContentView(R.layout.activity_settings);
         InsetsUtil.applySystemBarPadding(findViewById(R.id.main));
 
         // 1. 뷰 초기화

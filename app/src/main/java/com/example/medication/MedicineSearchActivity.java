@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.adapter.MedicineAdapter;
-import com.example.medication.databinding.MedicineSearchBinding;
+import com.example.medication.databinding.ActivityMedicineSearchBinding;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.MedicineSearchResponse;
-import com.example.medication.network.PillApi;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.network.PillApi;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import retrofit2.Response;
 
 public class MedicineSearchActivity extends AppCompatActivity {
 
-    private MedicineSearchBinding binding;
+    private ActivityMedicineSearchBinding binding;
     private MedicineAdapter medicineAdapter;
 
     private String lastSearchedKeyword = "";
@@ -37,7 +37,7 @@ public class MedicineSearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-        binding = MedicineSearchBinding.inflate(getLayoutInflater());
+        binding = ActivityMedicineSearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setupRecyclerView();

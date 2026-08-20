@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.signup;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.medication.InputView;
+import com.example.medication.Login;
+import com.example.medication.R;
 import com.example.medication.model.request.UserRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;

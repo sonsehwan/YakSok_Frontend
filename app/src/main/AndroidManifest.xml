@@ -95,7 +95,7 @@
             android:name=".FindDrugStore"
             android:exported="false" /> <!-- 로그인 -->
         <activity
-            android:name=".Login"
+            android:name=".ui.login.Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -104,10 +104,10 @@
             </intent-filter>
         </activity> <!-- 회원가입 -->
         <activity
-            android:name=".SignUp_Normal"
+            android:name=".ui.signup.SignUp_Normal"
             android:exported="true" />
         <activity
-            android:name=".SignUp_DrugStore"
+            android:name=".ui.signup.SignUp_DrugStore"
             android:exported="true" /> <!-- 메인화면 -->
         <activity
             android:name=".MainActivity"

@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.signup;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.medication.FindDrugStore;
+import com.example.medication.InputView;
+import com.example.medication.R;
 import com.example.medication.model.request.UserRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
@@ -30,32 +31,15 @@ import retrofit2.Response;
 
 public class SignUp_DrugStore extends AppCompatActivity {
 
-    private InputView inputEmail, inputPw, inputCheckPw, inputNickName, inputDrugStore;
-
-    private ActivityResultLauncher<Intent> addressSearchLauncher;
+    private InputView inputEmail, inputPw, inputCheckPw, inputNickName;
 
     private Button btnFinish;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up_drugstore);
+        setContentView(R.layout.activity_sign_up_normal );
 
         initViews();
-
-        Intent intent = getIntent();
-        String type = intent.getStringExtra("SignUp_Type");
-
-        addressSearchLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if(result.getResultCode() == RESULT_OK && result.getData() != null){
-                        String address = result.getData().getStringExtra("address_result");
-                        if(address != null){
-                            inputDrugStore.setText(address);
-                        }
-                    }
-                }
-        );
 
         inputCheckPw.setOnValidateListener(text ->{
             String originalPw = inputPw.getText();
@@ -65,10 +49,8 @@ public class SignUp_DrugStore extends AppCompatActivity {
             return null;
         });
 
-        inputDrugStore.setOnClickListener(v -> {
-            Intent drugStoreIntent = new Intent(this, AddressSearch.class);
-            addressSearchLauncher.launch(drugStoreIntent);
-        });
+        Intent intent = getIntent();
+        String type = intent.getStringExtra("SignUp_Type");
 
         btnFinish.setOnClickListener(v -> {startSignUp(type);});
     }
@@ -139,7 +121,7 @@ public class SignUp_DrugStore extends AppCompatActivity {
 
                     if(result.isBusinessSuccess()){
                         Log.d("SignUp", result.getMessage());
-                        Intent intent = new Intent(SignUp_DrugStore.this, Login.class);
+                        Intent intent = new Intent(SignUp_DrugStore.this, FindDrugStore.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
@@ -195,7 +177,6 @@ public class SignUp_DrugStore extends AppCompatActivity {
         inputPw = findViewById(R.id.input_pw);
         inputCheckPw = findViewById(R.id.input_check_pw);
         inputNickName = findViewById(R.id.input_nickname);
-        inputDrugStore = findViewById(R.id.input_drugstore);
         btnFinish = findViewById(R.id.btn_finish);
     }
 }

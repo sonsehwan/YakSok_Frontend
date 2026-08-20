@@ -52,7 +52,7 @@ public class DrugStoreList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.drug_store_list);
+        setContentView(R.layout.activity_drug_store_list);
         InsetsUtil.applySystemBarPadding(findViewById(R.id.main));
 
         initViews();
