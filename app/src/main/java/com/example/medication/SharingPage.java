@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.medication.ui.login.Login;
 import com.example.medication.util.SprefsManager;
 
 public class SharingPage extends AppCompatActivity {

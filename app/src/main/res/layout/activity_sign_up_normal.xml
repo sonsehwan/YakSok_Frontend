@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".SignUp_Normal">
+    tools:context=".ui.signup.SignUp_Normal">
 
     <com.example.medication.InputView
         android:id="@+id/input_nickname"
