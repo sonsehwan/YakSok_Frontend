@@ -92,14 +92,18 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
             h.tvTitle.setText(header.getTitle());
 
             boolean isCollapsed = collapsedCategories.contains(header.getTimeCategory());
-            h.ivArrow.animate().rotation(isCollapsed ? 0 : 90).setDuration(200).start();
+            h.ivArrow.setRotation(isCollapsed ? 0 : 90); // 바인딩 시점엔 애니메이션 없이 현재 상태를 바로 반영
 
             h.itemView.setOnClickListener(v -> {
+                boolean willCollapse;
                 if (isCollapsed) {
                     collapsedCategories.remove(header.getTimeCategory());
+                    willCollapse = false;
                 } else {
                     collapsedCategories.add(header.getTimeCategory());
+                    willCollapse = true;
                 }
+                h.ivArrow.animate().rotation(willCollapse ? 0 : 90).setDuration(200).start(); // 클릭했을 때만 회전 애니메이션
                 updateVisibleItems();
             });
         }else if (holder instanceof ItemViewHolder) {
