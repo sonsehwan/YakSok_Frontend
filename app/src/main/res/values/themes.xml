@@ -9,4 +9,10 @@
     </style>
 
     <style name="Theme.Medication" parent="Base.Theme.Medication" />
+
+    <!-- 사이드 메뉴 항목 글자를 키워서 아이콘과 균형을 맞춘다. -->
+    <style name="TextAppearance.SideMenu.Item" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
