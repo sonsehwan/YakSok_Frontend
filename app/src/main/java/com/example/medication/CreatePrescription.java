@@ -91,6 +91,11 @@ public class CreatePrescription extends AppCompatActivity {
     private AddMedicationSettingAdapter settingAdapter;
     private final List<PillRequest> selectedPills = new ArrayList<>();
 
+    // 처방전 스캔으로 인식한 약 이름을 서버에 조회하는 중인 건수.
+    // 조회가 비동기라, 전부 끝난 시점을 알아야 실패한 약을 한 번에 알려줄 수 있다.
+    private int pendingPillSearchCount = 0;
+    private final List<String> failedPillNames = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -389,6 +394,8 @@ public class CreatePrescription extends AppCompatActivity {
 
                 // 기존에 수동으로 등록된 약이 있다면 초기화 (처방전 스캔 기준 덮어쓰기)
                 selectedPills.clear();
+                failedPillNames.clear();
+                pendingPillSearchCount = medicineArray.length();
 
                 // 모든 약 데이터를 돌며 가장 큰 days(투약일 수)와 frequency 추출 & 리스트에 등록
                 for(int i = 0; i < medicineArray.length(); i++) {
@@ -403,22 +410,36 @@ public class CreatePrescription extends AppCompatActivity {
                     api.searchPill(medName).enqueue(new Callback<ApiResponse<MedicineSearchResponse>>() {
                         @Override
                         public void onResponse(Call<ApiResponse<MedicineSearchResponse>> call, Response<ApiResponse<MedicineSearchResponse>> response) {
-                            if (response.isSuccessful() && response.body() != null) {
-                                MedicineSearchResponse data = response.body().getData();
-                                if (data != null) {
-                                    selectedPills.add(new PillRequest(data.getImage(), medFreq, medDosage, data.getName()));
-
-                                    if (settingAdapter != null) {
-                                        settingAdapter.notifyItemInserted(selectedPills.size() - 1);
-                                    }
-                                    updateRegisterButtonState();
-                                }
+                            if (!response.isSuccessful() || response.body() == null) {
+                                Log.w("PillSearch", "'" + medName + "' 조회 실패. HTTP " + response.code());
+                                failedPillNames.add(medName);
+                                onPillSearchFinished();
+                                return;
                             }
+
+                            MedicineSearchResponse data = response.body().getData();
+                            if (data == null) {
+                                // 서버는 200을 주지만 공공 API 조회 결과가 없으면 data 가 null 이다.
+                                Log.w("PillSearch", "'" + medName + "' 약 정보 없음 (data == null)");
+                                failedPillNames.add(medName);
+                                onPillSearchFinished();
+                                return;
+                            }
+
+                            selectedPills.add(new PillRequest(data.getImage(), medFreq, medDosage, data.getName()));
+
+                            if (settingAdapter != null) {
+                                settingAdapter.notifyItemInserted(selectedPills.size() - 1);
+                            }
+                            updateRegisterButtonState();
+                            onPillSearchFinished();
                         }
 
                         @Override
                         public void onFailure(Call<ApiResponse<MedicineSearchResponse>> call, Throwable t) {
-                            Log.e("API_ERROR", "네트워크 오류: " + t.getMessage());
+                            Log.e("API_ERROR", "'" + medName + "' 네트워크 오류: " + t.getMessage());
+                            failedPillNames.add(medName);
+                            onPillSearchFinished();
                         }
                     });
 
@@ -474,6 +495,21 @@ public class CreatePrescription extends AppCompatActivity {
             Log.e("Gemini_Parsing_Error", "응답 데이터 파싱 실패", e);
             Toast.makeText(this, "AI가 처방전을 명확히 식별하지 못했습니다.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // 약 정보 조회가 하나 끝날 때마다 호출한다.
+    // 전부 끝났을 때 실패한 약이 있으면 사용자에게 한 번에 알린다.
+    // Retrofit 의 enqueue 콜백은 메인 스레드에서 실행되므로 별도 동기화가 필요 없다.
+    private void onPillSearchFinished() {
+        pendingPillSearchCount--;
+        if (pendingPillSearchCount > 0) return;
+
+        if (!failedPillNames.isEmpty()) {
+            Toast.makeText(this,
+                    String.join(", ", failedPillNames) + " 의 약 정보를 찾지 못했습니다.",
+                    Toast.LENGTH_LONG).show();
+        }
+        updateRegisterButtonState();
     }
 
     private String processExtractedDataWithLocation(Text visionText) {
