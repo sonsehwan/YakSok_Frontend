@@ -88,6 +88,12 @@ public class ShareYaksokListAdapter extends RecyclerView.Adapter<ShareYaksokList
         return items.size();
     }
 
+    public void updateData(List<Yaksok> newItems) {
+        this.items.clear();
+        this.items.addAll(newItems);
+        notifyDataSetChanged();
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvPeriod, tvPercent;
         ProgressBar progressBar;

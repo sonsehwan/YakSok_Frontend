@@ -15,6 +15,7 @@ import com.example.medication.model.request.FirebaseTokenRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
+import com.example.medication.ui.login.Login;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -26,7 +27,7 @@ import retrofit2.Response;
 public class Settings extends AppCompatActivity {
 
     private ImageView ivLogout;
-    private LinearLayout llMyInfo, llShare, llGeneral;
+    private LinearLayout llMyInfo;
     private BottomNavigationView bottomNav;
 
     @Override
@@ -55,15 +56,6 @@ public class Settings extends AppCompatActivity {
             startActivity(intent);
         });
 
-        llShare.setOnClickListener(v -> {
-            Intent intent = new Intent(Settings.this, SharingPage.class);
-            startActivity(intent);
-        });
-
-        llGeneral.setOnClickListener(v -> {
-            Intent intent = new Intent(Settings.this,WipActivity.class);
-            startActivity(intent);
-        });
         bottomNav.setSelectedItemId(R.id.nav_settings);
 
         bottomNav.setOnItemSelectedListener(item -> {
@@ -147,8 +139,6 @@ public class Settings extends AppCompatActivity {
     private void initViews() {
         ivLogout = findViewById(R.id.iv_logout);
         llMyInfo = findViewById(R.id.ll_my_info);
-        llShare = findViewById(R.id.ll_share);
-        llGeneral = findViewById(R.id.ll_general);
         bottomNav = findViewById(R.id.bottom_navigation);
     }
 

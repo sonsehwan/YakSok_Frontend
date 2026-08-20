@@ -10,7 +10,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/page_bg"
+    android:background="@color/white"
     tools:context=".YaksokList">
 
     <ImageView
@@ -18,22 +18,21 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
         android:padding="4dp"
         android:src="@drawable/ic_menu2"
-        app:layout_constraintBottom_toBottomOf="@id/tv_header_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_header_title" />
-
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_header_title"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:gravity="center"
-        android:text="내 약속 목록"
+        android:text="약속 목록"
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -41,14 +40,62 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/view_divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="#F0F0F0"
+    <LinearLayout
+        android:id="@+id/ll_choice_yaksok"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_header_title" />
+        app:layout_constraintTop_toBottomOf="@id/tv_header_title"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/tv_my_yaksok"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="내 약속"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_touch_my_yaksok_list"/>
+
+        <TextView
+            android:id="@+id/tv_shared_yaksok"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="공유 약속"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+    android:id="@+id/view_divider"
+    android:layout_width="0dp"
+    android:layout_height="1dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/ll_choice_yaksok" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_share_user_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:background="@color/page_bg"
+        tools:listitem="@layout/item_shared_user_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_choice_yaksok"
+        android:visibility="gone"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_yaksok_list"
@@ -57,10 +104,11 @@
         android:clipToPadding="false"
         android:paddingTop="8dp"
         android:paddingBottom="20dp"
+        android:background="@color/page_bg"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_divider"
+        app:layout_constraintTop_toBottomOf="@+id/rv_share_user_list"
         tools:listitem="@layout/item_yaksok" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -102,8 +150,13 @@
         android:layout_gravity="start"
         android:background="@color/white"
         android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_spacer"
         app:itemIconTint="@color/brand_icon"
         app:itemTextColor="@color/neutral_800"
+        app:itemIconSize="28dp"
+        app:itemIconPadding="24dp"
+        app:itemHorizontalPadding="20dp"
+        app:itemTextAppearance="@style/TextAppearance.SideMenu.Item"
         app:menu="@menu/side_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,10 +33,14 @@ public class ShareYaksokList extends AppCompatActivity {
 
     private ImageView ivBack;
     private TextView tvEmpty;
+    private TextView tvHeaderTitle;
     private RecyclerView rvShareYaksok;
 
     private final List<Yaksok> items = new ArrayList<>();
     private ShareYaksokListAdapter adapter;
+
+    private Long senderId;
+    private String senderNickname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +49,16 @@ public class ShareYaksokList extends AppCompatActivity {
         setContentView(R.layout.activity_share_yaksok_list);
         InsetsUtil.applySystemBarPadding(findViewById(R.id.main_root));
 
+        if (getIntent().hasExtra("senderId")) {
+            senderId = getIntent().getLongExtra("senderId", -1);
+        }
+        senderNickname = getIntent().getStringExtra("senderNickname");
+
         initViews();
+
+        if (senderNickname != null) {
+            tvHeaderTitle.setText(senderNickname + "님이 공유한 약속");
+        }
 
         adapter = new ShareYaksokListAdapter(items, new ShareYaksokListAdapter.OnItemClickListener() {
             @Override
@@ -78,17 +92,18 @@ public class ShareYaksokList extends AppCompatActivity {
     private void initViews() {
         ivBack = findViewById(R.id.iv_back);
         tvEmpty = findViewById(R.id.tv_empty);
+        tvHeaderTitle = findViewById(R.id.tv_header_title);
         rvShareYaksok = findViewById(R.id.rv_share_yaksok);
     }
 
     private void loadSharedYaksokList() {
-        String userEmail = SprefsManager.getUserEmail(this);
+        Long userId = SprefsManager.getUserId(this);
 
-        NetworkClient.getYaksokApi().getSharedYaksokList(userEmail)
+        NetworkClient.getYaksokApi().getSharedYaksokList(userId, senderId)
                 .enqueue(new Callback<ApiResponse<List<Yaksok>>>() {
                     @Override
-                    public void onResponse(Call<ApiResponse<List<Yaksok>>> call,
-                                           Response<ApiResponse<List<Yaksok>>> response) {
+                    public void onResponse(@NonNull Call<ApiResponse<List<Yaksok>>> call,
+                                           @NonNull Response<ApiResponse<List<Yaksok>>> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             List<Yaksok> data = response.body().getData();
 
@@ -123,9 +138,9 @@ public class ShareYaksokList extends AppCompatActivity {
     }
 
     private void removeSharedYaksok(Long yaksokId) {
-        String userEmail = SprefsManager.getUserEmail(this);
+        Long userId = SprefsManager.getUserId(this);
 
-        NetworkClient.getYaksokApi().deleteSharedYaksok(yaksokId, userEmail)
+        NetworkClient.getYaksokApi().deleteSharedYaksok(yaksokId, userId)
                 .enqueue(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {

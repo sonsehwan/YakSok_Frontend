@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 상단, 좌측, 우측을 stroke 두께(2dp)만큼 음수로 밀어내어 하단 테두리만 남김 -->
+    <item
+        android:top="-3dp"
+        android:left="-3dp"
+        android:right="-3dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/black" />
+        </shape>
+    </item>
+</layer-list>
