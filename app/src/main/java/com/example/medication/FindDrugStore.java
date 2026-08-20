@@ -182,9 +182,9 @@ public class FindDrugStore extends AppCompatActivity {
         }
         loadingDialog.show();
 
-        String email = SprefsManager.getUserEmail(this);
+        Long userId = SprefsManager.getUserId(this);
 
-        CreateDrugStoreRequest request = new CreateDrugStoreRequest(email, drugStore);
+        CreateDrugStoreRequest request = new CreateDrugStoreRequest(userId, drugStore);
 
         DrugStoreApi api = NetworkClient.getDrugStoreApi();
         api.createDrugStore(request).enqueue(new Callback<ApiResponse<UserResponse>>() {

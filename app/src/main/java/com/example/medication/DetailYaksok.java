@@ -262,8 +262,8 @@ public class DetailYaksok extends AppCompatActivity {
             return;
         }
 
-        String myEmail = SprefsManager.getUserEmail(this);
-        FriendChatRoomRequest request = new FriendChatRoomRequest(myEmail, friend.getFriendId());
+        Long myUserId = SprefsManager.getUserId(this);
+        FriendChatRoomRequest request = new FriendChatRoomRequest(myUserId, friend.getFriendId());
 
         NetworkClient.getChatApi().enterFriendChatRoom(request)
                 .enqueue(new Callback<ApiResponse<ChatRoomResponse>>() {

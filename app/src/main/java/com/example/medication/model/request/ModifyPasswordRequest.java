@@ -1,22 +1,22 @@
 package com.example.medication.model.request;
 
 public class ModifyPasswordRequest {
-    private String email;
+    private Long userId;
     private String currentPassword;
     private String newPassword;
 
-    public ModifyPasswordRequest(String email, String currentPassword, String newPassword) {
-        this.email = email;
+    public ModifyPasswordRequest(Long userId, String currentPassword, String newPassword) {
+        this.userId = userId;
         this.newPassword = newPassword;
         this.currentPassword = currentPassword;
     }
 
-    public String getEmail() {
-        return email;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getCurrentPassword() {

@@ -29,5 +29,5 @@ public interface ChatApi {
 
     // 로그인한 유저가 참여 중인 채팅방 목록
     @GET("/api/chat/room")
-    Call<ApiResponse<List<ChatRoomListDto>>> getMyChatRooms(@Query("userEmail") String userEmail);
+    Call<ApiResponse<List<ChatRoomListDto>>> getMyChatRooms(@Query("userId") Long userId);
 }

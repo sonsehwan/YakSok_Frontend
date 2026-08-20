@@ -119,11 +119,11 @@ public class Settings extends AppCompatActivity {
     }
 
     private void deleteToken(){
-        String email = SprefsManager.getUserEmail(this);
+        Long userId = SprefsManager.getUserId(this);
         FirebaseTokenRequest request = new FirebaseTokenRequest(null);
         UserApi api = NetworkClient.getApi();
 
-        api.updateFcmToken(email, request).enqueue(new Callback<ApiResponse<Void>>(){
+        api.updateFcmToken(userId, request).enqueue(new Callback<ApiResponse<Void>>(){
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
                 if(response.isSuccessful()) {

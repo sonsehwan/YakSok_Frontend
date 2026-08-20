@@ -1,7 +1,7 @@
 package com.example.medication;
 
 import static com.example.medication.util.SprefsManager.getUser;
-import static com.example.medication.util.SprefsManager.getUserEmail;
+import static com.example.medication.util.SprefsManager.getUserId;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -77,7 +77,7 @@ public class DrugStoreDetail extends AppCompatActivity {
                     Log.d("drugStoreHpid", drugStore.getHpid());
                 }
             }
-            String userEmail = getUserEmail(this);
+            Long userId = getUserId(this);
             String hpid = drugStore.getHpid();
 
             if (hpid == null) {
@@ -91,7 +91,7 @@ public class DrugStoreDetail extends AppCompatActivity {
                 return;
             }
 
-            ChatRoomRequest request = new ChatRoomRequest(userEmail, hpid);
+            ChatRoomRequest request = new ChatRoomRequest(userId, hpid);
 
             // Retrofit 통신 시작
             NetworkClient.getChatApi().enterChatRoom(request).enqueue(new Callback<ApiResponse<ChatRoomResponse>>() {

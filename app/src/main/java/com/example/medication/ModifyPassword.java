@@ -20,6 +20,7 @@ import com.example.medication.model.request.ModifyPasswordRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
+import com.example.medication.ui.login.Login;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
 
@@ -67,11 +68,11 @@ public class ModifyPassword extends AppCompatActivity {
             return;
         }
 
-        String email = SprefsManager.getUserEmail(ModifyPassword.this);
+        Long userId = SprefsManager.getUserId(ModifyPassword.this);
         String currentPw = currentPassword.getText();
         String newPw = newPassword.getText();
 
-        ModifyPasswordRequest request = new ModifyPasswordRequest(email, currentPw, newPw);
+        ModifyPasswordRequest request = new ModifyPasswordRequest(userId, currentPw, newPw);
 
         UserApi api = NetworkClient.getApi();
         api.modifyPassword(request).enqueue(new Callback<ApiResponse<Void>>() {

@@ -1,20 +1,20 @@
 package com.example.medication.model.request;
 
 public class ChatRoomRequest {
-    private String userEmail;
+    private Long userId;
     private String hpid;
 
-    public ChatRoomRequest(String userEmail, String hpid) {
-        this.userEmail = userEmail;
+    public ChatRoomRequest(Long userId, String hpid) {
+        this.userId = userId;
         this.hpid = hpid;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getHpid() {

@@ -75,6 +75,12 @@ public class SprefsManager {
         return (user != null) ? user.getEmail() : "이메일";
     }
 
+    // 유저 id만 따로 뽑아서 가져오기
+    public static Long getUserId(Context context){
+        UserResponse user = getUser(context);
+        return (user != null) ? user.getId() : null;
+    }
+
     // 로그인 상태 확인
     public static boolean isLoggedIn(Context context) {
         return getPreference(context).getBoolean(KEY_IS_LOGGED_IN, false);

@@ -4,6 +4,6 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class ShareYaksokRequest {
-    private String userEmail;
+    private Long userId;
     private Long yaksokId;
 }

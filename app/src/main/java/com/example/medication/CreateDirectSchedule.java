@@ -204,7 +204,7 @@ public class CreateDirectSchedule extends AppCompatActivity {
         else if(selectedId == R.id.rb_anytime) dosageTime = "직후";
 
         CreateYakSokRequest request = new CreateYakSokRequest(
-                SprefsManager.getUserEmail(this),
+                SprefsManager.getUserId(this),
                 title,
                 startDate,
                 prescriptionDays,

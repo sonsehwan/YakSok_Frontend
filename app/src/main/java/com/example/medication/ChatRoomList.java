@@ -98,9 +98,9 @@ public class ChatRoomList extends AppCompatActivity {
     }
 
     private void loadChatRooms() {
-        String userEmail = SprefsManager.getUserEmail(this);
+        Long userId = SprefsManager.getUserId(this);
 
-        NetworkClient.getChatApi().getMyChatRooms(userEmail)
+        NetworkClient.getChatApi().getMyChatRooms(userId)
                 .enqueue(new Callback<ApiResponse<List<ChatRoomListDto>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<ChatRoomListDto>>> call,

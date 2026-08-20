@@ -21,6 +21,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
+import com.example.medication.ui.login.Login;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
 
@@ -83,11 +84,11 @@ public class MyInfoActivity extends AppCompatActivity {
 
     private void deleteUserFromServer() {
         UserApi api = NetworkClient.getApi();
-        String userEmail = SprefsManager.getUserEmail(this);
+        Long userId = SprefsManager.getUserId(this);
 
-        Log.d("MyInfoActivity", "탈퇴 요청 이메일: " + userEmail);
+        Log.d("MyInfoActivity", "탈퇴 요청 id: " + userId);
 
-        api.deleteUser(userEmail).enqueue(new Callback<ApiResponse<Void>>() {
+        api.deleteUser(userId).enqueue(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful()) {
@@ -131,10 +132,10 @@ public class MyInfoActivity extends AppCompatActivity {
             return;
         }
 
-        String email = SprefsManager.getUserEmail(MyInfoActivity.this);
+        Long userId = SprefsManager.getUserId(MyInfoActivity.this);
         String nickname = inputNickname.getText();
 
-        ModifyInfoRequest request = new ModifyInfoRequest(email, nickname);
+        ModifyInfoRequest request = new ModifyInfoRequest(userId, nickname);
 
         UserApi api = NetworkClient.getApi();
 

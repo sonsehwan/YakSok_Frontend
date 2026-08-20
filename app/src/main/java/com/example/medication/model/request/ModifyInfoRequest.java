@@ -1,20 +1,20 @@
 package com.example.medication.model.request;
 
 public class ModifyInfoRequest {
-    private String email;
+    private Long userId;
     private String nickname;
 
-    public ModifyInfoRequest(String email, String nickName){
-        this.email = email;
+    public ModifyInfoRequest(Long userId, String nickName){
+        this.userId = userId;
         this.nickname = nickName;
     }
 
-    public String getEmail() {
-        return email;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getNickname() {

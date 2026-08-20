@@ -172,11 +172,11 @@ public class ShareYaksokDetail extends AppCompatActivity {
     }
 
     private void saveSharedYaksok() {
-        String userEmail = SprefsManager.getUserEmail(this);
+        Long userId = SprefsManager.getUserId(this);
         btnSave.setEnabled(false);   // 연타로 중복 요청이 나가지 않게 막는다
 
         NetworkClient.getYaksokApi()
-                .saveSharedYaksok(new ShareYaksokRequest(userEmail, yaksokId))
+                .saveSharedYaksok(new ShareYaksokRequest(userId, yaksokId))
                 .enqueue(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {

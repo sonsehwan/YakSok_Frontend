@@ -29,9 +29,9 @@ public interface UserApi {
     @PATCH("/api/users/password")
     Call<ApiResponse<Void>> modifyPassword(@Body ModifyPasswordRequest request);
 
-    @DELETE("api/users/{email}")
-    Call<ApiResponse<Void>> deleteUser(@Path("email") String email);
+    @DELETE("api/users/{id}")
+    Call<ApiResponse<Void>> deleteUser(@Path("id") Long id);
 
-    @PATCH("/api/users/{email}/fcm-token")
-    Call<ApiResponse<Void>> updateFcmToken(@Path("email") String email, @Body FirebaseTokenRequest request);
+    @PATCH("/api/users/{id}/fcm-token")
+    Call<ApiResponse<Void>> updateFcmToken(@Path("id") Long id, @Body FirebaseTokenRequest request);
 }

@@ -3,20 +3,20 @@ package com.example.medication.model.request;
 import com.example.medication.model.SearchDrugStore;
 
 public class CreateDrugStoreRequest {
-    String email;
+    Long userId;
     SearchDrugStore drugStore;
 
-    public CreateDrugStoreRequest(String email, SearchDrugStore store) {
-        this.email = email;
+    public CreateDrugStoreRequest(Long userId, SearchDrugStore store) {
+        this.userId = userId;
         this.drugStore = store;
     }
 
-    public String getEmail() {
-        return email;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public SearchDrugStore getStore() {

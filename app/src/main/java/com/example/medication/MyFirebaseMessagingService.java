@@ -32,17 +32,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d("Create_New_Token", "새로 생성된 등록 토큰: " + token);
         if (SprefsManager.isLoggedIn(this)) {
             UserResponse user = SprefsManager.getUser(this);
-            if (user != null && user.getEmail() != null) {
-                sendRegistrationToServer(user.getEmail(), token);
+            if (user != null && user.getId() != null) {
+                sendRegistrationToServer(user.getId(), token);
             }
         }
     }
 
-    private void sendRegistrationToServer(String email, String token) {
+    private void sendRegistrationToServer(Long userId, String token) {
         FirebaseTokenRequest request = new FirebaseTokenRequest(token);
         UserApi api = NetworkClient.getApi();
 
-        api.updateFcmToken(email, request).enqueue(new Callback<ApiResponse<Void>>(){
+        api.updateFcmToken(userId, request).enqueue(new Callback<ApiResponse<Void>>(){
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
                 if(response.isSuccessful()){

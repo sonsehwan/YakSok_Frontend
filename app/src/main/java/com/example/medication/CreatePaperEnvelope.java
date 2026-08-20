@@ -150,6 +150,9 @@ public class CreatePaperEnvelope extends AppCompatActivity {
         rvSelectedPills = findViewById(R.id.rv_selected_pills);
     }
 
+    /***
+     * 리사이클러 뷰 셋팅
+     */
     private void setupRecyclerView() {
         settingAdapter = new AddMedicationSettingAdapter(selectedPills);
         rvSelectedPills.setLayoutManager(new LinearLayoutManager(this));
@@ -238,6 +241,10 @@ public class CreatePaperEnvelope extends AppCompatActivity {
         dialog.show();
     }
 
+
+    /***
+     * 달력 날짜 선택
+     */
     private void showDatePicker() {
         Calendar cal = Calendar.getInstance();
         DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
@@ -247,6 +254,9 @@ public class CreatePaperEnvelope extends AppCompatActivity {
         dialog.show();
     }
 
+    /***
+     * 모든 항목이 입력되었는지 확인
+     */
     private boolean validateInput() {
         if (!inputStartDate.isValid() || !inputTitle.isValid() || !inputPrescriptionDays.isValid()) {
             Toast.makeText(this, "필수 항목을 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
@@ -283,6 +293,10 @@ public class CreatePaperEnvelope extends AppCompatActivity {
         return true;
     }
 
+
+    /***
+     *
+     */
     private void updateRegisterButtonState() {
         if (!selectedPills.isEmpty()) {
             btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFFEB3B));
@@ -294,6 +308,12 @@ public class CreatePaperEnvelope extends AppCompatActivity {
     }
 
     // ========================================================================
+
+    /***
+     * 제미나이 AI로 약 정보 추출
+     *
+     * @param imageUri
+     */
     private void analyzeTextWithGemini(Uri imageUri) {
         loadingDialog.show();
 
@@ -349,6 +369,11 @@ public class CreatePaperEnvelope extends AppCompatActivity {
         }
     }
 
+    /***
+     * 제미나이로 추출한 약정보로 공공 API에서 실제 약 정보 가져오기
+     *
+     * @param aiResponseText
+     */
     private void parseAndDisplayGeminiResult(String aiResponseText) {
         try {
             String cleanJson = aiResponseText.replace("```json", "").replace("```", "").trim();
@@ -511,7 +536,7 @@ public class CreatePaperEnvelope extends AppCompatActivity {
         else if(selectedId == R.id.rb_anytime) dosageTime = "직후";
 
         CreateYakSokRequest request = new CreateYakSokRequest(
-                SprefsManager.getUserEmail(this),
+                SprefsManager.getUserId(this),
                 title,
                 startDate,
                 prescriptionDays,

@@ -4,7 +4,7 @@ import java.util.List;
 
 
 public class CreateYakSokRequest {
-    private String email;
+    private Long userId;
     private String title; // 약속 이름
     private String startDate; // 약속 시작 날짜
     private int prescriptionDays; // 복용 기간
@@ -17,8 +17,8 @@ public class CreateYakSokRequest {
     private String dosageTime; // 투약 시간대
     private List<PillRequest> pills; //복약 목록
 
-    public CreateYakSokRequest(String email, String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, String timeMorning, String timeLunch, String timeDinner, List<PillRequest> pills) {
-        this.email = email;
+    public CreateYakSokRequest(Long userId, String title, String startDate, int prescriptionDays, boolean takeMorning, boolean takeLunch, boolean takeDinner, String dosageTime, String timeMorning, String timeLunch, String timeDinner, List<PillRequest> pills) {
+        this.userId = userId;
         this.title = title;
         this.startDate = startDate;
         this.prescriptionDays = prescriptionDays;
@@ -107,12 +107,12 @@ public class CreateYakSokRequest {
         this.pills = pills;
     }
 
-    public String getEmail() {
-        return email;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setEmail(String userEmail) {
-        this.email = userEmail;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
 }

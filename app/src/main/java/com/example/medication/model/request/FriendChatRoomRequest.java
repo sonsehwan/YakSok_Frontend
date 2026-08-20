@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class FriendChatRoomRequest {
-    private String userEmail;
+    private Long userId;
     private Long friendId;
 }
