@@ -77,14 +77,14 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_send"
-            android:layout_width="72dp"
+            android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:text="전송"
             android:textSize="13sp"
             android:textStyle="bold"
             android:textColor="#222222"
             android:layout_marginStart="8dp"
-            app:cornerRadius="24dp"
+            app:cornerRadius="20dp"
             app:backgroundTint="@color/brand_surface" />
 
     </LinearLayout>

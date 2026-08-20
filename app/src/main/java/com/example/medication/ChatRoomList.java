@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,6 +50,10 @@ public class ChatRoomList extends AppCompatActivity {
         adapter = new ChatRoomListAdapter(rooms, this::openChatRoom);
         rvChatRooms.setLayoutManager(new LinearLayoutManager(this));
         rvChatRooms.setAdapter(adapter);
+
+        DividerItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(this, R.drawable.divider_chat_room));
+        rvChatRooms.addItemDecoration(divider);
 
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
