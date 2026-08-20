@@ -15,7 +15,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.medication.InputView;
-import com.example.medication.Login;
+import com.example.medication.ui.login.Login;
 import com.example.medication.R;
 import com.example.medication.model.request.UserRequest;
 import com.example.medication.model.response.ApiResponse;
