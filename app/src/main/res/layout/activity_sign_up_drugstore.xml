@@ -7,22 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.signup.SignUp_Normal">
-
-    <com.example.medication.InputView
-        android:id="@+id/input_nickname"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:imeOptions="actionDone"
-        android:inputType="text"
-        app:helperText="2~10자의 한글, 영문, 숫자만 사용 가능합니다."
-        app:hintText="닉네임을 입력하세요."
-        app:iconSrc="@drawable/ic_user"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_check_pw"
-        app:validationType="nickname" />
+    tools:context=".ui.signup.SignUp_DrugStore">
 
     <ImageView
         android:id="@+id/imageView"
@@ -88,12 +73,88 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/input_pw" />
 
+    <com.example.medication.InputView
+        android:id="@+id/input_nickname"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        app:helperText="2~10자의 한글, 영문, 숫자만 사용 가능합니다."
+        app:hintText="닉네임을 입력하세요."
+        app:iconSrc="@drawable/ic_user"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_check_pw"
+        app:validationType="nickname" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mcv_find_drugstore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="28dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:strokeWidth="2dp"
+        app:strokeColor="@color/brand_icon"
+        app:cardBackgroundColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_nickname">
+
+        <LinearLayout
+            android:id="@+id/ll_find_drugstore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="3dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/iv_map"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="15dp"
+                app:tint="@color/brand_icon"
+                app:srcCompat="@drawable/ic_map" />
+
+            <TextView
+                android:id="@+id/tv_drugstore"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingStart="12dp"
+                android:gravity="center_vertical"
+                android:hint="약국을 등록하세요"
+                android:textColorHint="#999999"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btn_find_drugstore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/brand_surface"
+                android:minWidth="60dp"
+                android:minHeight="48dp"
+                android:paddingVertical="0dp"
+                app:insetTop="0dp"
+                app:insetBottom="0dp"
+                android:paddingHorizontal="12dp"
+                android:text="찾기"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_next_step"
+        android:id="@+id/btn_sign_up"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginHorizontal="20dp"
-        android:text="다음"
+        android:text="회원가입"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -102,6 +163,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_nickname" />
+        app:layout_constraintTop_toBottomOf="@+id/mcv_find_drugstore" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
