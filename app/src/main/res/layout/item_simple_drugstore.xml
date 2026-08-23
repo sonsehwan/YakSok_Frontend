@@ -27,7 +27,8 @@
         <!-- 약 정보 텍스트 영역 -->
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
