@@ -2,6 +2,7 @@ package com.example.medication.ui.signup;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.medication.InputView;
 import com.example.medication.R;
@@ -26,6 +28,7 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.example.medication.ui.FindDrugStore.FindDrugStore;
 import com.example.medication.ui.login.Login;
+import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -38,7 +41,8 @@ public class SignUp_DrugStore extends AppCompatActivity {
 
     private InputView inputEmail, inputPw, inputCheckPw, inputNickName;
     private Button btnSignUp, btnFindDrugStore;
-    private TextView tvDrugstore;
+    private TextView tvDrugstore, tvDrugstoreError;
+    private MaterialCardView mcvFindDrugstore;
 
     private ActivityResultLauncher<Intent> findDrugStoreLauncher;
 
@@ -71,10 +75,6 @@ public class SignUp_DrugStore extends AppCompatActivity {
 
         btnSignUp.setOnClickListener(v -> {
             if(!checkValid()){
-                return;
-            }
-            if(drugStore == null){
-                showToast("약국을 선택해주세요.");
                 return;
             }
             startSignUp(type, drugStore);
@@ -124,7 +124,15 @@ public class SignUp_DrugStore extends AppCompatActivity {
         boolean isCheckPw = inputCheckPw.isValid();
         boolean isNickName = inputNickName.isValid();
 
-        if(!isEmailVaild || !isPwVaild || !isCheckPw || !isNickName){
+        boolean isDrugStoreValid = true;
+        if(drugStore == null){
+            showDrugStoreError("약국을 선택해주세요.");
+            isDrugStoreValid = false;
+        }else{
+            hideDrugStoreError();
+        }
+
+        if(!isEmailVaild || !isPwVaild || !isCheckPw || !isNickName || !isDrugStoreValid){
             showToast("입력 정보를 다시 확인해주세요.");
             return false;
         }
@@ -141,6 +149,7 @@ public class SignUp_DrugStore extends AppCompatActivity {
                         if(drugStore == null){
                             showToast("약국 정보를 가져오는데 실패하였습니다.");
                         }else{
+                            hideDrugStoreError();
                             tvDrugstore.setText(drugStore.getDutyName());
                         }
                     }
@@ -166,6 +175,7 @@ public class SignUp_DrugStore extends AppCompatActivity {
 
                     if(result.isBusinessSuccess()){
                         Log.d("SignUp", result.getMessage());
+                        showToast("회원가입 완료");
                         Intent intent = new Intent(SignUp_DrugStore.this, Login.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
@@ -200,6 +210,8 @@ public class SignUp_DrugStore extends AppCompatActivity {
                     inputEmail.showError(message);
                 }else if(message.contains("닉네임")){
                     inputNickName.showError(message);
+                }else if(message.contains("약국")){
+                    showDrugStoreError(message);
                 }else{
                     showToast(message);
                 }
@@ -211,6 +223,17 @@ public class SignUp_DrugStore extends AppCompatActivity {
         }catch (IOException e){
             showToast("에러 메시지 분석 중 오류가 발생했습니다.");
         }
+    }
+
+    private void showDrugStoreError(String message){
+        tvDrugstoreError.setText(message);
+        tvDrugstoreError.setVisibility(View.VISIBLE);
+        mcvFindDrugstore.setStrokeColor(Color.parseColor("#FF0000"));
+    }
+
+    private void hideDrugStoreError(){
+        tvDrugstoreError.setVisibility(View.GONE);
+        mcvFindDrugstore.setStrokeColor(ContextCompat.getColor(this, R.color.brand_icon));
     }
 
     private void showToast(String message){
@@ -225,5 +248,7 @@ public class SignUp_DrugStore extends AppCompatActivity {
         btnFindDrugStore = findViewById(R.id.btn_find_drugstore);
         btnSignUp = findViewById(R.id.btn_sign_up);
         tvDrugstore = findViewById(R.id.tv_drugstore);
+        tvDrugstoreError = findViewById(R.id.tv_drugstore_error);
+        mcvFindDrugstore = findViewById(R.id.mcv_find_drugstore);
     }
 }

@@ -121,6 +121,7 @@ public class SignUp_Normal extends AppCompatActivity {
 
                     if(result.isBusinessSuccess()){
                         Log.d("SignUp", result.getMessage());
+                        showToast("회원가입 완료");
                         Intent intent = new Intent(SignUp_Normal.this, Login.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
