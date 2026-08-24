@@ -92,7 +92,7 @@
             android:name=".CreateDirectSchedule"
             android:exported="false" />
         <activity
-            android:name=".FindDrugStore"
+            android:name=".ui.FindDrugStore.FindDrugStore"
             android:exported="false" /> <!-- 로그인 -->
         <activity
             android:name=".ui.login.Login"

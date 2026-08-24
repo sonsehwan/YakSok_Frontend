@@ -10,6 +10,8 @@ public class NetworkClient {
 
     private static final String BASE_URL = "http://13.209.186.24:8080/";
 
+    private static String qrCodeAPI_URL = "https://api.qrserver.com/v1/create-qr-code/";
+
     private static Retrofit userRetrofit = null;
     private static Retrofit friendRetrofit = null;
     private static Retrofit pillRetrofit = null;

@@ -1,7 +1,8 @@
-package com.example.medication;
+package com.example.medication.ui.FindDrugStore;
 
 import static com.example.medication.util.SprefsManager.getUser;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.medication.LoadingDialog;
+import com.example.medication.R;
 import com.example.medication.adapter.FindDrugStoreAdapter;
 import com.example.medication.databinding.ActivityFindDrugstoreBinding;
 import com.example.medication.model.SearchDrugStore;
@@ -35,6 +38,7 @@ public class FindDrugStore extends AppCompatActivity {
     ActivityFindDrugstoreBinding binding;
     private FindDrugStoreAdapter adapter;
     private LoadingDialog loadingDialog;
+    private String type;
 
     private static final int[] SIGUNGU_ARRAYS = {
             0,                         // 0: 시/도 선택
@@ -63,6 +67,8 @@ public class FindDrugStore extends AppCompatActivity {
         binding = ActivityFindDrugstoreBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        type = getIntent().getStringExtra("TYPE_SIGN_UP");
+
         setRecyclerView();
         setupAddressSpinners();
 
@@ -71,12 +77,15 @@ public class FindDrugStore extends AppCompatActivity {
         });
 
         binding.btnFindDrugstore.setOnClickListener(v -> {
-            UserResponse currentUser = getUser(this);
+            // 회원가입 중에는 아직 로그인된 유저가 없으므로 역할 검사를 건너뛴다.
+            if (!"sign_up".equals(type)) {
+                UserResponse currentUser = getUser(this);
 
-            // 약국 회원만 약국을 등록할 수 있다.
-            if (currentUser == null || !Objects.equals(currentUser.getRole(), "DRUGSTORE")) {
-                showToast("유저회원은 약국 등록을 할 수 없습니다.");
-                return;
+                // 약국 회원만 약국을 등록할 수 있다.
+                if (currentUser == null || !Objects.equals(currentUser.getRole(), "DRUGSTORE")) {
+                    showToast("유저회원은 약국 등록을 할 수 없습니다.");
+                    return;
+                }
             }
 
             int sidoPosition = binding.spFirstAddress.getSelectedItemPosition();
@@ -169,8 +178,15 @@ public class FindDrugStore extends AppCompatActivity {
                 .setTitle(drugStore.getDutyName() + " 선택")
                 .setMessage(drugStore.getDutyName() +"을 선택하시겠습니까?")
                 .setPositiveButton("선택", (dialog, which) -> {
-                    choiceDrugStoreAndCallApi(drugStore);
-                    finish();
+                    if ("sign_up".equals(type)) {
+                        // 회원가입 중에는 계정이 아직 없으므로 API 호출 없이 선택 결과만 돌려준다.
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("CHOiCE_DRUGSTORE", drugStore);
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    } else {
+                        // TODO: 내 정보 수정(modify) 화면에서의 약국 변경 처리
+                    }
                 })
                 .setNegativeButton("취소", null)
                 .show();

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.medication.ui.signup.SignUp_DrugStore;
 import com.example.medication.ui.signup.SignUp_Normal;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -28,7 +29,7 @@ public class SignUpTypeBottomSheet extends BottomSheetDialogFragment {
         });
 
         drugStore_type.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), SignUp_Normal.class);
+            Intent intent = new Intent(getContext(), SignUp_DrugStore.class);
             intent.putExtra("SignUp_Type", "DRUGSTORE");
             startActivity(intent);
             dismiss();

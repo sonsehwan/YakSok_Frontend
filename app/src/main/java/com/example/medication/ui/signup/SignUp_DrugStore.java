@@ -10,17 +10,22 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.medication.FindDrugStore;
 import com.example.medication.InputView;
 import com.example.medication.R;
+import com.example.medication.model.SearchDrugStore;
 import com.example.medication.model.request.UserRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
+import com.example.medication.ui.FindDrugStore.FindDrugStore;
+import com.example.medication.ui.login.Login;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -32,14 +37,20 @@ import retrofit2.Response;
 public class SignUp_DrugStore extends AppCompatActivity {
 
     private InputView inputEmail, inputPw, inputCheckPw, inputNickName;
+    private Button btnSignUp, btnFindDrugStore;
+    private TextView tvDrugstore;
 
-    private Button btnFinish;
+    private ActivityResultLauncher<Intent> findDrugStoreLauncher;
+
+    private SearchDrugStore drugStore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up_normal );
+        setContentView(R.layout.activity_sign_up_drugstore );
 
         initViews();
+        setupFindDrugStoreLauncher();
 
         inputCheckPw.setOnValidateListener(text ->{
             String originalPw = inputPw.getText();
@@ -49,10 +60,25 @@ public class SignUp_DrugStore extends AppCompatActivity {
             return null;
         });
 
-        Intent intent = getIntent();
-        String type = intent.getStringExtra("SignUp_Type");
+        btnFindDrugStore.setOnClickListener(v -> {
+            Intent intent = new Intent(this, FindDrugStore.class);
+            intent.putExtra("TYPE_SIGN_UP", "sign_up");
+            findDrugStoreLauncher.launch(intent);
+        });
 
-        btnFinish.setOnClickListener(v -> {startSignUp(type);});
+        Intent getIntent = getIntent();
+        String type = getIntent.getStringExtra("SignUp_Type");
+
+        btnSignUp.setOnClickListener(v -> {
+            if(!checkValid()){
+                return;
+            }
+            if(drugStore == null){
+                showToast("약국을 선택해주세요.");
+                return;
+            }
+            startSignUp(type, drugStore);
+        });
     }
 
     @Override
@@ -92,7 +118,7 @@ public class SignUp_DrugStore extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
 
-    private void startSignUp(String type){
+    private boolean checkValid(){
         boolean isEmailVaild = inputEmail.isValid();
         boolean isPwVaild = inputPw.isValid();
         boolean isCheckPw = inputCheckPw.isValid();
@@ -100,16 +126,35 @@ public class SignUp_DrugStore extends AppCompatActivity {
 
         if(!isEmailVaild || !isPwVaild || !isCheckPw || !isNickName){
             showToast("입력 정보를 다시 확인해주세요.");
-            return;
+            return false;
         }
+        return true;
+    }
 
+    private void setupFindDrugStoreLauncher() {
+        findDrugStoreLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        drugStore = (SearchDrugStore) result.getData().getSerializableExtra("CHOiCE_DRUGSTORE");
+
+                        if(drugStore == null){
+                            showToast("약국 정보를 가져오는데 실패하였습니다.");
+                        }else{
+                            tvDrugstore.setText(drugStore.getDutyName());
+                        }
+                    }
+                }
+        );
+    }
+
+    private void startSignUp(String type, SearchDrugStore drugStore){
         String email = inputEmail.getText();
         String pw = inputPw.getText();
         String nickName = inputNickName.getText();
         String role = type;
 
-
-        UserRequest request = new UserRequest(email, pw, nickName, role);
+        UserRequest request = new UserRequest(email, pw, nickName, drugStore, role);
 
         UserApi api = NetworkClient.getApi();
         api.signUp(request).enqueue(new Callback<ApiResponse<Void>>() {
@@ -121,7 +166,7 @@ public class SignUp_DrugStore extends AppCompatActivity {
 
                     if(result.isBusinessSuccess()){
                         Log.d("SignUp", result.getMessage());
-                        Intent intent = new Intent(SignUp_DrugStore.this, FindDrugStore.class);
+                        Intent intent = new Intent(SignUp_DrugStore.this, Login.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
@@ -177,6 +222,8 @@ public class SignUp_DrugStore extends AppCompatActivity {
         inputPw = findViewById(R.id.input_pw);
         inputCheckPw = findViewById(R.id.input_check_pw);
         inputNickName = findViewById(R.id.input_nickname);
-        btnFinish = findViewById(R.id.btn_finish);
+        btnFindDrugStore = findViewById(R.id.btn_find_drugstore);
+        btnSignUp = findViewById(R.id.btn_sign_up);
+        tvDrugstore = findViewById(R.id.tv_drugstore);
     }
 }
