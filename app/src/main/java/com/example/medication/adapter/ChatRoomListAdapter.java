@@ -19,12 +19,18 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
         void onRoomClick(ChatRoomListDto room);
     }
 
+    public interface OnRoomLongClickListener {
+        void onRoomLongClick(ChatRoomListDto room);
+    }
+
     private final List<ChatRoomListDto> rooms;
     private final OnRoomClickListener listener;
+    private final OnRoomLongClickListener longClickListener;
 
-    public ChatRoomListAdapter(List<ChatRoomListDto> rooms, OnRoomClickListener listener) {
+    public ChatRoomListAdapter(List<ChatRoomListDto> rooms, OnRoomClickListener listener, OnRoomLongClickListener longClickListener) {
         this.rooms = rooms;
         this.listener = listener;
+        this.longClickListener = longClickListener;
     }
 
     @NonNull
@@ -67,6 +73,10 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
             tvTime.setText(formatTime(room.getLastMessageAt()));
 
             itemView.setOnClickListener(v -> listener.onRoomClick(room));
+            itemView.setOnLongClickListener(v -> {
+                longClickListener.onRoomLongClick(room);
+                return true;
+            });
         }
 
         // 서버가 "2026-07-28T11:05:00" 형태로 내려준다. 시:분만 잘라 쓴다.

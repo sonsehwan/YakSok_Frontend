@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -47,7 +48,7 @@ public class ChatRoomList extends AppCompatActivity {
 
         initViews();
 
-        adapter = new ChatRoomListAdapter(rooms, this::openChatRoom);
+        adapter = new ChatRoomListAdapter(rooms, this::openChatRoom, this::showRoomActionsDialog);
         rvChatRooms.setLayoutManager(new LinearLayoutManager(this));
         rvChatRooms.setAdapter(adapter);
 
@@ -101,6 +102,58 @@ public class ChatRoomList extends AppCompatActivity {
         Intent intent = new Intent(ChatRoomList.this, ChattingRoom.class);
         intent.putExtra("roomId", room.getRoomId());
         startActivity(intent);
+    }
+
+    // 롱클릭 시 카톡처럼 방 이름을 제목으로 한 액션 메뉴를 띄운다.
+    private void showRoomActionsDialog(ChatRoomListDto room) {
+        String[] actions = {"삭제"};
+        new AlertDialog.Builder(this)
+                .setTitle(room.getRoomName())
+                .setItems(actions, (dialog, which) -> {
+                    if (which == 0) {
+                        showDeleteConfirmDialog(room);
+                    }
+                })
+                .show();
+    }
+
+    private void showDeleteConfirmDialog(ChatRoomListDto room) {
+        new AlertDialog.Builder(this)
+                .setTitle("채팅방 나가기")
+                .setMessage("'" + room.getRoomName() + "' 채팅방을 목록에서 지울까요?")
+                .setPositiveButton("나가기", (dialog, which) -> deleteChatRoom(room))
+                .setNegativeButton("취소", null)
+                .show();
+    }
+
+    private void deleteChatRoom(ChatRoomListDto room) {
+        Long userId = SprefsManager.getUserId(this);
+
+        NetworkClient.getChatApi().deleteChatRoom(userId, room.getRoomId())
+                .enqueue(new Callback<ApiResponse<List<ChatRoomListDto>>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<List<ChatRoomListDto>>> call,
+                                           Response<ApiResponse<List<ChatRoomListDto>>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<ChatRoomListDto> data = response.body().getData();
+
+                            rooms.clear();
+                            if (data != null) {
+                                rooms.addAll(data);
+                            }
+                            adapter.notifyDataSetChanged();
+
+                            tvEmpty.setVisibility(rooms.isEmpty() ? View.VISIBLE : View.GONE);
+                        } else {
+                            Toast.makeText(ChatRoomList.this, "채팅방을 지우지 못했습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<List<ChatRoomListDto>>> call, Throwable t) {
+                        Toast.makeText(ChatRoomList.this, "서버와 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void loadChatRooms() {

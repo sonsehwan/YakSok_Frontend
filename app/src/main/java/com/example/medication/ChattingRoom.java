@@ -45,6 +45,7 @@ public class ChattingRoom extends AppCompatActivity {
     private Long roomId;
     private String roomName;
     private String myEmail;
+    private Long myUserId;
 
     private Long pendingShareYaksokId = null;
     private String pendingShareMessage = null;
@@ -98,6 +99,7 @@ public class ChattingRoom extends AppCompatActivity {
         }
 
         myEmail = getUserEmail(this);
+        myUserId = com.example.medication.util.SprefsManager.getUserId(this);
         if (roomId == -1) {
             Toast.makeText(this, "잘못된 접근입니다.", Toast.LENGTH_SHORT).show();
             finish();
@@ -132,7 +134,7 @@ public class ChattingRoom extends AppCompatActivity {
     }
 
     private void loadPreviousMessages() {
-        NetworkClient.getChatApi().getPreviousMessages(roomId)
+        NetworkClient.getChatApi().getPreviousMessages(roomId, myUserId)
                 .enqueue(new Callback<ApiResponse<List<ChatMessage>>>() {
                     @Override
                     public void onResponse(
