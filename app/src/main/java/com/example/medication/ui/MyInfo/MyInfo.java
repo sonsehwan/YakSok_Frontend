@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.MyInfo;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +11,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.medication.InputView;
+import com.example.medication.R;
+import com.example.medication.Settings;
 import com.example.medication.model.request.ModifyInfoRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
@@ -26,15 +31,19 @@ import com.example.medication.ui.login.Login;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
 
+import java.util.Objects;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MyInfoActivity extends AppCompatActivity {
+public class MyInfo extends AppCompatActivity {
 
     private ImageView ivBack;
     private InputView inputNickname;
     private Button btnChangePw, btnSaveInfo, btnWithdraw, btnFindDrugStore;
+    private TextView tvLabelDrugstore;
+    private LinearLayout llFindDrugstore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +56,20 @@ public class MyInfoActivity extends AppCompatActivity {
         btnSaveInfo = findViewById(R.id.btn_save_info);
         btnFindDrugStore = findViewById(R.id.btn_find_drugstore);
         btnWithdraw = findViewById(R.id.btn_withdraw);
+        tvLabelDrugstore = findViewById(R.id.tv_label_drugstore);
+        llFindDrugstore = findViewById(R.id.ll_find_drugstore);
         btnWithdraw.setOnClickListener(v -> showWithdrawConfirmDialog());
 
         // 기존에 저장된 닉네임을 불러와서 미리 채워둡니다.
         String currentNickname = SprefsManager.getUserNickName(this);
         inputNickname.setText(currentNickname);
+
+        // 약국 회원일 때만 약국 등록 영역을 노출합니다.
+        UserResponse currentUser = SprefsManager.getUser(this);
+        if (currentUser != null && Objects.equals(currentUser.getRole(), "DRUGSTORE")) {
+            tvLabelDrugstore.setVisibility(View.VISIBLE);
+            llFindDrugstore.setVisibility(View.VISIBLE);
+        }
 
         // 뒤로가기 버튼 클릭 이벤트
         ivBack.setOnClickListener(v -> finish());
@@ -93,9 +111,9 @@ public class MyInfoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(MyInfoActivity.this, "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyInfo.this, "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
 
-                    SprefsManager.clearUserInfo(MyInfoActivity.this);
+                    SprefsManager.clearUserInfo(MyInfo.this);
 
                     navigateToLoginScreen();
                 } else {
@@ -109,20 +127,20 @@ public class MyInfoActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    Toast.makeText(MyInfoActivity.this, "탈퇴 실패 (코드: " + statusCode + ")", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyInfo.this, "탈퇴 실패 (코드: " + statusCode + ")", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                 Log.e("MyInfoActivity", "탈퇴 API 통신 실패: " + t.getMessage());
-                Toast.makeText(MyInfoActivity.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyInfo.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void navigateToLoginScreen() {
-        Intent intent = new Intent(MyInfoActivity.this, Login.class);
+        Intent intent = new Intent(MyInfo.this, Login.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
@@ -133,7 +151,7 @@ public class MyInfoActivity extends AppCompatActivity {
             return;
         }
 
-        Long userId = SprefsManager.getUserId(MyInfoActivity.this);
+        Long userId = SprefsManager.getUserId(MyInfo.this);
         String nickname = inputNickname.getText();
 
         ModifyInfoRequest request = new ModifyInfoRequest(userId, nickname);
@@ -153,11 +171,11 @@ public class MyInfoActivity extends AppCompatActivity {
                         // 로그인한 유저의 정보를 가져온다(이메일, 비밀번호, 닉네임)
                         UserResponse user = result.getData();
                         //저장소에 저장
-                        SprefsManager.setUserInfo(MyInfoActivity.this, user);
+                        SprefsManager.setUserInfo(MyInfo.this, user);
 
                         Log.d("ModifyNickName", result.getMessage());
 
-                        Intent intent = new Intent(MyInfoActivity.this, Settings.class);
+                        Intent intent = new Intent(MyInfo.this, Settings.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();

@@ -74,10 +74,10 @@
             android:name=".MedicineSearchActivity"
             android:exported="false" />
         <activity
-            android:name=".ModifyPassword"
+            android:name=".ui.MyInfo.ModifyPassword"
             android:exported="false" />
         <activity
-            android:name=".MyInfoActivity"
+            android:name=".ui.MyInfo.MyInfo"
             android:exported="false" />
         <activity
             android:name=".WipActivity"

@@ -15,6 +15,7 @@ import com.example.medication.model.request.FirebaseTokenRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
+import com.example.medication.ui.MyInfo.MyInfo;
 import com.example.medication.ui.login.Login;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
@@ -52,7 +53,7 @@ public class Settings extends AppCompatActivity {
         });
 
         llMyInfo.setOnClickListener(v -> {
-            Intent intent = new Intent(Settings.this, MyInfoActivity.class);
+            Intent intent = new Intent(Settings.this, MyInfo.class);
             startActivity(intent);
         });
 
