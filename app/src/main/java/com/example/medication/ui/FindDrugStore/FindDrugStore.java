@@ -24,6 +24,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.DrugStoreApi;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.ui.MyInfo.MyInfo;
 import com.example.medication.util.SprefsManager;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class FindDrugStore extends AppCompatActivity {
         binding = ActivityFindDrugstoreBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        type = getIntent().getStringExtra("TYPE_SIGN_UP");
+        type = getIntent().getStringExtra("INTENT_TYPE");
 
         setRecyclerView();
         setupAddressSpinners();
@@ -185,7 +186,7 @@ public class FindDrugStore extends AppCompatActivity {
                         setResult(RESULT_OK, resultIntent);
                         finish();
                     } else {
-                        // TODO: 내 정보 수정(modify) 화면에서의 약국 변경 처리
+                        choiceDrugStoreAndCallApi(drugStore);
                     }
                 })
                 .setNegativeButton("취소", null)
@@ -203,10 +204,10 @@ public class FindDrugStore extends AppCompatActivity {
         CreateDrugStoreRequest request = new CreateDrugStoreRequest(userId, drugStore);
 
         DrugStoreApi api = NetworkClient.getDrugStoreApi();
-        api.createDrugStore(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
+        api.modifyDrugStore(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
-                loadingDialog.dismiss(); // 통신이 끝나면 로딩창 닫기
+                loadingDialog.dismiss();
 
                 Log.d("DrugStoreAPI", "요청 URL: " + call.request().url());
                 Log.d("DrugStoreAPI", "응답 코드: " + response.code());
@@ -224,6 +225,10 @@ public class FindDrugStore extends AppCompatActivity {
                     UserResponse saveUser = getUser(FindDrugStore.this);
                     String userHdip = saveUser.getMyDrugStore().getHpid();
                     Log.d("새로 저장한 유저", userHdip);
+
+                    Intent intent = new Intent(FindDrugStore.this, MyInfo.class);
+                    startActivity(intent);
+                    finish();
                 } else {
                     showToast("서버로부터 결과를 가져오지 못했습니다.");
                 }

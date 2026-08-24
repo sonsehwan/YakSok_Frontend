@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -43,7 +44,10 @@ public class MyInfo extends AppCompatActivity {
     private InputView inputNickname;
     private Button btnChangePw, btnSaveInfo, btnWithdraw, btnFindDrugStore;
     private TextView tvLabelDrugstore;
+    private TextView tvDrugstore;
     private LinearLayout llFindDrugstore;
+
+    private ActivityResultLauncher<Intent> findDrugStoreLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,7 @@ public class MyInfo extends AppCompatActivity {
         btnFindDrugStore = findViewById(R.id.btn_find_drugstore);
         btnWithdraw = findViewById(R.id.btn_withdraw);
         tvLabelDrugstore = findViewById(R.id.tv_label_drugstore);
+        tvDrugstore = findViewById(R.id.tv_drugstore);
         llFindDrugstore = findViewById(R.id.ll_find_drugstore);
         btnWithdraw.setOnClickListener(v -> showWithdrawConfirmDialog());
 
@@ -69,6 +74,10 @@ public class MyInfo extends AppCompatActivity {
         if (currentUser != null && Objects.equals(currentUser.getRole(), "DRUGSTORE")) {
             tvLabelDrugstore.setVisibility(View.VISIBLE);
             llFindDrugstore.setVisibility(View.VISIBLE);
+
+            if (currentUser.getMyDrugStore() != null) {
+                tvDrugstore.setText(currentUser.getMyDrugStore().getDutyName());
+            }
         }
 
         // 뒤로가기 버튼 클릭 이벤트
@@ -86,6 +95,7 @@ public class MyInfo extends AppCompatActivity {
 
         btnFindDrugStore.setOnClickListener(view -> {
             Intent intent = new Intent(this, FindDrugStore.class);
+            intent.putExtra("INTENT_TYPE", "modify");
             startActivity(intent);
         });
     }

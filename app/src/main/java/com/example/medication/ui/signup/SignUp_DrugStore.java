@@ -66,7 +66,7 @@ public class SignUp_DrugStore extends AppCompatActivity {
 
         btnFindDrugStore.setOnClickListener(v -> {
             Intent intent = new Intent(this, FindDrugStore.class);
-            intent.putExtra("TYPE_SIGN_UP", "sign_up");
+            intent.putExtra("INTENT_TYPE", "sign_up");
             findDrugStoreLauncher.launch(intent);
         });
 

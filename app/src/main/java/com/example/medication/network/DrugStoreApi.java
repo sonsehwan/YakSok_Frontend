@@ -31,5 +31,5 @@ public interface DrugStoreApi {
     );
 
     @POST("/api/drugstore")
-    Call<ApiResponse<UserResponse>> createDrugStore(@Body CreateDrugStoreRequest request);
+    Call<ApiResponse<UserResponse>> modifyDrugStore(@Body CreateDrugStoreRequest request);
 }
