@@ -17,14 +17,27 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
 
     private List<FriendResponseDto> items;
     private OnItemClickListener listener;
+    private OnItemLongClickListener longClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(FriendResponseDto friend, int position);
     }
 
+    public interface OnItemLongClickListener {
+        void onItemLongClick(FriendResponseDto friend);
+    }
+
+    // 롱클릭이 필요 없는 화면(친구 선택 다이얼로그 등)에서 쓰는 생성자
     public FriendListAdapter(List<FriendResponseDto> items, OnItemClickListener listener) {
+        this(items, listener, null);
+    }
+
+    public FriendListAdapter(List<FriendResponseDto> items,
+                             OnItemClickListener listener,
+                             OnItemLongClickListener longClickListener) {
         this.items = items;
         this.listener = listener;
+        this.longClickListener = longClickListener;
     }
 
     @NonNull
@@ -47,6 +60,15 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
             if (listener != null && pos != RecyclerView.NO_POSITION) {
                 listener.onItemClick(item, pos);
             }
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            // 롱클릭을 쓰지 않는 화면에서는 이벤트를 소비하지 않고 그대로 흘려보낸다
+            if (longClickListener == null) {
+                return false;
+            }
+            longClickListener.onItemLongClick(item);
+            return true;
         });
     }
 

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -139,7 +140,7 @@ public class FriendList extends AppCompatActivity {
             // 약속 공유 기능 완성 후 연결 예정
             Intent intent = new Intent(FriendList.this, WipActivity.class);
             startActivity(intent);
-        });
+        }, this::showFriendActionsDialog);
         rvFriendList.setAdapter(adapter);
     }
 
@@ -151,13 +152,7 @@ public class FriendList extends AppCompatActivity {
                                            Response<ApiResponse<FriendListDto>> response) {
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().getData() != null) {
-                            List<FriendResponseDto> friends = response.body().getData().getFriends();
-
-                            adapter.updateData(friends);
-
-                            int count = (friends == null) ? 0 : friends.size();
-                            tvFriendCount.setText("내 친구 " + count);
-                            tvEmptyFriend.setVisibility(count == 0 ? TextView.VISIBLE : TextView.GONE);
+                            bindFriendList(response.body().getData().getFriends());
                         } else {
                             showError(response, "친구 목록을 불러오지 못했습니다.");
                         }
@@ -166,6 +161,62 @@ public class FriendList extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<ApiResponse<FriendListDto>> call, Throwable t) {
                         Log.e("FriendList", "친구 목록 통신 실패: " + t.getMessage());
+                        Toast.makeText(FriendList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    // 친구 목록과 개수, 빈 목록 안내 문구를 한 번에 갱신한다.
+    private void bindFriendList(List<FriendResponseDto> friends) {
+        adapter.updateData(friends);
+
+        int count = (friends == null) ? 0 : friends.size();
+        tvFriendCount.setText("내 친구 " + count);
+        tvEmptyFriend.setVisibility(count == 0 ? TextView.VISIBLE : TextView.GONE);
+    }
+
+    // 친구 항목을 길게 누르면 액션 메뉴를 띄운다.
+    private void showFriendActionsDialog(FriendResponseDto friend) {
+        String[] actions = {"삭제"};
+        new AlertDialog.Builder(this)
+                .setTitle(friend.getNickname())
+                .setItems(actions, (dialog, which) -> {
+                    if (which == 0) {
+                        showDeleteConfirmDialog(friend);
+                    }
+                })
+                .show();
+    }
+
+    private void showDeleteConfirmDialog(FriendResponseDto friend) {
+        new AlertDialog.Builder(this)
+                .setTitle("친구 삭제")
+                .setMessage("'" + friend.getNickname() + "' 님을 내 친구 목록에서 삭제할까요?\n"
+                        + "상대방 목록에는 내가 그대로 남습니다.")
+                .setPositiveButton("삭제", (dialog, which) -> deleteFriend(friend))
+                .setNegativeButton("취소", null)
+                .show();
+    }
+
+    private void deleteFriend(FriendResponseDto friend) {
+        NetworkClient.getFriendApi().deleteFriend(loginUserId, friend.getFriendId())
+                .enqueue(new Callback<ApiResponse<FriendListDto>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<FriendListDto>> call,
+                                           Response<ApiResponse<FriendListDto>> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().getData() != null) {
+                            Toast.makeText(FriendList.this, "친구를 삭제했습니다.", Toast.LENGTH_SHORT).show();
+
+                            bindFriendList(response.body().getData().getFriends());
+                        } else {
+                            showError(response, "친구를 삭제하지 못했습니다.");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<FriendListDto>> call, Throwable t) {
+                        Log.e("FriendList", "친구 삭제 실패: " + t.getMessage());
                         Toast.makeText(FriendList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
