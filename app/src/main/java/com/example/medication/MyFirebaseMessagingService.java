@@ -68,6 +68,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String title = remoteMessage.getData().get("title");
             String body = remoteMessage.getData().get("body");
             String notiIdStr = remoteMessage.getData().get("notificationId");
+            String type = remoteMessage.getData().get("type");
 
             int notificationId = 0;
             if(notiIdStr != null) {
@@ -75,47 +76,64 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
 
             if (title != null && body != null) {
-                showNotification(title, body, notificationId);
+                showNotification(title, body, notificationId, type);
             }
         }
     }
 
-    private void showNotification(String title, String body, int notificationId) {
-        Log.d("알림", "알림 생성을 시작합니다.");
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        String channelId = "yaksok_channel";
+    private String resolveChannelId(String type, NotificationManager notificationManager) {
+        boolean isShareAlert = "TAKEN_ALERT".equals(type);
+        String channelId = isShareAlert ? "yaksok_share_channel" : "yaksok_channel";
 
-        // Android 8.0 이상 알림 채널 생성
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    channelId,
-                    "복약 알림",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel.setDescription("YakSok의 약 복용 시간 알림을 수신합니다.");
+            String channelName = isShareAlert ? "공유 약속 알림" : "복약 알림";
+            String channelDesc = isShareAlert
+                    ? "공유받은 약속의 복약 완료 알림을 수신합니다."
+                    : "YakSok의 약 복용 시간 알림을 수신합니다.";
+
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription(channelDesc);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{0, 300, 200, 300});
             notificationManager.createNotificationChannel(channel);
         }
+        return channelId;
+    }
 
-        Intent completeIntent = new Intent(this, NotificationActionReceiver.class);
-        completeIntent.setAction("ACTION_COMPLETE");
-        completeIntent.putExtra("notificationId", notificationId);
-        PendingIntent completePendingIntent = PendingIntent.getBroadcast(
-                this, notificationId, completeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-        Intent snoozeIntent = new Intent(this, NotificationActionReceiver.class);
-        snoozeIntent.setAction("ACTION_SNOOZE");
-        snoozeIntent.putExtra("notificationId", notificationId);
-        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(
-                this, notificationId + 1000, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    private void showNotification(String title, String body, int notificationId, String type) {
+        Log.d("알림", "알림 생성을 시작합니다.");
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        String channelId = resolveChannelId(type, notificationManager);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .addAction(0, "약속 완료", completePendingIntent)
-                .addAction(0, "약속 미루기", snoozePendingIntent);
+                .setAutoCancel(true);
+
+        String safeType = (type != null) ? type : "REMINDER";
+        switch (safeType) {
+            case "TAKEN_ALERT":
+                break;
+            case "REMINDER":
+            default:
+                Intent completeIntent = new Intent(this, NotificationActionReceiver.class);
+                completeIntent.setAction("ACTION_COMPLETE");
+                completeIntent.putExtra("notificationId", notificationId);
+                PendingIntent completePendingIntent = PendingIntent.getBroadcast(
+                        this, notificationId, completeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+                Intent snoozeIntent = new Intent(this, NotificationActionReceiver.class);
+                snoozeIntent.setAction("ACTION_SNOOZE");
+                snoozeIntent.putExtra("notificationId", notificationId);
+                PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(
+                        this, notificationId + 1000, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+                builder.addAction(0, "약속 완료", completePendingIntent)
+                        .addAction(0, "약속 미루기", snoozePendingIntent);
+                break;
+        }
         notificationManager.notify(notificationId, builder.build());
     }
 }
