@@ -1,4 +1,4 @@
-package com.example.medication.ui.FindDrugStore;
+package com.example.medication.ui.finddrugstore;
 
 import static com.example.medication.util.SprefsManager.getUser;
 
@@ -24,7 +24,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.DrugStoreApi;
 import com.example.medication.network.NetworkClient;
-import com.example.medication.ui.MyInfo.MyInfo;
+import com.example.medication.ui.myinfo.MyInfo;
 import com.example.medication.util.SprefsManager;
 
 import java.util.ArrayList;

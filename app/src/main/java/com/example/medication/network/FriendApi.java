@@ -11,6 +11,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -49,4 +50,10 @@ public interface FriendApi {
 
     //  친구 목록 가져오기
     @GET("/api/friend/list") Call<ApiResponse<FriendListDto>> getFriendList(@Query("loginUserId") Long loginUserId);
+
+    //  친구 삭제하기 (삭제 후 갱신된 친구 목록을 받는다)
+    @DELETE("/api/friend")
+    Call<ApiResponse<FriendListDto>> deleteFriend(
+            @Query("loginUserId") Long loginUserId,
+            @Query("friendId") Long friendId);
 }

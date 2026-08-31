@@ -1,4 +1,4 @@
-package com.example.medication.ui.MyInfo;
+package com.example.medication.ui.myinfo;
 
 import android.content.Context;
 import android.content.Intent;
