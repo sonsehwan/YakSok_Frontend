@@ -20,6 +20,7 @@ import com.example.medication.ui.login.Login;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,7 +50,6 @@ public class Settings extends AppCompatActivity {
     private void setupClickListeners() {
         ivLogout.setOnClickListener(v -> {
             showLogOutDialog();
-            deleteToken();
         });
 
         llMyInfo.setOnClickListener(v -> {
@@ -98,9 +98,8 @@ public class Settings extends AppCompatActivity {
                 .setTitle("로그아웃")
                 .setMessage("로그아웃 하시겠습니까?")
                 .setPositiveButton("로그아웃", (dialog, which) -> {
-                    // 1. 세션 데이터(Sprefs) 삭제
+                    deleteToken();
                     SprefsManager.clearUserInfo(Settings.this);
-
                     finishAffinity();
                     Intent intent = new Intent(Settings.this, Login.class);
 //                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -113,10 +112,22 @@ public class Settings extends AppCompatActivity {
 
     private void deleteToken(){
         Long userId = SprefsManager.getUserId(this);
-        FirebaseTokenRequest request = new FirebaseTokenRequest(null);
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if(!task.isSuccessful()){
+                        Log.w("FcmToken", "로그아웃 중 토큰 조회 실패", task.getException());
+                        return;
+                    }
+                    sendTokenDeleteToServer(userId, task.getResult());
+                });
+    }
+
+    private void sendTokenDeleteToServer(Long userId, String token){
+        FirebaseTokenRequest request = new FirebaseTokenRequest(token);
         UserApi api = NetworkClient.getApi();
 
-        api.updateFcmToken(userId, request).enqueue(new Callback<ApiResponse<Void>>(){
+        api.deleteFcmToken(userId, request).enqueue(new Callback<ApiResponse<Void>>(){
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
                 if(response.isSuccessful()) {
