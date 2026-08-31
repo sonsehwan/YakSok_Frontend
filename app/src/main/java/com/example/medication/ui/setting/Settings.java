@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.setting;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,12 +11,17 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.medication.ChatRoomList;
+import com.example.medication.FriendList;
+import com.example.medication.MainActivity;
+import com.example.medication.R;
+import com.example.medication.YaksokList;
 import com.example.medication.model.request.FirebaseTokenRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
-import com.example.medication.ui.MyInfo.MyInfo;
 import com.example.medication.ui.login.Login;
+import com.example.medication.ui.myinfo.MyInfo;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

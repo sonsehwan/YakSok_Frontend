@@ -1,4 +1,4 @@
-package com.example.medication.ui.MyInfo;
+package com.example.medication.ui.myinfo;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,13 +21,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.medication.InputView;
 import com.example.medication.R;
-import com.example.medication.Settings;
+import com.example.medication.ui.setting.Settings;
 import com.example.medication.model.request.ModifyInfoRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
-import com.example.medication.ui.FindDrugStore.FindDrugStore;
+import com.example.medication.ui.finddrugstore.FindDrugStore;
 import com.example.medication.ui.login.Login;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
