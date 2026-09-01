@@ -24,7 +24,6 @@ import com.example.medication.ChatRoomList;
 import com.example.medication.DrugStoreList;
 import com.example.medication.FriendList;
 import com.example.medication.R;
-import com.example.medication.Settings;
 import com.example.medication.ui.yaksok.YaksokList;
 import com.example.medication.adapter.NotificationMultiViewAdapter;
 import com.example.medication.model.NotificationListItem;
@@ -44,6 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements YaksokEventBus.Li
             for (NotificationYaksok todayItem : notificationYaksokList) {
                 for (NotificationYaksok savedItem : allSavedList) {
                     // int와 Long 비교 주의 (entity는 int id, 서버 DTO 확인 필요)
-                    if (savedItem.getId() == todayItem.getId()) {
+                    if (Objects.equals(savedItem.getId(), todayItem.getId())) {
                         savedItem.setTaken(todayItem.isTaken());
                         break;
                     }

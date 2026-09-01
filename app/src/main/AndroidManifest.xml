@@ -75,16 +75,16 @@
             android:name=".MedicineSearchActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.MyInfo.ModifyPassword"
+            android:name=".ui.myinfo.ModifyPassword"
             android:exported="false" />
         <activity
-            android:name=".ui.MyInfo.MyInfo"
+            android:name=".ui.myinfo.MyInfo"
             android:exported="false" />
         <activity
             android:name=".WipActivity"
             android:exported="false" />
         <activity
-            android:name=".Settings"
+            android:name=".ui.setting.Settings"
             android:exported="false" />
         <activity
             android:name=".CreatePrescription"
@@ -93,7 +93,7 @@
             android:name=".CreateDirectSchedule"
             android:exported="false" />
         <activity
-            android:name=".ui.FindDrugStore.FindDrugStore"
+            android:name=".ui.finddrugstore.FindDrugStore"
             android:exported="false" /> <!-- 로그인 -->
         <activity
             android:name=".ui.login.Login"

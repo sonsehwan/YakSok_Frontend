@@ -19,6 +19,7 @@ import com.example.medication.adapter.ChatRoomListAdapter;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.ChatRoomListDto;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.ui.setting.Settings;
 import com.example.medication.ui.main.MainActivity;
 import com.example.medication.ui.yaksok.YaksokList;
 import com.example.medication.util.InsetsUtil;
