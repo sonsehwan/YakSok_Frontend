@@ -16,6 +16,7 @@ import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.example.medication.util.SprefsManager;
+import com.example.medication.util.YaksokEventBus;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -64,11 +65,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        if (!remoteMessage.getData().isEmpty()) {
+        if(remoteMessage.getData().isEmpty()) return;
+
+        String type = remoteMessage.getData().get("type");
+
+        if("REFRESH".equals(type)){
+            Log.d("FCM", "REFRESH 수신 - 화면 갱신 신호 발행");
+            YaksokEventBus.get().publish();
+            return;
+        }
+
             String title = remoteMessage.getData().get("title");
             String body = remoteMessage.getData().get("body");
             String notiIdStr = remoteMessage.getData().get("notificationId");
-            String type = remoteMessage.getData().get("type");
 
             int notificationId = 0;
             if(notiIdStr != null) {
@@ -78,7 +87,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if (title != null && body != null) {
                 showNotification(title, body, notificationId, type);
             }
-        }
     }
 
     private String resolveChannelId(String type, NotificationManager notificationManager) {

@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.util.YaksokEventBus;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,8 +49,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                             Toast.makeText(context, "서버 오류 발생! 앱을 열어 다시 완료해주세요.", Toast.LENGTH_LONG).show();
                         }else{
                             Log.d("통신 성공", "알림 상태 변경 성공");
-                            // 성공했을 때만 완료 토스트를 띄워줍니다.
                             Toast.makeText(context, "약 복용이 완료 처리되었습니다.", Toast.LENGTH_SHORT).show();
+                            YaksokEventBus.get().publish();
                         }
                     }
 
