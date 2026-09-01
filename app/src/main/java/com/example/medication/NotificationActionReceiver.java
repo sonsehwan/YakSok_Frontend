@@ -31,7 +31,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         // 약속 완료 버튼 클릭시
         if ("ACTION_COMPLETE".equals(action)) {
             Log.d("NotificationAction", "약속 완료 버튼 클릭됨 ID: " + notificationId);
-            completeNotification(context, notificationId);
+            PendingResult pendingResult = goAsync();
+            completeNotification(context, notificationId, pendingResult);
 
         } else if ("ACTION_SNOOZE".equals(action)) { // 미루기 버튼 클릭 시
             Log.d("NotificationAction", "미루기 버튼 클릭됨 ID: " + notificationId);
@@ -39,26 +40,34 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         }
     }
 
-    public void completeNotification(Context context, int notificationId){
+    public void completeNotification(Context context, int notificationId, PendingResult pendingResult){
         NetworkClient.getYaksokApi().updateNotificationStatus((long)notificationId, true)
                 .enqueue(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
-                        if (!response.isSuccessful()) {
-                            Log.e("통신 실패", "알림 상태 변경 실패: " + response.code());
-                            Toast.makeText(context, "서버 오류 발생! 앱을 열어 다시 완료해주세요.", Toast.LENGTH_LONG).show();
-                        }else{
-                            Log.d("통신 성공", "알림 상태 변경 성공");
-                            Toast.makeText(context, "약 복용이 완료 처리되었습니다.", Toast.LENGTH_SHORT).show();
-                            YaksokEventBus.get().publish();
+                        try{
+                            if (!response.isSuccessful()) {
+                                Log.e("통신 실패", "알림 상태 변경 실패: " + response.code());
+                                Toast.makeText(context, "서버 오류 발생! 앱을 열어 다시 완료해주세요.", Toast.LENGTH_LONG).show();
+                            }else{
+                                Log.d("통신 성공", "알림 상태 변경 성공");
+                                Toast.makeText(context, "약 복용이 완료 처리되었습니다.", Toast.LENGTH_SHORT).show();
+                                YaksokEventBus.get().publish();
+                            }
+                        }finally {
+                            pendingResult.finish();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                        String errorMessage = t.getMessage() != null ? t.getMessage() : "원인 불명";
-                        Log.e("통신 에러", errorMessage);
-                        Toast.makeText(context, "네트워크 오류! 앱을 열어 다시 완료해주세요.", Toast.LENGTH_LONG).show();
+                        try{
+                            String errorMessage = t.getMessage() != null ? t.getMessage() : "원인 불명";
+                            Log.e("통신 에러", errorMessage);
+                            Toast.makeText(context, "네트워크 오류! 앱을 열어 다시 완료해주세요.", Toast.LENGTH_LONG).show();
+                        }finally{
+                            pendingResult.finish();
+                        }
                     }
                 });
     }
