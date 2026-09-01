@@ -18,6 +18,7 @@ import com.example.medication.network.UserApi;
 import com.example.medication.ui.MyInfo.MyInfo;
 import com.example.medication.ui.login.Login;
 import com.example.medication.ui.main.MainActivity;
+import com.example.medication.ui.yaksoklist.YaksokList;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

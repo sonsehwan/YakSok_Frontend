@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.yaksoklist;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -20,6 +20,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.ChatRoomList;
+import com.example.medication.DetailYaksok;
+import com.example.medication.DrugStoreList;
+import com.example.medication.FriendList;
+import com.example.medication.R;
+import com.example.medication.Settings;
+import com.example.medication.ShareYaksokDetail;
+import com.example.medication.ShowAddMedicationList;
 import com.example.medication.adapter.ShareYaksokListAdapter;
 import com.example.medication.adapter.SharedUserAdapter;
 import com.example.medication.adapter.YaksokListAdapter;

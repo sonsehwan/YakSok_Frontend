@@ -69,7 +69,7 @@
         </service>
 
         <activity
-            android:name=".YaksokList"
+            android:name=".ui.yaksoklist.YaksokList"
             android:exported="false" />
         <activity
             android:name=".MedicineSearchActivity"
