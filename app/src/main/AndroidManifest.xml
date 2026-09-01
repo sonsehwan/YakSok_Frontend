@@ -111,7 +111,7 @@
             android:name=".ui.signup.SignUp_DrugStore"
             android:exported="true" /> <!-- 메인화면 -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="true" />
         <activity
             android:name=".SharingPage"

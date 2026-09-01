@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.main;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -20,6 +20,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.example.medication.ChatRoomList;
+import com.example.medication.DrugStoreList;
+import com.example.medication.FriendList;
+import com.example.medication.R;
+import com.example.medication.Settings;
+import com.example.medication.YaksokList;
 import com.example.medication.adapter.NotificationMultiViewAdapter;
 import com.example.medication.model.NotificationListItem;
 import com.example.medication.model.NotificationYaksok;
@@ -27,6 +33,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
+import com.example.medication.util.YaksokEventBus;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.kakao.sdk.common.util.Utility;
@@ -42,7 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements YaksokEventBus.Listener {
 
     private TextView tvDate, tvGreeting, tvSummary, tvProgressPercent;
     private ProgressBar progressMain;
@@ -125,6 +132,23 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setSelectedItemId(R.id.nav_home);
         selectedCalendar = Calendar.getInstance();
         updateDateHeader();
+        loadNotificationList();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        YaksokEventBus.get().subscribe(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        YaksokEventBus.get().unsubscribe(this);
+    }
+
+    @Override
+    public void onYaksokDataChanged(){
         loadNotificationList();
     }
 
@@ -254,8 +278,12 @@ public class MainActivity extends AppCompatActivity {
             for(NotificationYaksok n : dinner) notiList.add(new NotificationListItem.NotificationItem(n));
         }
 
-        adapter = new NotificationMultiViewAdapter(notiList, this::updateProgress);
-        rvNotification.setAdapter(adapter);
+        if(adapter == null){
+            adapter = new NotificationMultiViewAdapter(notiList, this::updateProgress);
+            rvNotification.setAdapter(adapter);
+        }else{
+            adapter.updateData(notiList);
+        }
     }
 
     private void updateProgress() {

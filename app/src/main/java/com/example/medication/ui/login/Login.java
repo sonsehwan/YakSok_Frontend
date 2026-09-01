@@ -16,7 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.medication.InputView;
-import com.example.medication.MainActivity;
+import com.example.medication.ui.main.MainActivity;
 import com.example.medication.R;
 import com.example.medication.SignUpTypeBottomSheet;
 import com.example.medication.model.request.FirebaseTokenRequest;

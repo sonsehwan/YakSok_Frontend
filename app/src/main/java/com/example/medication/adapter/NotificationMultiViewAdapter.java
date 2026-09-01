@@ -65,6 +65,12 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
         notifyDataSetChanged();
     }
 
+    public void updateData(List<NotificationListItem> newItems){
+        allItems.clear();
+        allItems.addAll(newItems);
+        updateVisibleItems();
+    }
+
     @Override
     public int getItemViewType(int position){
         return visibleItems.get(position).getViewType();
