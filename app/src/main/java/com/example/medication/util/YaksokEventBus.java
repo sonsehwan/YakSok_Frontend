@@ -23,7 +23,7 @@ public final class YaksokEventBus {
 
     private YaksokEventBus(){}
 
-    public void unsubcribe(Listener listener){
+    public void subscribe(Listener listener){
         if(listener != null && !listeners.contains(listener)){
             listeners.add(listener);
         }
