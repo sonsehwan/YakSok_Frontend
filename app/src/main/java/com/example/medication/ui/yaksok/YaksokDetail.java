@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.yaksok;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -23,6 +23,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.ChattingRoom;
+import com.example.medication.InputView;
+import com.example.medication.ModifyYaksok;
+import com.example.medication.R;
 import com.example.medication.adapter.DetailYaksokMedicationAdapter;
 import com.example.medication.adapter.FriendListAdapter;
 import com.example.medication.model.Yaksok;
@@ -45,7 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailYaksok extends AppCompatActivity {
+public class YaksokDetail extends AppCompatActivity {
 
     private ImageView ivBack, ivMenu;
     private InputView inputStartDate, inputTitle, inputPrescriptionDays;
@@ -65,7 +69,7 @@ public class DetailYaksok extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_yaksok);
+        setContentView(R.layout.activity_yaksok_detail);
 
         initViews();
         setupRecyclerView();
@@ -186,16 +190,16 @@ public class DetailYaksok extends AppCompatActivity {
                     Intent intent = new Intent();
                     setResult(RESULT_OK, intent);
                     finish();
-                    Toast.makeText(DetailYaksok.this, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(YaksokDetail.this, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(DetailYaksok.this, "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(YaksokDetail.this, "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                 Log.e("YaksokList", "삭제 통신 실패: " + t.getMessage());
-                Toast.makeText(DetailYaksok.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(YaksokDetail.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -273,7 +277,7 @@ public class DetailYaksok extends AppCompatActivity {
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().getData() != null) {
 
-                            Intent chatIntent = new Intent(DetailYaksok.this, ChattingRoom.class);
+                            Intent chatIntent = new Intent(YaksokDetail.this, ChattingRoom.class);
                             chatIntent.putExtra("roomId", response.body().getData().getRoomId());
                             chatIntent.putExtra("roomName", friend.getNickname());
                             chatIntent.putExtra("SHARE_YAKSOK_ID", yaksok.getId().longValue());
@@ -328,7 +332,7 @@ public class DetailYaksok extends AppCompatActivity {
                 return true;
             }
             else if(id == R.id.yaksok_modify) {
-                Intent intent = new Intent(DetailYaksok.this, ModifyYaksok.class);
+                Intent intent = new Intent(YaksokDetail.this, ModifyYaksok.class);
                 intent.putExtra("YAKSOK_DATA", yaksok);
                 modifyLauncher.launch(intent);
                 return true;

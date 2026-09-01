@@ -1,4 +1,4 @@
-package com.example.medication.ui.yaksoklist;
+package com.example.medication.ui.yaksok;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -21,12 +21,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.ChatRoomList;
-import com.example.medication.DetailYaksok;
 import com.example.medication.DrugStoreList;
 import com.example.medication.FriendList;
 import com.example.medication.R;
 import com.example.medication.Settings;
-import com.example.medication.ShareYaksokDetail;
+import com.example.medication.ui.sharedYaksok.ShareYaksokDetail;
 import com.example.medication.ShowAddMedicationList;
 import com.example.medication.adapter.ShareYaksokListAdapter;
 import com.example.medication.adapter.SharedUserAdapter;
@@ -39,6 +38,7 @@ import com.example.medication.network.YaksokApi;
 import com.example.medication.ui.main.MainActivity;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
+import com.example.medication.util.YaksokEventBus;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -50,19 +50,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class YaksokList extends AppCompatActivity {
+public class YaksokList extends AppCompatActivity implements YaksokEventBus.Listener {
 
     private TextView tvMyYaksok, tvSharedYaksok;
     private RecyclerView rvYaksokList, rvSharedUserList;
     private YaksokListAdapter adapter;
     private ShareYaksokListAdapter shareYaksokListAdapter;
     private SharedUserAdapter sharedUserAdapter;
-    private Long currentSenderId;
     private BottomNavigationView bottomNav;
     private FloatingActionButton fabScan;
     private DrawerLayout drawerLayout;
     private NavigationView navView;
     private ImageView ivMenu;
+
+    private Long currentSenderId;
+    private boolean isMyYaksokTab = true;
 
     private final ActivityResultLauncher<Intent> detailActivityLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -91,6 +93,30 @@ public class YaksokList extends AppCompatActivity {
             ShowAddMedicationList bottomSheet = new ShowAddMedicationList();
             bottomSheet.show(getSupportFragmentManager(), "show_create_list");
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.setSelectedItemId(R.id.nav_history);
+        refreshCurrentTab();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        YaksokEventBus.get().subscribe(this);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        YaksokEventBus.get().unsubscribe(this);
+    }
+
+    @Override
+    public void onYaksokDataChanged(){
+        refreshCurrentTab();
     }
 
     @SuppressLint("CutPasteId")
@@ -123,7 +149,7 @@ public class YaksokList extends AppCompatActivity {
         adapter = new YaksokListAdapter(new ArrayList<>(), new YaksokListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Yaksok yaksok, int position) {
-                Intent intent = new Intent(YaksokList.this, DetailYaksok.class);
+                Intent intent = new Intent(YaksokList.this, YaksokDetail.class);
 
                 intent.putExtra("YAKSOK_DATA", yaksok);
 
@@ -268,6 +294,7 @@ public class YaksokList extends AppCompatActivity {
 
     // "내 약속" 탭 선택
     private void selectMyYaksokTab() {
+        isMyYaksokTab = true;
         tvMyYaksok.setBackgroundResource(R.drawable.bg_touch_my_yaksok_list);
         tvSharedYaksok.setBackgroundResource(R.drawable.bg_black_border);
 
@@ -280,6 +307,7 @@ public class YaksokList extends AppCompatActivity {
 
     // "공유 약속" 탭 선택
     private void selectSharedYaksokTab() {
+        isMyYaksokTab = false;
         tvSharedYaksok.setBackgroundResource(R.drawable.bg_touch_shared_yaksok_list);
         tvMyYaksok.setBackgroundResource(R.drawable.bg_black_border);
 
@@ -291,6 +319,16 @@ public class YaksokList extends AppCompatActivity {
 
         rvSharedUserList.setVisibility(View.VISIBLE);
         fetchSharedUserList();
+    }
+
+    private void refreshCurrentTab(){
+        if(isMyYaksokTab){
+            fetchYaksokList();
+        }else if(currentSenderId != null){
+            fetchSharedYaksokBySender(currentSenderId);
+        }else{
+            fetchSharedUserList();
+        }
     }
 
     // 선택한 공유자가 나에게 공유한 약속 목록만 불러오기
@@ -351,11 +389,5 @@ public class YaksokList extends AppCompatActivity {
                         Toast.makeText(YaksokList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bottomNav.setSelectedItemId(R.id.nav_history);
     }
 }

@@ -23,6 +23,7 @@ import com.example.medication.adapter.ChattingRoomAdapter;
 import com.example.medication.model.ChatMessage;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.ui.sharedYaksok.ShareYaksokDetail;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 

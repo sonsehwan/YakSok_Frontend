@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.sharedYaksok;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.InputView;
+import com.example.medication.R;
 import com.example.medication.adapter.DetailYaksokMedicationAdapter;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.PillRequest;

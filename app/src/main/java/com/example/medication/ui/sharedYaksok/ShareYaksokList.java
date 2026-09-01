@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.sharedYaksok;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,12 +15,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.R;
 import com.example.medication.adapter.ShareYaksokListAdapter;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
+import com.example.medication.util.YaksokEventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ShareYaksokList extends AppCompatActivity {
+public class ShareYaksokList extends AppCompatActivity implements YaksokEventBus.Listener{
 
     private ImageView ivBack;
     private TextView tvEmpty;
@@ -83,9 +85,26 @@ public class ShareYaksokList extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart(){
+        super.onStart();
+        YaksokEventBus.get().subscribe(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         // 상대방의 진행률이 바뀔 수 있으므로 화면에 들어올 때마다 다시 가져온다.
+        loadSharedYaksokList();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        YaksokEventBus.get().unsubscribe(this);
+    }
+
+    @Override
+    public void onYaksokDataChanged(){
         loadSharedYaksokList();
     }
 

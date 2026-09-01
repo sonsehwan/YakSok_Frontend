@@ -25,7 +25,7 @@ import com.example.medication.DrugStoreList;
 import com.example.medication.FriendList;
 import com.example.medication.R;
 import com.example.medication.Settings;
-import com.example.medication.ui.yaksoklist.YaksokList;
+import com.example.medication.ui.yaksok.YaksokList;
 import com.example.medication.adapter.NotificationMultiViewAdapter;
 import com.example.medication.model.NotificationListItem;
 import com.example.medication.model.NotificationYaksok;
