@@ -43,7 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:baselineAligned="false"
+        android:gravity="bottom"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:paddingTop="10dp"
@@ -53,10 +54,12 @@
 
         <TextView
             android:layout_width="50dp"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
             android:layout_marginRight="5dp"
+            android:layout_gravity="bottom"
             android:text="+"
-            android:textSize="30dp"
+            android:textSize="26sp"
+            android:includeFontPadding="false"
             android:gravity="center"
             android:background="@drawable/bg_yellow"/>
 
@@ -64,25 +67,29 @@
         <EditText
             android:id="@+id/et_message"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="50dp"
             android:layout_weight="1"
             android:hint="메시지를 입력하세요"
             android:paddingStart="18dp"
             android:paddingEnd="18dp"
             android:background="@drawable/bg_message_edittext"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLines="5"
+            android:minLines="1"
             android:textSize="16sp"
             android:textColor="#222222"
-            android:textColorHint="#999999"
-            android:singleLine="true" />
+            android:textColorHint="#999999" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_send"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
             android:text="전송"
             android:textSize="13sp"
             android:textStyle="bold"
             android:textColor="#222222"
+            android:layout_gravity="bottom"
             android:layout_marginStart="8dp"
             android:minWidth="0dp"
             android:insetLeft="0dp"
