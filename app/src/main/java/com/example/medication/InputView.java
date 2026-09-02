@@ -38,6 +38,8 @@ public class InputView extends LinearLayout {
     private OnValidateListener onValidateListener;
     private String helperText;
 
+    private final LastCharVisibleTransformation lastCharMask = new LastCharVisibleTransformation();
+
     // 상태별 색상 상수
     private final int COLOR_ERROR = Color.parseColor("#FF0000");      // 에러 시 빨간색
     private final int COLOR_GUIDE = Color.parseColor("#999999");      // 평상시 가이드 회색
@@ -135,17 +137,15 @@ public class InputView extends LinearLayout {
     }
 
     private void setupPasswordMode() {
-        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        editText.setTransformationMethod(lastCharMask);
+
         imgToggle.setVisibility(View.VISIBLE);
         imgToggle.setOnClickListener(v -> {
             isPasswordVisible = !isPasswordVisible;
-            if (isPasswordVisible) {
-                editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                imgToggle.setImageResource(R.drawable.ic_visibility);
-            } else {
-                editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                imgToggle.setImageResource(R.drawable.ic_visibility_off);
-            }
+
+            editText.setTransformationMethod(isPasswordVisible ? null : lastCharMask);
+            imgToggle.setImageResource(isPasswordVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
             editText.setSelection(editText.getText().length());
         });
     }
