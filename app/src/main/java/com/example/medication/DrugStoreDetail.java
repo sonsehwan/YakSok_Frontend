@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 
 import com.example.medication.databinding.ActivityDrugStoreDetailBinding;
 import com.example.medication.model.DrugStore;
@@ -37,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DrugStoreDetail extends AppCompatActivity {
+public class DrugStoreDetail extends BaseActivity {
 
     private ActivityDrugStoreDetailBinding binding;
     DrugStore drugStore;

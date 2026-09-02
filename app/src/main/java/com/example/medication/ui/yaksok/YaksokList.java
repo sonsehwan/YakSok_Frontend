@@ -14,7 +14,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -50,7 +50,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class YaksokList extends AppCompatActivity implements YaksokEventBus.Listener {
+public class YaksokList extends BaseActivity implements YaksokEventBus.Listener {
 
     private TextView tvMyYaksok, tvSharedYaksok;
     private RecyclerView rvYaksokList, rvSharedUserList;

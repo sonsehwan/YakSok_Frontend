@@ -6,7 +6,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,7 +23,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MedicineSearchActivity extends AppCompatActivity {
+public class MedicineSearchActivity extends BaseActivity {
 
     private ActivityMedicineSearchBinding binding;
     private MedicineAdapter medicineAdapter;

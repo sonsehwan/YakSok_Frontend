@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 
 import com.example.medication.InputView;
 import com.example.medication.ui.login.Login;
@@ -29,7 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignUp_Normal extends AppCompatActivity {
+public class SignUp_Normal extends BaseActivity {
 
     private InputView inputEmail, inputPw, inputCheckPw, inputNickName;
 

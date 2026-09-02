@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.medication.InputView;
@@ -37,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignUp_DrugStore extends AppCompatActivity {
+public class SignUp_DrugStore extends BaseActivity {
 
     private InputView inputEmail, inputPw, inputCheckPw, inputNickName;
     private Button btnSignUp, btnFindDrugStore;

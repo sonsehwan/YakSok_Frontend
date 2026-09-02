@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,7 +34,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ShareYaksokDetail extends AppCompatActivity {
+public class ShareYaksokDetail extends BaseActivity {
 
     public static final String EXTRA_YAKSOK_ID = "SHARED_YAKSOK_ID";
     // 이미 저장한 경우

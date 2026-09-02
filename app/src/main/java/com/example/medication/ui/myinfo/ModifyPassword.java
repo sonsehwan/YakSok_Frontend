@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 
 import com.example.medication.InputView;
 import com.example.medication.R;
@@ -32,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ModifyPassword extends AppCompatActivity {
+public class ModifyPassword extends BaseActivity {
 
     private InputView currentPassword;
     private InputView newPassword;

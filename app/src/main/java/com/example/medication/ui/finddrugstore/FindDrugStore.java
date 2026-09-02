@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.medication.LoadingDialog;
@@ -35,7 +35,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FindDrugStore extends AppCompatActivity {
+public class FindDrugStore extends BaseActivity {
     ActivityFindDrugstoreBinding binding;
     private FindDrugStoreAdapter adapter;
     private LoadingDialog loadingDialog;

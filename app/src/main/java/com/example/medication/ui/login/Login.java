@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 
 import com.example.medication.InputView;
 import com.example.medication.ui.main.MainActivity;
@@ -33,7 +33,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Login extends AppCompatActivity {
+public class Login extends BaseActivity {
     private InputView inputEmail;
     private InputView inputPw;
     private Button btnLogin;

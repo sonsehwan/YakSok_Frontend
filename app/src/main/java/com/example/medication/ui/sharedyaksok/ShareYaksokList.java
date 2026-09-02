@@ -11,7 +11,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ShareYaksokList extends AppCompatActivity implements YaksokEventBus.Listener{
+public class ShareYaksokList extends BaseActivity implements YaksokEventBus.Listener{
 
     private ImageView ivBack;
     private TextView tvEmpty;

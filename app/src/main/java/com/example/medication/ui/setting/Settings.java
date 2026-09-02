@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 
 import com.example.medication.ui.chattingroom.ChatRoomList;
 import com.example.medication.FriendList;
@@ -31,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Settings extends AppCompatActivity {
+public class Settings extends BaseActivity {
 
     private ImageView ivLogout;
     private LinearLayout llMyInfo;

@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class WipActivity extends AppCompatActivity {
+public class WipActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

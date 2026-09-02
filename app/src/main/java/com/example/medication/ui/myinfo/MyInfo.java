@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 
 import com.example.medication.InputView;
 import com.example.medication.R;
@@ -38,7 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MyInfo extends AppCompatActivity {
+public class MyInfo extends BaseActivity {
 
     private ImageView ivBack;
     private InputView inputNickname;

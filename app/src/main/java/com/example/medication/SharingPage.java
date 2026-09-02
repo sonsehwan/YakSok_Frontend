@@ -7,12 +7,12 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 
 import com.example.medication.ui.login.Login;
 import com.example.medication.util.SprefsManager;
 
-public class SharingPage extends AppCompatActivity {
+public class SharingPage extends BaseActivity {
 
     private ImageView ivBack;
     private LinearLayout llFriend, llShareYaksok;

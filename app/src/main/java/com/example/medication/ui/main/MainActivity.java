@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.medication.ui.base.BaseActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -50,7 +50,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements YaksokEventBus.Listener {
+public class MainActivity extends BaseActivity implements YaksokEventBus.Listener {
 
     private TextView tvDate, tvGreeting, tvSummary, tvProgressPercent;
     private ProgressBar progressMain;
