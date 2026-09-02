@@ -23,7 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.ChattingRoom;
+import com.example.medication.ui.chattingroom.ChattingRoom;
 import com.example.medication.InputView;
 import com.example.medication.ModifyYaksok;
 import com.example.medication.R;

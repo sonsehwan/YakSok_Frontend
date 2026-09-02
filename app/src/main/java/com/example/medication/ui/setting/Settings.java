@@ -11,7 +11,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.medication.ChatRoomList;
+import com.example.medication.ui.chattingroom.ChatRoomList;
 import com.example.medication.FriendList;
 import com.example.medication.R;
 import com.example.medication.model.request.FirebaseTokenRequest;

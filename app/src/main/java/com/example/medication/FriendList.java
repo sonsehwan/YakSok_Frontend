@@ -33,6 +33,7 @@ import com.example.medication.model.response.ReceivedFriendRequestDto;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.model.response.UserSearchResultDto;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.ui.chattingroom.ChatRoomList;
 import com.example.medication.ui.setting.Settings;
 import com.example.medication.ui.main.MainActivity;
 import com.example.medication.ui.yaksok.YaksokList;

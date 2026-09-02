@@ -20,7 +20,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.ChatRoomList;
+import com.example.medication.ui.chattingroom.ChatRoomList;
 import com.example.medication.DrugStoreList;
 import com.example.medication.FriendList;
 import com.example.medication.R;
@@ -35,7 +35,7 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
 import com.example.medication.ui.main.MainActivity;
 import com.example.medication.ui.setting.Settings;
-import com.example.medication.ui.sharedYaksok.ShareYaksokDetail;
+import com.example.medication.ui.sharedyaksok.ShareYaksokDetail;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.example.medication.util.YaksokEventBus;

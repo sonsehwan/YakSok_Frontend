@@ -1,4 +1,4 @@
-package com.example.medication.ui.sharedYaksok;
+package com.example.medication.ui.sharedyaksok;
 
 import android.os.Bundle;
 import android.util.Log;

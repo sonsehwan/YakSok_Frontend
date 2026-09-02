@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.chattingroom;
 
 import static com.example.medication.util.SprefsManager.getUserEmail;
 
@@ -19,11 +19,12 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.R;
 import com.example.medication.adapter.ChattingRoomAdapter;
 import com.example.medication.model.ChatMessage;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
-import com.example.medication.ui.sharedYaksok.ShareYaksokDetail;
+import com.example.medication.ui.sharedyaksok.ShareYaksokDetail;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 

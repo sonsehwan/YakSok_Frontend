@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.chattingroom;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.FriendList;
+import com.example.medication.R;
 import com.example.medication.adapter.ChatRoomListAdapter;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.ChatRoomListDto;

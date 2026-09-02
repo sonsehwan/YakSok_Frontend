@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.example.medication.ChatRoomList;
+import com.example.medication.ui.chattingroom.ChatRoomList;
 import com.example.medication.DrugStoreList;
 import com.example.medication.FriendList;
 import com.example.medication.R;

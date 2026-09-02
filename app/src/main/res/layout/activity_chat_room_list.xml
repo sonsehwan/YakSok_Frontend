@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/page_bg"
-    tools:context=".ChatRoomList">
+    tools:context=".ui.chattingroom.ChatRoomList">
 
     <TextView
         android:id="@+id/tv_header_title"

@@ -19,6 +19,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.ChatRoomResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.ui.chattingroom.ChattingRoom;
 import com.google.gson.Gson;
 import com.kakao.vectormap.KakaoMap;
 import com.kakao.vectormap.KakaoMapReadyCallback;
