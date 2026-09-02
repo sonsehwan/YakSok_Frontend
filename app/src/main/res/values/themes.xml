@@ -1,11 +1,27 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <!-- 앱의 모든 화면이 밝은 색 기준으로 만들어져 있어 라이트로 고정한다.
-         DayNight 를 쓰면 다크 모드에서 팝업, 다이얼로그, 메뉴처럼
-         테마가 직접 그리는 부분만 어두워져 글자가 안 보이게 된다. -->
     <style name="Base.Theme.Medication" parent="Theme.Material3.Light.NoActionBar">
-        <!-- 앱 화면이 상단바를 차지하지 않게 설정 -->
         <item name="android:windowLightStatusBar">true</item>
+
+        <item name="android:fontFamily">@font/pretendard</item>
+        <item name="fontFamily">@font/pretendard</item>
+
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.App.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.App.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.App.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.App.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.App.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.App.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.App.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.App.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.App.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.App.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.App.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.App.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.App.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.App.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.App.LabelSmall</item>
+
+        <item name="alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
     </style>
 
     <style name="Theme.Medication" parent="Base.Theme.Medication" />
@@ -14,5 +30,14 @@
     <style name="TextAppearance.SideMenu.Item" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
+        <!-- 부모가 Material3.BodyLarge 라 여기서 명시하지 않으면 시스템 폰트로 남는다. -->
+        <item name="android:fontFamily">@font/pretendard</item>
+    </style>
+
+    <!-- androidx.appcompat.app.AlertDialog 는 자체 텍스트 스타일에 sans-serif 가
+         박혀 있어 textAppearance* 오버라이드만으로는 안 잡히는 경우가 있다. -->
+    <style name="ThemeOverlay.App.AlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:fontFamily">@font/pretendard</item>
+        <item name="fontFamily">@font/pretendard</item>
     </style>
 </resources>
