@@ -13,18 +13,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.medication.ui.base.BaseActivity;
-
 import com.example.medication.InputView;
-import com.example.medication.ui.main.MainActivity;
 import com.example.medication.R;
 import com.example.medication.SignUpTypeBottomSheet;
 import com.example.medication.model.request.FirebaseTokenRequest;
 import com.example.medication.model.request.LoginRequest;
 import com.example.medication.model.response.ApiResponse;
+import com.example.medication.model.response.LoginResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
+import com.example.medication.ui.base.BaseActivity;
+import com.example.medication.ui.main.MainActivity;
 import com.example.medication.util.SprefsManager;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
@@ -76,22 +76,24 @@ public class Login extends BaseActivity {
 
         UserApi api = NetworkClient.getApi();
 
-        api.login(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
+        api.login(request).enqueue(new Callback<ApiResponse<LoginResponse>>() {
             @Override
-            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+            public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
                 // 응답을 성공적으로 받고 내용이 있을 때
                 if(response.isSuccessful() && response.body() != null){
 
-                    ApiResponse<UserResponse> result = response.body();
+                    ApiResponse<LoginResponse> result = response.body();
 
                     if(result.isBusinessSuccess()){
 
-                        // 로그인한 유저의 정보를 가져온다(이메일, 비밀번호, 닉네임)
-                        UserResponse user = result.getData();
-                        //저장소에 저장
+                        LoginResponse loginResponse = result.getData();
+
+                        UserResponse user = loginResponse.getUser();
+
+                        SprefsManager.saveTokens(Login.this, loginResponse.getAccessToken(), loginResponse.getRefreshToken());
+
                         SprefsManager.setUserInfo(Login.this, user);
 
-                        //FCM 토큰 생성 및 저장
                         getAndSendFcmToken(user.getId());
 
                         Log.d("Login", result.getMessage());
@@ -110,7 +112,7 @@ public class Login extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
                 showToast("네트워크 연결 실패: " + t.getMessage());
                 Log.e("Login", "Failure: " + t.getMessage());
             }
@@ -134,7 +136,7 @@ public class Login extends BaseActivity {
         FirebaseTokenRequest request = new FirebaseTokenRequest(token);
         UserApi api = NetworkClient.getApi();
 
-        api.updateFcmToken(userId, request).enqueue(new Callback<ApiResponse<Void>>(){
+        api.updateFcmToken(request).enqueue(new Callback<ApiResponse<Void>>(){
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
                 if(response.isSuccessful()) {

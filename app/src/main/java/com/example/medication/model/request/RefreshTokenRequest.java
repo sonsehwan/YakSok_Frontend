@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class FriendRequestCreateDto {
-    private Long friendId;
+public class RefreshTokenRequest {
+    private String refreshToken;
 }

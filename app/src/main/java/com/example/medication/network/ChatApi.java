@@ -26,14 +26,14 @@ public interface ChatApi {
     Call<ApiResponse<ChatRoomResponse>> enterFriendChatRoom(@Body FriendChatRoomRequest request);
 
     @GET("/api/chat/room/{roomId}/messages")
-    Call<ApiResponse<List<ChatMessage>>> getPreviousMessages(@Path("roomId") Long roomId, @Query("userId") Long userId);
+    Call<ApiResponse<List<ChatMessage>>> getPreviousMessages(@Path("roomId") Long roomId);
 
     // 로그인한 유저가 참여 중인 채팅방 목록
     @GET("/api/chat/room")
-    Call<ApiResponse<List<ChatRoomListDto>>> getMyChatRooms(@Query("userId") Long userId);
+    Call<ApiResponse<List<ChatRoomListDto>>> getMyChatRooms();
 
     // 채팅방을 목록에서 삭제(숨김)
     @DELETE("/api/chat/room")
-    Call<ApiResponse<List<ChatRoomListDto>>> deleteChatRoom(@Query("userId") Long userId, @Query("roomId") Long roomId);
+    Call<ApiResponse<List<ChatRoomListDto>>> deleteChatRoom(@Query("roomId") Long roomId);
 
 }

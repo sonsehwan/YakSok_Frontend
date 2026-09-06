@@ -22,12 +22,16 @@ public class SprefsManager {
 
     //저장폴더 이름
     private static final String PREF_NAME = "YakSokPrefs";
+    //토큰 전용 저장폴더 이름 (로그아웃 시 통째로 clear() 하기 위해 분리)
+    private static final String AUTH_PREF_NAME = "YakSokAuthPrefs";
 
     //데이터를 저장할 데이터 키값
     private static final String KEY_USER_DATA = "user_data"; // 유저 객체 전체 JSON
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
     private static final String KEY_YAKSOK_LiST = "yaksok_list";
     private static final String KEY_NOTIFICATION_LIST = "notification_list";
+    private static final String KEY_ACCESS_TOKEN = "access_token";
+    private static final String KEY_REFRESH_TOKEN = "refresh_token";
 
     private static Gson getGson() {
         return new GsonBuilder()
@@ -43,7 +47,31 @@ public class SprefsManager {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    //로그인 성공시 유저 정보 저장
+    //토큰 전용 저장소
+    private static SharedPreferences getAuthPreference(Context context){
+        return context.getSharedPreferences(AUTH_PREF_NAME, Context.MODE_PRIVATE);
+    }
+
+    // 로그인/재발급 성공 시 토큰 저장
+    public static void saveTokens(Context context, String accessToken, String refreshToken){
+        SharedPreferences.Editor editor = getAuthPreference(context).edit();
+        editor.putString(KEY_ACCESS_TOKEN, accessToken);
+        editor.putString(KEY_REFRESH_TOKEN, refreshToken);
+        editor.apply();
+    }
+
+    public static String getAccessToken(Context context){
+        return getAuthPreference(context).getString(KEY_ACCESS_TOKEN, null);
+    }
+
+    public static String getRefreshToken(Context context){
+        return getAuthPreference(context).getString(KEY_REFRESH_TOKEN, null);
+    }
+
+    public static void clearAuthInfo(Context context){
+        getAuthPreference(context).edit().clear().apply();
+    }
+
     public static void setUserInfo(Context context, UserResponse user){
         SharedPreferences.Editor editor = getPreference(context).edit();
 
@@ -92,6 +120,8 @@ public class SprefsManager {
         editor.remove(KEY_USER_DATA);
         editor.remove(KEY_IS_LOGGED_IN);
         editor.apply();
+
+        clearAuthInfo(context);
     }
 
     // 저장된 모든 약속 목록을 가져오기

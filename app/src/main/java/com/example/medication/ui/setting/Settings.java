@@ -132,7 +132,7 @@ public class Settings extends BaseActivity {
         FirebaseTokenRequest request = new FirebaseTokenRequest(token);
         UserApi api = NetworkClient.getApi();
 
-        api.deleteFcmToken(userId, request).enqueue(new Callback<ApiResponse<Void>>(){
+        api.deleteFcmToken(request).enqueue(new Callback<ApiResponse<Void>>(){
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
                 if(response.isSuccessful()) {

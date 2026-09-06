@@ -234,7 +234,7 @@ public class YaksokDetail extends BaseActivity {
         rvFriend.setLayoutManager(new LinearLayoutManager(this));
         rvFriend.setAdapter(adapter);
 
-        NetworkClient.getFriendApi().getFriendList(me.getId())
+        NetworkClient.getFriendApi().getFriendList()
                 .enqueue(new Callback<ApiResponse<FriendListDto>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<FriendListDto>> call,

@@ -43,7 +43,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         FirebaseTokenRequest request = new FirebaseTokenRequest(token);
         UserApi api = NetworkClient.getApi();
 
-        api.updateFcmToken(userId, request).enqueue(new Callback<ApiResponse<Void>>(){
+        api.updateFcmToken(request).enqueue(new Callback<ApiResponse<Void>>(){
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
                 if(response.isSuccessful()){

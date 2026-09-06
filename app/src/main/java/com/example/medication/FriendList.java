@@ -61,8 +61,6 @@ public class FriendList extends BaseActivity {
     private TextView tvEmptyFriend;
     private BottomNavigationView bottomNav;
 
-    private Long loginUserId;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +74,6 @@ public class FriendList extends BaseActivity {
             finish();
             return;
         }
-        loginUserId = user.getId();
 
         initViews();
         setRecyclerView();
@@ -149,7 +146,7 @@ public class FriendList extends BaseActivity {
     }
 
     private void fetchFriendList() {
-        NetworkClient.getFriendApi().getFriendList(loginUserId)
+        NetworkClient.getFriendApi().getFriendList()
                 .enqueue(new Callback<ApiResponse<FriendListDto>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<FriendListDto>> call,
@@ -203,7 +200,7 @@ public class FriendList extends BaseActivity {
     }
 
     private void deleteFriend(FriendResponseDto friend) {
-        NetworkClient.getFriendApi().deleteFriend(loginUserId, friend.getFriendId())
+        NetworkClient.getFriendApi().deleteFriend(friend.getFriendId())
                 .enqueue(new Callback<ApiResponse<FriendListDto>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<FriendListDto>> call,
@@ -227,7 +224,7 @@ public class FriendList extends BaseActivity {
     }
 
     private void updateRequestCount() {
-        NetworkClient.getFriendApi().getReceivedFriendRequests(loginUserId)
+        NetworkClient.getFriendApi().getReceivedFriendRequests()
                 .enqueue(new Callback<ApiResponse<List<ReceivedFriendRequestDto>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<ReceivedFriendRequestDto>>> call,
@@ -276,7 +273,7 @@ public class FriendList extends BaseActivity {
 
             layoutResult.setVisibility(LinearLayout.GONE);
 
-            NetworkClient.getFriendApi().searchUser(nickname, loginUserId)
+            NetworkClient.getFriendApi().searchUser(nickname)
                     .enqueue(new Callback<ApiResponse<UserSearchResultDto>>() {
                         @Override
                         public void onResponse(Call<ApiResponse<UserSearchResultDto>> call,
@@ -311,7 +308,7 @@ public class FriendList extends BaseActivity {
     }
 
     private void sendFriendRequest(Long friendId, Dialog dialog) {
-        FriendRequestCreateDto request = new FriendRequestCreateDto(loginUserId, friendId);
+        FriendRequestCreateDto request = new FriendRequestCreateDto(friendId);
 
         NetworkClient.getFriendApi().createFriendRequest(request)
                 .enqueue(new Callback<ApiResponse<Void>>() {
@@ -354,7 +351,7 @@ public class FriendList extends BaseActivity {
                 (request, accept) -> answerFriendRequest(request, accept, dialog));
         rv.setAdapter(requestAdapter);
 
-        NetworkClient.getFriendApi().getReceivedFriendRequests(loginUserId)
+        NetworkClient.getFriendApi().getReceivedFriendRequests()
                 .enqueue(new Callback<ApiResponse<List<ReceivedFriendRequestDto>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<ReceivedFriendRequestDto>>> call,
@@ -383,7 +380,7 @@ public class FriendList extends BaseActivity {
     }
 
     private void answerFriendRequest(ReceivedFriendRequestDto request, boolean accept, Dialog dialog) {
-        FriendRequestAnswerDto answer = new FriendRequestAnswerDto(loginUserId, accept);
+        FriendRequestAnswerDto answer = new FriendRequestAnswerDto(accept);
 
         NetworkClient.getFriendApi().answerFriendRequest(request.getRequestId(), answer)
                 .enqueue(new Callback<ApiResponse<Void>>() {

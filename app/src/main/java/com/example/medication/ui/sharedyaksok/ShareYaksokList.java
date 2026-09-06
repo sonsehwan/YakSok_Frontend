@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +19,7 @@ import com.example.medication.adapter.ShareYaksokListAdapter;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.example.medication.util.YaksokEventBus;
@@ -118,7 +118,7 @@ public class ShareYaksokList extends BaseActivity implements YaksokEventBus.List
     private void loadSharedYaksokList() {
         Long userId = SprefsManager.getUserId(this);
 
-        NetworkClient.getYaksokApi().getSharedYaksokList(userId, senderId)
+        NetworkClient.getYaksokApi().getSharedYaksokList(senderId)
                 .enqueue(new Callback<ApiResponse<List<Yaksok>>>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse<List<Yaksok>>> call,
@@ -159,7 +159,7 @@ public class ShareYaksokList extends BaseActivity implements YaksokEventBus.List
     private void removeSharedYaksok(Long yaksokId) {
         Long userId = SprefsManager.getUserId(this);
 
-        NetworkClient.getYaksokApi().deleteSharedYaksok(yaksokId, userId)
+        NetworkClient.getYaksokApi().deleteSharedYaksok(yaksokId)
                 .enqueue(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {

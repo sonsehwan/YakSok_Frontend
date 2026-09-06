@@ -117,7 +117,7 @@ public class MyInfo extends BaseActivity {
 
         Log.d("MyInfoActivity", "탈퇴 요청 id: " + userId);
 
-        api.deleteUser(userId).enqueue(new Callback<ApiResponse<Void>>() {
+        api.deleteUser().enqueue(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful()) {

@@ -25,7 +25,6 @@ import com.example.medication.ui.setting.Settings;
 import com.example.medication.ui.main.MainActivity;
 import com.example.medication.ui.yaksok.YaksokList;
 import com.example.medication.util.InsetsUtil;
-import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -132,9 +131,7 @@ public class ChatRoomList extends BaseActivity {
     }
 
     private void deleteChatRoom(ChatRoomListDto room) {
-        Long userId = SprefsManager.getUserId(this);
-
-        NetworkClient.getChatApi().deleteChatRoom(userId, room.getRoomId())
+        NetworkClient.getChatApi().deleteChatRoom(room.getRoomId())
                 .enqueue(new Callback<ApiResponse<List<ChatRoomListDto>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<ChatRoomListDto>>> call,
@@ -162,9 +159,7 @@ public class ChatRoomList extends BaseActivity {
     }
 
     private void loadChatRooms() {
-        Long userId = SprefsManager.getUserId(this);
-
-        NetworkClient.getChatApi().getMyChatRooms(userId)
+        NetworkClient.getChatApi().getMyChatRooms()
                 .enqueue(new Callback<ApiResponse<List<ChatRoomListDto>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<ChatRoomListDto>>> call,

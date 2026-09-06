@@ -25,9 +25,7 @@ public interface FriendApi {
      */
     // 닉네임으로 사용자 검색
     @GET("/api/friend/search")
-    Call<ApiResponse<UserSearchResultDto>> searchUser(
-            @Query("nickname") String nickname,
-            @Query("loginUserId") Long loginUserId);
+    Call<ApiResponse<UserSearchResultDto>> searchUser(@Query("nickname") String nickname);
 
     // 친구 요청 보내기
     @POST("/api/friend/request")
@@ -35,11 +33,11 @@ public interface FriendApi {
 
     // 내가 받은 친구 요청 목록
     @GET("/api/friend/request/received")
-    Call<ApiResponse<List<ReceivedFriendRequestDto>>> getReceivedFriendRequests(
-            @Query("loginUserId") Long loginUserId);
+    Call<ApiResponse<List<ReceivedFriendRequestDto>>> getReceivedFriendRequests();
 
     // 친구 요청 수락/거절
-    @PATCH("/api/friend/request/{requestId}/answer")Call<ApiResponse<Void>> answerFriendRequest(
+    @PATCH("/api/friend/request/{requestId}/answer")
+    Call<ApiResponse<Void>> answerFriendRequest(
             @Path("requestId") Long requestId,
             @Body FriendRequestAnswerDto answer);
 
@@ -49,11 +47,10 @@ public interface FriendApi {
      */
 
     //  친구 목록 가져오기
-    @GET("/api/friend/list") Call<ApiResponse<FriendListDto>> getFriendList(@Query("loginUserId") Long loginUserId);
+    @GET("/api/friend/list")
+    Call<ApiResponse<FriendListDto>> getFriendList();
 
     //  친구 삭제하기 (삭제 후 갱신된 친구 목록을 받는다)
     @DELETE("/api/friend")
-    Call<ApiResponse<FriendListDto>> deleteFriend(
-            @Query("loginUserId") Long loginUserId,
-            @Query("friendId") Long friendId);
+    Call<ApiResponse<FriendListDto>> deleteFriend(@Query("friendId") Long friendId);
 }

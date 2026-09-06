@@ -24,6 +24,8 @@ public class NetworkClient {
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(15, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(new AuthInterceptor())
+                .authenticator(new TokenAuthenticator())
                 .build();
     }
 

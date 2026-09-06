@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
-import com.example.medication.ui.base.BaseActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -20,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.example.medication.ui.chattingroom.ChatRoomList;
 import com.example.medication.DrugStoreList;
 import com.example.medication.FriendList;
 import com.example.medication.R;
@@ -29,6 +27,8 @@ import com.example.medication.model.NotificationListItem;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.ui.base.BaseActivity;
+import com.example.medication.ui.chattingroom.ChatRoomList;
 import com.example.medication.ui.setting.Settings;
 import com.example.medication.ui.yaksok.YaksokList;
 import com.example.medication.util.InsetsUtil;
@@ -195,7 +195,7 @@ public class MainActivity extends BaseActivity implements YaksokEventBus.Listene
         notificationYaksokList.clear();
         Long userId = SprefsManager.getUserId(this); // 로그인한 유저의 id 정보
 
-        NetworkClient.getYaksokApi().getNotifications(userId) // 해당 유저가 생성한 알림 정보를 DB에서 받아서 로컬에 저장
+        NetworkClient.getYaksokApi().getNotifications() // 해당 유저가 생성한 알림 정보를 DB에서 받아서 로컬에 저장
                 .enqueue(new Callback<ApiResponse<List<NotificationYaksok>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<NotificationYaksok>>> call, Response<ApiResponse<List<NotificationYaksok>>> response) {

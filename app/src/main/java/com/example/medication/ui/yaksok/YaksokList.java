@@ -14,13 +14,11 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import com.example.medication.ui.base.BaseActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.ui.chattingroom.ChatRoomList;
 import com.example.medication.DrugStoreList;
 import com.example.medication.FriendList;
 import com.example.medication.R;
@@ -33,6 +31,8 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.SharedUser;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
+import com.example.medication.ui.base.BaseActivity;
+import com.example.medication.ui.chattingroom.ChatRoomList;
 import com.example.medication.ui.main.MainActivity;
 import com.example.medication.ui.setting.Settings;
 import com.example.medication.ui.sharedyaksok.ShareYaksokDetail;
@@ -247,7 +247,7 @@ public class YaksokList extends BaseActivity implements YaksokEventBus.Listener 
 
         Long userId = SprefsManager.getUserId(this);
 
-        api.getYaksokList(userId).enqueue(new Callback<ApiResponse<List<Yaksok>>>() {
+        api.getYaksokList().enqueue(new Callback<ApiResponse<List<Yaksok>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<Yaksok>>> call, Response<ApiResponse<List<Yaksok>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -272,7 +272,7 @@ public class YaksokList extends BaseActivity implements YaksokEventBus.Listener 
     private void fetchSharedUserList() {
         Long userId = SprefsManager.getUserId(this);
 
-        NetworkClient.getYaksokApi().getSharedUserList(userId).enqueue(new Callback<ApiResponse<List<SharedUser>>>() {
+        NetworkClient.getYaksokApi().getSharedUserList().enqueue(new Callback<ApiResponse<List<SharedUser>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<SharedUser>>> call, Response<ApiResponse<List<SharedUser>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -336,7 +336,7 @@ public class YaksokList extends BaseActivity implements YaksokEventBus.Listener 
         currentSenderId = senderId;
         Long userId = SprefsManager.getUserId(this);
 
-        NetworkClient.getYaksokApi().getSharedYaksokList(userId, senderId)
+        NetworkClient.getYaksokApi().getSharedYaksokList(senderId)
                 .enqueue(new Callback<ApiResponse<List<Yaksok>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<Yaksok>>> call, Response<ApiResponse<List<Yaksok>>> response) {
@@ -369,7 +369,7 @@ public class YaksokList extends BaseActivity implements YaksokEventBus.Listener 
     private void removeSharedYaksok(Long yaksokId) {
         Long userId = SprefsManager.getUserId(this);
 
-        NetworkClient.getYaksokApi().deleteSharedYaksok(yaksokId, userId)
+        NetworkClient.getYaksokApi().deleteSharedYaksok(yaksokId)
                 .enqueue(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
