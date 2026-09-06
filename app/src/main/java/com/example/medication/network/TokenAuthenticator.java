@@ -4,6 +4,7 @@ import com.example.medication.MedicationApp;
 import com.example.medication.model.request.RefreshTokenRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.TokenResponse;
+import com.example.medication.util.AuthEventBus;
 import com.example.medication.util.SprefsManager;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ public class TokenAuthenticator implements Authenticator {
                 authApi.refresh(new RefreshTokenRequest(refreshToken)).execute();
 
         if (!result.isSuccessful() || result.body() == null || !result.body().isBusinessSuccess()) {
+            forceLogout();
             return null;
         }
 
@@ -62,5 +64,10 @@ public class TokenAuthenticator implements Authenticator {
             count++;
         }
         return count;
+    }
+
+    private void forceLogout(){
+        SprefsManager.clearUserInfo(MedicationApp.getContext());
+        AuthEventBus.get().publish();
     }
 }

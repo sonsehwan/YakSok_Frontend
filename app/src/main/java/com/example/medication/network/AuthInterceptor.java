@@ -21,7 +21,7 @@ public class AuthInterceptor implements Interceptor {
         }
 
         Request authorized = original.newBuilder()
-                .header("Authorization", "Bearer" + accessToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .build();
 
         return chain.proceed(authorized);
