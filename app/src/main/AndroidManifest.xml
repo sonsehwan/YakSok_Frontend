@@ -104,7 +104,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- 회원가입 -->
+        </activity>
+        <activity
+            android:name=".ui.login.FindId"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.FindPassword"
+            android:exported="false" /> <!-- 회원가입 -->
         <activity
             android:name=".ui.signup.SignUp_Normal"
             android:exported="true" />

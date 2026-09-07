@@ -37,11 +37,28 @@
         tools:ignore="MissingConstraints" />
 
     <com.example.medication.InputView
-        android:id="@+id/input_email"
+        android:id="@+id/input_login_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
+        android:imeOptions="actionNext"
+        android:inputType="text"
+        android:nextFocusDown="@id/input_email"
+        app:helperText="8~20자의 영문 소문자와 숫자만 사용 가능합니다."
+        app:hintText="아이디를 입력하세요."
+        app:iconSrc="@drawable/ic_user"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:validationType="id" />
+
+    <com.example.medication.InputView
+        android:id="@+id/input_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
         android:imeOptions="actionNext"
         android:inputType="textEmailAddress"
         android:nextFocusDown="@id/input_pw"
@@ -50,7 +67,7 @@
         app:iconSrc="@drawable/ic_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/input_login_id"
         app:validationType="email" />
 
     <com.example.medication.InputView

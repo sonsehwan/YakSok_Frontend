@@ -3,10 +3,9 @@ package com.example.medication.model.request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-// 로그인 요청 DTO
+// 아이디 찾기 - 인증코드 발송 요청
 @Getter
 @AllArgsConstructor
-public class LoginRequest {
-    private String loginId;
-    private String password;
+public class FindIdSendCodeRequest {
+    private String email;
 }

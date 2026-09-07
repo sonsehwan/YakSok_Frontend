@@ -39,7 +39,7 @@ import retrofit2.Response;
 
 public class SignUp_DrugStore extends BaseActivity {
 
-    private InputView inputEmail, inputPw, inputCheckPw, inputNickName;
+    private InputView inputLoginId, inputEmail, inputPw, inputCheckPw, inputNickName;
     private Button btnSignUp, btnFindDrugStore;
     private TextView tvDrugstore, tvDrugstoreError;
     private MaterialCardView mcvFindDrugstore;
@@ -119,6 +119,7 @@ public class SignUp_DrugStore extends BaseActivity {
     }
 
     private boolean checkValid(){
+        boolean isLoginIdValid = inputLoginId.isValid();
         boolean isEmailVaild = inputEmail.isValid();
         boolean isPwVaild = inputPw.isValid();
         boolean isCheckPw = inputCheckPw.isValid();
@@ -132,7 +133,7 @@ public class SignUp_DrugStore extends BaseActivity {
             hideDrugStoreError();
         }
 
-        if(!isEmailVaild || !isPwVaild || !isCheckPw || !isNickName || !isDrugStoreValid){
+        if(!isLoginIdValid || !isEmailVaild || !isPwVaild || !isCheckPw || !isNickName || !isDrugStoreValid){
             showToast("입력 정보를 다시 확인해주세요.");
             return false;
         }
@@ -158,12 +159,13 @@ public class SignUp_DrugStore extends BaseActivity {
     }
 
     private void startSignUp(String type, SearchDrugStore drugStore){
+        String loginId = inputLoginId.getText();
         String email = inputEmail.getText();
         String pw = inputPw.getText();
         String nickName = inputNickName.getText();
         String role = type;
 
-        UserRequest request = new UserRequest(email, pw, nickName, drugStore, role);
+        UserRequest request = new UserRequest(loginId, email, pw, nickName, drugStore, role);
 
         UserApi api = NetworkClient.getApi();
         api.signUp(request).enqueue(new Callback<ApiResponse<Void>>() {
@@ -206,7 +208,9 @@ public class SignUp_DrugStore extends BaseActivity {
 
                 String message = errorResponse.getMessage();
 
-                if(message.contains("이메일")){
+                if(message.contains("아이디")){
+                    inputLoginId.showError(message);
+                }else if(message.contains("이메일")){
                     inputEmail.showError(message);
                 }else if(message.contains("닉네임")){
                     inputNickName.showError(message);
@@ -241,6 +245,7 @@ public class SignUp_DrugStore extends BaseActivity {
     }
 
     private void initViews() {
+        inputLoginId = findViewById(R.id.input_login_id);
         inputEmail = findViewById(R.id.input_email);
         inputPw = findViewById(R.id.input_pw);
         inputCheckPw = findViewById(R.id.input_check_pw);

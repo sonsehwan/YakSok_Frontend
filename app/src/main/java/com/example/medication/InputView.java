@@ -45,7 +45,7 @@ public class InputView extends LinearLayout {
     private final int COLOR_GUIDE = Color.parseColor("#999999");      // 평상시 가이드 회색
     private final int COLOR_DEFAULT_STROKE = ContextCompat.getColor(getContext(), R.color.brand_icon);
 
-    private final String idPattern = "^[a-z0-9_-]{5,20}$";
+    private final String idPattern = "^[a-z0-9]{8,20}$";
     private final String passwordPattern = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+])[A-Za-z\\d!@#$%^&*()_+]{8,16}$";
     private final String nicknamePattern = "^[a-zA-Z0-9가-힣]{2,10}$";
     private final String birthPattern = "^(19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$";
@@ -192,7 +192,7 @@ public class InputView extends LinearLayout {
             }
         } else if (validationType == 2) { // id
             if (!text.matches(idPattern)) {
-                showError("아이디: 5~20자의 영문 소문자, 숫자, _, -만 사용 가능합니다.");
+                showError("아이디: 8~20자의 영문 소문자와 숫자만 사용 가능합니다.");
                 return false;
             }
         } else if (validationType == 4) { // nickname

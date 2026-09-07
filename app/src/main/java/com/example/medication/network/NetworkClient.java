@@ -13,6 +13,7 @@ public class NetworkClient {
     private static String qrCodeAPI_URL = "https://api.qrserver.com/v1/create-qr-code/";
 
     private static Retrofit userRetrofit = null;
+    private static Retrofit authRetrofit = null;
     private static Retrofit friendRetrofit = null;
     private static Retrofit pillRetrofit = null;
     private static Retrofit yaksokRetrofit = null;
@@ -44,6 +45,23 @@ public class NetworkClient {
             }
         }
         return userRetrofit.create(UserApi.class);
+    }
+
+    // 로그인 전 인증 관련 api 통신 (토큰 재발급 / 아이디·비밀번호 찾기)
+    // AuthInterceptor 는 accessToken 이 null 이면 그냥 통과시키고, 4개 경로 모두 permitAll 이라 401 도 안 난다
+    public static AuthApi getAuthApi() {
+        if (authRetrofit == null) {
+            try {
+                authRetrofit = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)
+                        .client(getHttpClient())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+            } catch (Exception e) {
+                android.util.Log.e("NetworkClient", "Retrofit 초기화 실패: " + e.getMessage());
+            }
+        }
+        return authRetrofit.create(AuthApi.class);
     }
 
     //친구관련 api 통신

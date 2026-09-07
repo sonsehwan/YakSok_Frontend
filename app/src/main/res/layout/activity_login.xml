@@ -42,13 +42,13 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_welcome">
 
         <com.example.medication.InputView
-            android:id="@+id/input_email"
+            android:id="@+id/input_login_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:hintText="이메일을 입력하세요"
-            app:iconSrc="@drawable/ic_email"
-            app:validationType="email"
-            android:inputType="textEmailAddress"
+            app:hintText="아이디를 입력하세요"
+            app:iconSrc="@drawable/ic_user"
+            app:validationType="id"
+            android:inputType="text"
             android:imeOptions="actionNext" />
 
         <com.example.medication.InputView
@@ -79,13 +79,48 @@
         app:layout_constraintTop_toBottomOf="@+id/ll_input_group"/>
 
     <LinearLayout
+        android:id="@+id/ll_find_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login">
+
+        <TextView
+            android:id="@+id/tv_find_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="아이디 찾기"
+            android:textColor="#666666" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:text="·"
+            android:textColor="#999999" />
+
+        <TextView
+            android:id="@+id/tv_find_pw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="비밀번호 찾기"
+            android:textColor="#666666" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_find_account">
 
         <TextView
             android:layout_width="wrap_content"

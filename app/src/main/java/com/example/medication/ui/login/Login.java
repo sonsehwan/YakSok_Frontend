@@ -34,10 +34,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Login extends BaseActivity {
-    private InputView inputEmail;
+    private InputView inputLoginId;
     private InputView inputPw;
     private Button btnLogin;
     private TextView tvGoSignUp;
+    private TextView tvFindId;
+    private TextView tvFindPw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,16 +65,19 @@ public class Login extends BaseActivity {
             SignUpTypeBottomSheet sheet = new SignUpTypeBottomSheet();
             sheet.show(getSupportFragmentManager(), "sign_up_type");
         });
+
+        tvFindId.setOnClickListener(v -> startActivity(new Intent(this, FindId.class)));
+        tvFindPw.setOnClickListener(v -> startActivity(new Intent(this, FindPassword.class)));
     }
 
     private void startLogin(){
-        if(!inputEmail.isValid() || !inputPw.isValid()){
+        if(!inputLoginId.isValid() || !inputPw.isValid()){
             return;
         }
-        String email = inputEmail.getText();
+        String loginId = inputLoginId.getText();
         String password = inputPw.getText();
 
-        LoginRequest request = new LoginRequest(email, password);
+        LoginRequest request = new LoginRequest(loginId, password);
 
         UserApi api = NetworkClient.getApi();
 
@@ -174,7 +179,7 @@ public class Login extends BaseActivity {
                     String message = errorResponse.getMessage();
 
                     if (message.contains("비밀번호")) inputPw.showError(message);
-                    else if (message.contains("이메일") || message.contains("사용자")) inputEmail.showError(message);
+                    else if (message.contains("아이디") || message.contains("사용자")) inputLoginId.showError(message);
                     else showToast(message);
                 } else {
                     // JSON 형태가 아니거나 메세지가 없는 경우
@@ -188,10 +193,12 @@ public class Login extends BaseActivity {
     }
 
     private void initViews() {
-        inputEmail = findViewById(R.id.input_email);
+        inputLoginId = findViewById(R.id.input_login_id);
         inputPw = findViewById(R.id.input_pw);
         btnLogin = findViewById(R.id.btn_login);
         tvGoSignUp = findViewById(R.id.tv_go_signup);
+        tvFindId = findViewById(R.id.tv_find_id);
+        tvFindPw = findViewById(R.id.tv_find_pw);
     }
 
     private void showToast(String message){
