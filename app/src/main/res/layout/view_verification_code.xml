@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <com.example.medication.InputView
+        android:id="@+id/input_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
+        android:inputType="number"
+        app:hintText="인증코드 6자리"
+        app:iconSrc="@drawable/ic_lock" />
+
+    <TextView
+        android:id="@+id/tv_expiry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="8dp"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        tools:text="남은 시간 4:32" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_resend"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:text="인증코드 재발송"
+        android:textColor="@color/black"
+        app:cornerRadius="12dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_verify"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:text="확인"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:backgroundTint="@color/brand_surface"
+        app:cornerRadius="12dp" />
+</merge>

@@ -4,16 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.medication.InputView;
-import com.example.medication.R;
+import com.example.medication.databinding.ActivityFindIdBinding;
 import com.example.medication.model.request.FindIdSendCodeRequest;
 import com.example.medication.model.request.FindIdVerifyRequest;
 import com.example.medication.model.response.ApiResponse;
@@ -21,7 +19,6 @@ import com.example.medication.model.response.FindIdResponse;
 import com.example.medication.network.AuthApi;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.base.BaseActivity;
-import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -30,41 +27,27 @@ import retrofit2.Response;
 
 public class FindId extends BaseActivity {
 
-    private static final long RESEND_COOLDOWN_MS = 60_000L;
-
-    private InputView inputEmail, inputCode;
-    private MaterialButton btnSendCode, btnVerify, btnGoLogin;
-    private TextView tvResult;
+    private ActivityFindIdBinding binding;
 
     private String sentEmail;
-    private CountDownTimer cooldownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_find_id);
+        binding = ActivityFindIdBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        initViews();
-
-        btnSendCode.setOnClickListener(v -> sendCode());
-        btnVerify.setOnClickListener(v -> verify());
-        btnGoLogin.setOnClickListener(v -> goLogin());
+        binding.btnSendCode.setOnClickListener(v -> sendCode(false));
+        binding.verificationCode.setOnResendListener(() -> sendCode(true));
+        binding.verificationCode.setOnVerifyListener(this::verify);
+        binding.btnGoLogin.setOnClickListener(v -> goLogin());
     }
 
-    private void initViews() {
-        inputEmail = findViewById(R.id.input_email);
-        inputCode = findViewById(R.id.input_code);
-        btnSendCode = findViewById(R.id.btn_send_code);
-        btnVerify = findViewById(R.id.btn_verify);
-        btnGoLogin = findViewById(R.id.btn_go_login);
-        tvResult = findViewById(R.id.tv_result);
-    }
-
-    private void sendCode() {
-        if (!inputEmail.isValid()) {
+    private void sendCode(boolean resend) {
+        if (!binding.inputEmail.isValid()) {
             return;
         }
-        String email = inputEmail.getText();
+        String email = binding.inputEmail.getText();
 
         AuthApi api = NetworkClient.getAuthApi();
         api.sendFindIdCode(new FindIdSendCodeRequest(email)).enqueue(new Callback<ApiResponse<Void>>() {
@@ -72,30 +55,25 @@ public class FindId extends BaseActivity {
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isBusinessSuccess()) {
                     sentEmail = email;
-                    inputCode.setVisibility(View.VISIBLE);
-                    btnVerify.setVisibility(View.VISIBLE);
-                    startCooldown();
+                    if (!resend) binding.btnSendCode.setVisibility(View.GONE);
+                    binding.verificationCode.start();
                     showToast("인증코드를 이메일로 발송했습니다.");
                 } else {
-                    handleError(response, "인증코드 발송에 실패했습니다.");
+                    if (resend) binding.verificationCode.onResendFailed();
+                    showToast(serverMessage(response, "인증코드 발송에 실패했습니다."));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                if (resend) binding.verificationCode.onResendFailed();
                 showToast("네트워크 연결을 확인해주세요.");
                 Log.e("FindId", "send-code 실패: " + t.getMessage());
             }
         });
     }
 
-    private void verify() {
-        String code = inputCode.getText();
-        if (code.isEmpty()) {
-            inputCode.showError("인증코드를 입력해주세요.");
-            return;
-        }
-
+    private void verify(String code) {
         AuthApi api = NetworkClient.getAuthApi();
         api.verifyFindId(new FindIdVerifyRequest(sentEmail, code)).enqueue(new Callback<ApiResponse<FindIdResponse>>() {
             @Override
@@ -104,7 +82,7 @@ public class FindId extends BaseActivity {
                         && response.body().isBusinessSuccess() && response.body().getData() != null) {
                     showResult(response.body().getData().getLoginId());
                 } else {
-                    handleError(response, "인증에 실패했습니다.");
+                    binding.verificationCode.showError(serverMessage(response, "인증에 실패했습니다."));
                 }
             }
 
@@ -117,15 +95,14 @@ public class FindId extends BaseActivity {
     }
 
     private void showResult(String loginId) {
-        cancelCooldown();
-        inputEmail.setVisibility(View.GONE);
-        btnSendCode.setVisibility(View.GONE);
-        inputCode.setVisibility(View.GONE);
-        btnVerify.setVisibility(View.GONE);
+        binding.verificationCode.stop();
+        binding.inputEmail.setVisibility(View.GONE);
+        binding.btnSendCode.setVisibility(View.GONE);
+        binding.verificationCode.setVisibility(View.GONE);
 
-        tvResult.setText("회원님의 아이디는\n[ " + loginId + " ] 입니다.");
-        tvResult.setVisibility(View.VISIBLE);
-        btnGoLogin.setVisibility(View.VISIBLE);
+        binding.tvResult.setText("회원님의 아이디는\n[ " + loginId + " ] 입니다.");
+        binding.tvResult.setVisibility(View.VISIBLE);
+        binding.btnGoLogin.setVisibility(View.VISIBLE);
     }
 
     private void goLogin() {
@@ -135,44 +112,18 @@ public class FindId extends BaseActivity {
         finish();
     }
 
-    private void startCooldown() {
-        cancelCooldown();
-        btnSendCode.setEnabled(false);
-        cooldownTimer = new CountDownTimer(RESEND_COOLDOWN_MS, 1000) {
-            @Override
-            public void onTick(long msLeft) {
-                btnSendCode.setText((msLeft / 1000) + "초 후 재발송");
-            }
-
-            @Override
-            public void onFinish() {
-                btnSendCode.setEnabled(true);
-                btnSendCode.setText("인증코드 재발송");
-            }
-        }.start();
-    }
-
-    private void cancelCooldown() {
-        if (cooldownTimer != null) {
-            cooldownTimer.cancel();
-            cooldownTimer = null;
-        }
-    }
-
-    private void handleError(Response<?> response, String fallback) {
+    private String serverMessage(Response<?> response, String fallback) {
         try {
             if (response.errorBody() != null) {
-                String json = response.errorBody().string();
-                ApiResponse<?> body = new Gson().fromJson(json, ApiResponse.class);
+                ApiResponse<?> body = new Gson().fromJson(response.errorBody().string(), ApiResponse.class);
                 if (body != null && body.getMessage() != null) {
-                    showToast(body.getMessage());
-                    return;
+                    return body.getMessage();
                 }
             }
         } catch (Exception e) {
             Log.e("FindId", "에러 파싱 실패: " + e.getMessage());
         }
-        showToast(fallback);
+        return fallback;
     }
 
     private void showToast(String message) {
@@ -180,16 +131,10 @@ public class FindId extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        cancelCooldown();
-    }
-
-    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
-            if (v instanceof android.widget.EditText) {
+            if (v instanceof EditText) {
                 Rect outRect = new Rect();
                 v.getGlobalVisibleRect(outRect);
                 if (!outRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
