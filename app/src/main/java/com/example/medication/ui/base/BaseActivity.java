@@ -2,8 +2,12 @@ package com.example.medication.ui.base;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Build;
+import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.medication.ui.login.Login;
@@ -16,6 +20,22 @@ public class BaseActivity extends AppCompatActivity implements AuthEventBus.List
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        lockPortrait();
+    }
+
+    private void lockPortrait() {
+        try {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } catch (IllegalStateException e) {
+            if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+                throw e;
+            }
+        }
     }
 
     @Override
