@@ -236,4 +236,16 @@ public class InputView extends LinearLayout {
     public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
         return editText.requestFocus(direction, previouslyFocusedRect);
     }
+
+    public void requestInputFocus() {
+        editText.requestFocus();
+        editText.post(() -> {
+            android.view.inputmethod.InputMethodManager imm =
+                    (android.view.inputmethod.InputMethodManager) getContext()
+                            .getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.showSoftInput(editText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+    }
 }

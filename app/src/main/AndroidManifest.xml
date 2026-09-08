@@ -110,6 +110,9 @@
             android:exported="false" />
         <activity
             android:name=".ui.login.FindPassword"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.ResetPassword"
             android:exported="false" /> <!-- 회원가입 -->
         <activity
             android:name=".ui.signup.SignUp_Normal"

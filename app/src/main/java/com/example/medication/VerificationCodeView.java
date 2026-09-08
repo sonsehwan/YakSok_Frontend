@@ -83,7 +83,7 @@ public class VerificationCodeView extends LinearLayout {
 
     public void showError(String message) { inputCode.showError(message); }
 
-    /** 인증코드 발송/재발송 성공 시 호출. 뷰를 보이게 하고 두 타이머를 (재)시작한다. */
+
     public void start() {
         setVisibility(VISIBLE);
         inputCode.setText("");
@@ -92,15 +92,14 @@ public class VerificationCodeView extends LinearLayout {
         btnVerify.setEnabled(true);
         startExpiryTimer();
         startCooldownTimer();
+        inputCode.requestInputFocus();
     }
 
-    /** 재발송 요청이 실패했을 때 호출 — 버튼을 다시 누를 수 있게 되돌린다. */
     public void onResendFailed() {
         btnResend.setEnabled(true);
         btnResend.setText("인증코드 재발송");
     }
 
-    /** 인증 성공 등으로 타이머가 더 필요 없을 때. */
     public void stop() {
         cancelExpiryTimer();
         cancelCooldownTimer();
@@ -123,7 +122,7 @@ public class VerificationCodeView extends LinearLayout {
                 tvExpiry.setText("인증 시간이 만료되었어요. 재발송해주세요.");
                 tvExpiry.setTextColor(colorWarn);
                 btnVerify.setEnabled(false);
-                cancelCooldownTimer();          // 만료되면 재발송을 바로 열어준다
+                cancelCooldownTimer();
                 btnResend.setEnabled(true);
                 btnResend.setText("인증코드 재발송");
             }
