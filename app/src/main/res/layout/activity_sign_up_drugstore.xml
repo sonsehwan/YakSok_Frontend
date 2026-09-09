@@ -148,7 +148,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_find_drugstore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -163,7 +163,9 @@
                 android:text="찾기"
                 android:textColor="#000000"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                app:elevation="0dp" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
