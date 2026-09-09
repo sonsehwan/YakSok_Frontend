@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 오른쪽(상담) 탭: 선택 시 위/바깥 테두리만, 비선택 시 밑줄만 (YaksokList 폴더 탭과 동일) -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:drawable="@drawable/bg_touch_shared_yaksok_list" />
+    <item android:drawable="@drawable/bg_black_border" />
+</selector>
