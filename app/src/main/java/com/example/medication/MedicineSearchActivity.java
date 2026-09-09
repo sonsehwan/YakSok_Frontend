@@ -16,6 +16,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.MedicineSearchResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.PillApi;
+import com.example.medication.util.InsetsUtil;
 
 import java.util.List;
 
@@ -40,6 +41,12 @@ public class MedicineSearchActivity extends BaseActivity {
         binding = ActivityMedicineSearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // 배경은 edge-to-edge로 두고, 콘텐츠만 상태바 높이만큼 내려 겹침을 막는다.
+        InsetsUtil.applySystemBarPadding(binding.getRoot());
+
+        // 제품 선택 없이 나가면 호출한 화면은 결과 없이 취소로 처리된다.
+        binding.ivBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+
         setupRecyclerView();
 
         // [핵심] 화면 진입 시 검색어 없이 첫 페이지 데이터를 즉시 요청합니다.
@@ -49,6 +56,12 @@ public class MedicineSearchActivity extends BaseActivity {
         binding.btnSearch.setOnClickListener(v -> {
             String keyword = binding.etSearch.getText().toString();
             searchMedicine(keyword, true);
+        });
+
+        // 키보드의 검색 키로도 동작하도록 한다.
+        binding.etSearch.setOnEditorActionListener((v, actionId, event) -> {
+            searchMedicine(binding.etSearch.getText().toString(), true);
+            return true;
         });
     }
 
