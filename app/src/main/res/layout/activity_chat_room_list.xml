@@ -5,7 +5,7 @@
     android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/page_bg"
+    android:background="@color/white"
     tools:context=".ui.chattingroom.ChatRoomList">
 
     <TextView
@@ -30,6 +30,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_header_title" />
 
+    <!-- 약국 사장 계정에서만 보인다: [친구 | 상담]. YaksokList의 내 약속/공유 약속 폴더 탭과 동일 디자인 -->
+    <RadioGroup
+        android:id="@+id/rg_chat_type"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_divider">
+
+        <RadioButton
+            android:id="@+id/rb_chat_friend"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_chat_tab_friend"
+            android:button="@null"
+            android:gravity="center"
+            android:text="친구"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/rb_chat_consult"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_chat_tab_consult"
+            android:button="@null"
+            android:gravity="center"
+            android:text="상담"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RadioGroup>
+
     <TextView
         android:id="@+id/tv_empty"
         android:layout_width="wrap_content"
@@ -47,10 +86,11 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
+        android:background="@color/page_bg"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_divider"
+        app:layout_constraintTop_toBottomOf="@id/rg_chat_type"
         tools:listitem="@layout/item_chat_room" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

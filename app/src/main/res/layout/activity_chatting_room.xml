@@ -52,17 +52,6 @@
         android:background="#FFFFFF"
         android:elevation="8dp">
 
-        <TextView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginRight="5dp"
-            android:layout_gravity="bottom"
-            android:text="+"
-            android:textSize="26sp"
-            android:includeFontPadding="false"
-            android:gravity="center"
-            android:background="@drawable/bg_yellow"/>
-
 
         <EditText
             android:id="@+id/et_message"
@@ -93,7 +82,7 @@
             android:layout_marginStart="8dp"
             android:minWidth="0dp"
             android:insetLeft="0dp"
-            app:cornerRadius="20dp"
+            app:cornerRadius="12dp"
             app:backgroundTint="@color/brand_surface" />
 
     </LinearLayout>

@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -31,12 +32,12 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private final List<ChatMessage> messageList = new ArrayList<>();
-    private final String myEmail;
+    private final Long myParticipantId;
     private final OnYaksokClickListener listener;
 
-    // 내 이메일을 전달받아 내가 보낸 메시지인지 판별합니다.
-    public ChattingRoomAdapter(String myEmail, OnYaksokClickListener listener) {
-        this.myEmail = myEmail;
+    // 이 방에서 나를 대표하는 참여자 id를 전달받아 내가 보낸 메시지인지 판별합니다.
+    public ChattingRoomAdapter(Long myParticipantId, OnYaksokClickListener listener) {
+        this.myParticipantId = myParticipantId;
         this.listener = listener;
     }
 
@@ -49,7 +50,7 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemViewType(int position) {
         ChatMessage msg = messageList.get(position);
 
-        boolean isMine = msg.getSender() != null && msg.getSender().equals(myEmail);
+        boolean isMine = Objects.equals(msg.getSenderParticipantId(), myParticipantId);
         boolean isShare = msg.getType() == ChatMessage.MessageType.SHARE_YAKSOK;
 
         if (isMine) {

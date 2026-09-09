@@ -1,7 +1,5 @@
 package com.example.medication.ui.chattingroom;
 
-import static com.example.medication.util.SprefsManager.getUserEmail;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
@@ -46,7 +44,7 @@ public class ChattingRoom extends BaseActivity {
 
     private Long roomId;
     private String roomName;
-    private String myEmail;
+    private Long myParticipantId;
 
     private Long pendingShareYaksokId = null;
     private String pendingShareMessage = null;
@@ -54,6 +52,8 @@ public class ChattingRoom extends BaseActivity {
     private StompClient mStompClient;
     private Disposable mTopicDisposable;
     private Gson gson = new Gson();
+
+    private volatile boolean chatReady = false;
 
     private RecyclerView rvMessages;
     private ChattingRoomAdapter chattingRoomAdapter;
@@ -88,7 +88,6 @@ public class ChattingRoom extends BaseActivity {
 
         initViews();
 
-        // Intent에서 방 정보 꺼내기
         Intent intent = getIntent();
         roomId = intent.getLongExtra("roomId", -1);
         roomName = intent.getStringExtra("roomName");
@@ -99,8 +98,8 @@ public class ChattingRoom extends BaseActivity {
             pendingShareMessage = intent.getStringExtra("SHARE_MESSAGE");
         }
 
-        myEmail = getUserEmail(this);
-        if (roomId == -1) {
+        myParticipantId = intent.getLongExtra("myParticipantId", -1);
+        if (roomId == -1 || myParticipantId == -1) {
             Toast.makeText(this, "잘못된 접근입니다.", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -108,7 +107,7 @@ public class ChattingRoom extends BaseActivity {
 
         tvRoomName.setText(roomName != null ? roomName : "상담방");
 
-        chattingRoomAdapter = new ChattingRoomAdapter(myEmail, sharedYaksokId -> {
+        chattingRoomAdapter = new ChattingRoomAdapter(myParticipantId, sharedYaksokId -> {
             Intent shareIntent = new Intent(ChattingRoom.this, ShareYaksokDetail.class);
             shareIntent.putExtra(ShareYaksokDetail.EXTRA_YAKSOK_ID, sharedYaksokId);
             startActivity(shareIntent);
@@ -119,17 +118,19 @@ public class ChattingRoom extends BaseActivity {
 
         loadPreviousMessages();
 
-        // 소켓 연결 시작
         connectStomp();
 
-        // 전송 버튼 클릭 이벤트
         btnSend.setOnClickListener(v -> {
             String text = etMessage.getText().toString().trim();
+            if (text.isEmpty()) return;
 
-            if (!text.isEmpty()) {
-                sendMessage(text);
-                etMessage.setText("");
+            if (!chatReady) {
+                Toast.makeText(this, "채팅 서버에 연결 중이에요. 잠시 후 다시 시도해 주세요.", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            sendMessage(text);
+            etMessage.setText("");
         });
     }
 
@@ -179,10 +180,12 @@ public class ChattingRoom extends BaseActivity {
                     break;
 
                 case ERROR:
+                    chatReady = false;
                     Log.e(TAG, "STOMP 연결 오류", lifecycleEvent.getException());
                     break;
 
                 case CLOSED:
+                    chatReady = false;
                     Log.d(TAG, "STOMP 연결 종료");
                     break;
             }
@@ -208,7 +211,9 @@ public class ChattingRoom extends BaseActivity {
                     Log.e(TAG, "구독 중 에러 발생", throwable);
                 });
 
-        // 구독이 끝난 뒤에 보내야 내가 보낸 메시지도 화면에 표시된다
+        // 구독까지 끝났으니 이제 전송을 허용한다. (내가 보낸 메시지도 서버 브로드캐스트로 돌아와 화면에 표시된다)
+        chatReady = true;
+
         sendPendingShareMessage();
     }
 
@@ -217,7 +222,7 @@ public class ChattingRoom extends BaseActivity {
         if (pendingShareYaksokId == null) return;
 
         ChatMessage chatMessage = new ChatMessage(
-                String.valueOf(roomId), myEmail,
+                String.valueOf(roomId), myParticipantId,
                 ChatMessage.MessageType.SHARE_YAKSOK,
                 pendingShareMessage, pendingShareYaksokId);
 
@@ -232,7 +237,7 @@ public class ChattingRoom extends BaseActivity {
 
     @SuppressLint("CheckResult")
     private void sendMessage(String text) {
-        ChatMessage chatMessage = new ChatMessage(String.valueOf(roomId), myEmail, ChatMessage.MessageType.TEXT, text);
+        ChatMessage chatMessage = new ChatMessage(String.valueOf(roomId), myParticipantId, ChatMessage.MessageType.TEXT, text);
         String jsonPayload = gson.toJson(chatMessage);
 
         mStompClient.send("/pub/chat/message", jsonPayload)
@@ -240,6 +245,10 @@ public class ChattingRoom extends BaseActivity {
                     Log.d(TAG, "메시지 전송 성공!");
                 }, throwable -> {
                     Log.e(TAG, "메시지 전송 실패", throwable);
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "메시지를 보내지 못했어요. 다시 시도해 주세요.", Toast.LENGTH_SHORT).show();
+                        etMessage.setText(text);   // 입력 내용 복구
+                    });
                 });
     }
 

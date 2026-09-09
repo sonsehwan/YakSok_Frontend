@@ -1,7 +1,6 @@
 package com.example.medication;
 
 import static com.example.medication.util.SprefsManager.getUser;
-import static com.example.medication.util.SprefsManager.getUserId;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -78,7 +77,6 @@ public class DrugStoreDetail extends BaseActivity {
                     Log.d("drugStoreHpid", drugStore.getHpid());
                 }
             }
-            Long userId = getUserId(this);
             String hpid = drugStore.getHpid();
 
             if (hpid == null) {
@@ -92,7 +90,7 @@ public class DrugStoreDetail extends BaseActivity {
                 return;
             }
 
-            ChatRoomRequest request = new ChatRoomRequest(userId, hpid);
+            ChatRoomRequest request = new ChatRoomRequest(hpid);
 
             // Retrofit 통신 시작
             NetworkClient.getChatApi().enterChatRoom(request).enqueue(new Callback<ApiResponse<ChatRoomResponse>>() {
@@ -101,10 +99,10 @@ public class DrugStoreDetail extends BaseActivity {
                     if (response.isSuccessful() && response.body() != null) {
 
                         ChatRoomResponse roomResponse = (ChatRoomResponse) response.body().getData();
-                        Long roomId = roomResponse.getRoomId();
 
                         Intent chatIntent = new Intent(DrugStoreDetail.this, ChattingRoom.class);
-                        chatIntent.putExtra("roomId", roomId);
+                        chatIntent.putExtra("roomId", roomResponse.getRoomId());
+                        chatIntent.putExtra("myParticipantId", roomResponse.getMyParticipantId());
                         chatIntent.putExtra("roomName", drugStore.getDutyName());
                         startActivity(chatIntent);
 

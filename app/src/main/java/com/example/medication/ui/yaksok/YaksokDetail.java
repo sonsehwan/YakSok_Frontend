@@ -266,8 +266,7 @@ public class YaksokDetail extends BaseActivity {
             return;
         }
 
-        Long myUserId = SprefsManager.getUserId(this);
-        FriendChatRoomRequest request = new FriendChatRoomRequest(myUserId, friend.getFriendId());
+        FriendChatRoomRequest request = new FriendChatRoomRequest(friend.getFriendId());
 
         NetworkClient.getChatApi().enterFriendChatRoom(request)
                 .enqueue(new Callback<ApiResponse<ChatRoomResponse>>() {
@@ -279,6 +278,7 @@ public class YaksokDetail extends BaseActivity {
 
                             Intent chatIntent = new Intent(YaksokDetail.this, ChattingRoom.class);
                             chatIntent.putExtra("roomId", response.body().getData().getRoomId());
+                            chatIntent.putExtra("myParticipantId", response.body().getData().getMyParticipantId());
                             chatIntent.putExtra("roomName", friend.getNickname());
                             chatIntent.putExtra("SHARE_YAKSOK_ID", yaksok.getId().longValue());
                             chatIntent.putExtra("SHARE_MESSAGE", buildShareMessage(yaksok));
