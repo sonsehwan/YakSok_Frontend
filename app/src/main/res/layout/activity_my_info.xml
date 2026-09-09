@@ -121,7 +121,7 @@
             android:textColor="#000000"
             android:gravity="center_vertical" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_change_pw"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
@@ -132,7 +132,11 @@
             android:text="변경"
             android:textColor="#000000"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="12dp"
+            app:elevation="0dp" />
 
     </LinearLayout>
 
@@ -182,7 +186,7 @@
             android:textColor="#000000"
             android:textSize="16sp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_find_drugstore"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
@@ -193,11 +197,15 @@
             android:text="찾기"
             android:textColor="#000000"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="12dp"
+            app:elevation="0dp" />
 
     </LinearLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_withdraw"
         android:layout_width="0dp"
         android:layout_height="56dp"
@@ -208,6 +216,10 @@
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        app:cornerRadius="12dp"
+        app:elevation="0dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_save_info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -215,7 +227,7 @@
 
 
     <!-- 수정하기 버튼 -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_save_info"
         android:layout_width="0dp"
         android:layout_height="56dp"
@@ -226,6 +238,10 @@
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        app:cornerRadius="12dp"
+        app:elevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

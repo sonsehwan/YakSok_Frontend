@@ -52,7 +52,7 @@
         android:textSize="15sp"
         android:textStyle="bold"
         app:backgroundTint="@color/brand_surface"
-        app:cornerRadius="14dp"
+        app:cornerRadius="12dp"
         app:elevation="0dp" />
 
     <!-- 검색 결과 -->
@@ -117,7 +117,7 @@
             android:textSize="15sp"
             android:textStyle="bold"
             app:backgroundTint="@color/brand_surface"
-            app:cornerRadius="14dp"
+            app:cornerRadius="12dp"
             app:elevation="0dp" />
     </LinearLayout>
 </LinearLayout>

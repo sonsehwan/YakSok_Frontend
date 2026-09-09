@@ -8,7 +8,7 @@
     android:layout_marginHorizontal="20dp"
     android:layout_marginVertical="8dp"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="20dp"
+    app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
     app:strokeWidth="0dp">
 
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="10dp">
 
             <!-- 알약 아이콘 영역 -->
             <FrameLayout

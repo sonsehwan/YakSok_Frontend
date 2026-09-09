@@ -82,7 +82,10 @@
             android:layout_marginStart="8dp"
             android:minWidth="0dp"
             android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
             app:cornerRadius="12dp"
+            app:elevation="0dp"
             app:backgroundTint="@color/brand_surface" />
 
     </LinearLayout>
