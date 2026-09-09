@@ -13,10 +13,6 @@ public class UserResponse implements Serializable {
     private String email;
     @SerializedName("nickname")
     private String nickname;
-    private String gender;
-    private String birthdate;
-    private Boolean penaltyEnable = false;
-    private Boolean isLocked = false;
     private String role;
     @SerializedName("myDrugStore")
     private DrugStore myDrugStore;
@@ -32,19 +28,6 @@ public class UserResponse implements Serializable {
         return nickname;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public String getBirthdate() {
-        return birthdate;
-    }
-    public Boolean getPenaltyEnable() {
-        return penaltyEnable;
-    }
-    public Boolean getIsLocked() {
-        return isLocked;
-    }
     public String getRole() {
         return role;
     }
