@@ -20,7 +20,6 @@ import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.base.BaseActivity;
-import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.example.medication.util.YaksokEventBus;
 
@@ -49,7 +48,6 @@ public class ShareYaksokList extends BaseActivity implements YaksokEventBus.List
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_share_yaksok_list);
-        InsetsUtil.applySystemBarPadding(findViewById(R.id.main_root));
 
         if (getIntent().hasExtra("senderId")) {
             senderId = getIntent().getLongExtra("senderId", -1);

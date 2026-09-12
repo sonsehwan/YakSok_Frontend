@@ -22,7 +22,6 @@ import com.example.medication.model.request.PillRequest;
 import com.example.medication.model.request.ShareYaksokRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
-import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
@@ -59,7 +58,6 @@ public class ShareYaksokDetail extends BaseActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_share_yaksok_detail);
-        InsetsUtil.applySystemBarPadding(findViewById(R.id.main_root));
 
         initViews();
         setupRecyclerView();

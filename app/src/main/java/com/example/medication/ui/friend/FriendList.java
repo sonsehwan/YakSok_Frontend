@@ -39,6 +39,7 @@ import com.example.medication.ui.common.WipActivity;
 import com.example.medication.ui.setting.Settings;
 import com.example.medication.ui.main.MainActivity;
 import com.example.medication.ui.yaksok.YaksokList;
+import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
@@ -69,6 +70,7 @@ public class FriendList extends BaseActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_friend_list);
+        InsetsUtil.applySystemBarPadding(findViewById(R.id.main));
 
         UserResponse user = SprefsManager.getUser(this);
         if (user == null || user.getId() == null) {
