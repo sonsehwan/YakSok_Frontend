@@ -15,8 +15,8 @@ import android.widget.Toast;
 
 import com.example.medication.InputView;
 import com.example.medication.R;
-import com.example.medication.SignUpTypeBottomSheet;
 import com.example.medication.model.request.FirebaseTokenRequest;
+import com.example.medication.ui.signup.SignUpTypeBottomSheet;
 import com.example.medication.model.request.LoginRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.LoginResponse;

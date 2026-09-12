@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.signup;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.example.medication.R;
 import com.example.medication.ui.base.BaseActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;

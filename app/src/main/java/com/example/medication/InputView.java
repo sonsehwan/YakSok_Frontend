@@ -4,7 +4,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
+import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +44,17 @@ public class InputView extends LinearLayout {
     private OnValidateListener onValidateListener;
     private String helperText;
 
+    // 마지막 글자만 노출하는 마스크와 전체를 가리는 마스크. 둘을 번갈아 적용해 노출 여부를 바꾼다.
     private final LastCharVisibleTransformation lastCharMask = new LastCharVisibleTransformation();
+    private final TransformationMethod fullMask = PasswordTransformationMethod.getInstance();
+
+    // 마지막 글자를 노출해 두는 시간(마지막 입력 기준)
+    private static final long REVEAL_DURATION_MS = 2000L;
+    private final Handler revealHandler = new Handler(Looper.getMainLooper());
+    private final Runnable hideLastCharRunnable = () -> applyMask(false);
+
+    private boolean lastChangeWasInsertion = false;  // 삭제 시엔 노출하지 않기 위한 판정값
+    private boolean isUpdatingMask = false;          // 마스크 교체가 유발한 TextWatcher 재진입 무시용
 
     // 상태별 색상 상수
     private final int COLOR_ERROR = Color.parseColor("#FF0000");      // 에러 시 빨간색
@@ -122,6 +138,9 @@ public class InputView extends LinearLayout {
 
             editText.setOnFocusChangeListener((v, hasFocus) -> {
                 if (!hasFocus) {
+                    // 포커스가 빠지면 마지막 글자도 즉시 가린다.
+                    cancelHideLastChar();
+                    applyMask(false);
                     validateInput();
                 }
             });
@@ -138,16 +157,85 @@ public class InputView extends LinearLayout {
 
     private void setupPasswordMode() {
         editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-        editText.setTransformationMethod(lastCharMask);
+        
+        editText.setTransformationMethod(fullMask);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isUpdatingMask) return;
+                lastChangeWasInsertion = count > before;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (isUpdatingMask) return;
+
+                // 삭제이거나, 비었거나, 사용자가 입력 중이 아니면(setText 등) 노출하지 않는다.
+                if (!lastChangeWasInsertion || s.length() == 0 || !editText.hasFocus()) {
+                    cancelHideLastChar();
+                    applyMask(false);
+                    return;
+                }
+                applyMask(true);
+                scheduleHideLastChar();
+            }
+        });
 
         imgToggle.setVisibility(View.VISIBLE);
         imgToggle.setOnClickListener(v -> {
             isPasswordVisible = !isPasswordVisible;
 
-            editText.setTransformationMethod(isPasswordVisible ? null : lastCharMask);
+            cancelHideLastChar();
+            editText.setTransformationMethod(isPasswordVisible ? null : fullMask);
             imgToggle.setImageResource(isPasswordVisible ? R.drawable.ic_visibility : R.drawable.ic_visibility_off);
             editText.setSelection(editText.getText().length());
         });
+    }
+
+    /**
+     * 마지막 글자 노출 여부를 적용한다.
+     * setTransformationMethod()는 내부에서 setText()를 호출해 TextWatcher를 재진입시키므로
+     * isUpdatingMask로 감싸 그 호출을 무시하게 한다.
+     *
+     * @param revealLast true면 마지막 글자 노출, false면 전체 마스킹
+     */
+    private void applyMask(boolean revealLast) {
+        if (!isPasswordType || isPasswordVisible) return;
+
+        TransformationMethod target = revealLast ? lastCharMask : fullMask;
+        if (editText.getTransformationMethod() == target) return;
+
+        // 마스크를 교체하면 커서 위치가 초기화되므로 복원한다.
+        int selStart = editText.getSelectionStart();
+        int selEnd = editText.getSelectionEnd();
+        isUpdatingMask = true;
+        try {
+            editText.setTransformationMethod(target);
+            if (selStart >= 0 && selEnd >= 0) {
+                editText.setSelection(selStart, selEnd);
+            }
+        } finally {
+            isUpdatingMask = false;
+        }
+    }
+
+    private void scheduleHideLastChar() {
+        cancelHideLastChar();
+        revealHandler.postDelayed(hideLastCharRunnable, REVEAL_DURATION_MS);
+    }
+
+    private void cancelHideLastChar() {
+        revealHandler.removeCallbacks(hideLastCharRunnable);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        cancelHideLastChar();
+        super.onDetachedFromWindow();
     }
 
     public void showError(String message) {

@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.yaksok;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -21,6 +21,8 @@ import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.InputView;
+import com.example.medication.R;
 import com.example.medication.adapter.AddMedicationSettingAdapter;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
@@ -30,7 +32,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.SaveYaksokResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
-import com.example.medication.ui.main.MainActivity;
+import com.example.medication.ui.medicine.MedicineSearchActivity;
 import com.example.medication.util.SprefsManager;
 
 import org.json.JSONObject;
@@ -44,7 +46,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CreateDirectSchedule extends BaseActivity {
+public class ModifyYaksok extends BaseActivity {
 
     private ImageView ivBack;
     private InputView inputStartDate, inputTitle, inputPrescriptionDays;
@@ -59,13 +61,13 @@ public class CreateDirectSchedule extends BaseActivity {
     private RecyclerView rvSelectedPills;
     private AddMedicationSettingAdapter settingAdapter;
     private final List<PillRequest> selectedPills = new ArrayList<>();
-
     private ActivityResultLauncher<Intent> searchLauncher;
+    private Yaksok originalYaksok;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_prescription);
+        setContentView(R.layout.activity_modify_yaksok);
 
         initViews();
         setupRecyclerView();
@@ -77,15 +79,64 @@ public class CreateDirectSchedule extends BaseActivity {
 
         // 약 추가 버튼 클릭 시 검색 화면 이동
         btnAddPill.setOnClickListener(v -> {
-            Intent intent = new Intent(CreateDirectSchedule.this, MedicineSearchActivity.class);
+            Intent intent = new Intent(ModifyYaksok.this, MedicineSearchActivity.class);
             searchLauncher.launch(intent);
         });
 
-        // 약속 등록 버튼
+        // 약속 수정 버튼
         btnRegister.setOnClickListener(v -> {
             if(!validateInput()) return;
-            startCreateYaksok();
+            startModifyYaksok();
         });
+
+        originalYaksok = (Yaksok)getIntent().getSerializableExtra("YAKSOK_DATA");
+
+
+        if(originalYaksok != null){
+            populateViews(originalYaksok);
+        }else{
+            showToast("약속 정보를 불러올 수 없습니다.");
+        }
+    }
+
+    private void populateViews(Yaksok yaksok){
+        if(yaksok.getTitle() != null) inputTitle.setText(yaksok.getTitle());
+        if (yaksok.getStartDate() != null) inputStartDate.setText(yaksok.getStartDate());
+        inputPrescriptionDays.setText(String.valueOf(yaksok.getPrescriptionDays()));
+
+        if(yaksok.getPills() != null && !yaksok.getPills().isEmpty()) {
+            selectedPills.clear();
+            selectedPills.addAll(yaksok.getPills());
+            settingAdapter.notifyDataSetChanged();
+            updateRegisterButtonState();
+        }
+
+        if (yaksok.isTakeMorning()) {
+            cbMorning.setChecked(true);
+            inputSetMorningTime.setVisibility(View.VISIBLE);
+            if (yaksok.getTimeMorning() != null) inputSetMorningTime.setText(yaksok.getTimeMorning());
+        }
+        if (yaksok.isTakeLunch()) {
+            cbLunch.setChecked(true);
+            inputSetLunchTime.setVisibility(View.VISIBLE);
+            if (yaksok.getTimeLunch() != null) inputSetLunchTime.setText(yaksok.getTimeLunch());
+        }
+        if (yaksok.isTakeDinner()) {
+            cbDinner.setChecked(true);
+            inputSetDinnerTime.setVisibility(View.VISIBLE);
+            if (yaksok.getTimeDinner() != null) inputSetDinnerTime.setText(yaksok.getTimeDinner());
+        }
+
+        String dosageTime = yaksok.getDosageTime();
+        if (dosageTime != null) {
+            if (dosageTime.equals("식전 30분")) {
+                rgDosageTime.check(R.id.rb_before);
+            } else if (dosageTime.equals("식후 30분")) {
+                rgDosageTime.check(R.id.rb_after);
+            } else { // 직후
+                rgDosageTime.check(R.id.rb_anytime);
+            }
+        }
     }
 
     private void setupTimePickerLogic(){
@@ -184,7 +235,7 @@ public class CreateDirectSchedule extends BaseActivity {
         return true;
     }
 
-    private void startCreateYaksok(){
+    private void startModifyYaksok(){
         String startDate = inputStartDate.getText();
         String title = inputTitle.getText();
         int prescriptionDays = Integer.parseInt(inputPrescriptionDays.getText());
@@ -220,7 +271,7 @@ public class CreateDirectSchedule extends BaseActivity {
 
         YaksokApi api = NetworkClient.getYaksokApi();
 
-        api.saveYaksok(request).enqueue(new Callback<ApiResponse<SaveYaksokResponse>>() {
+        api.updateYaksok(originalYaksok.getId(), request).enqueue(new Callback<ApiResponse<SaveYaksokResponse>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<SaveYaksokResponse>> call, @NonNull Response<ApiResponse<SaveYaksokResponse>> response) {
                 if(response.isSuccessful() && response.body() != null){
@@ -235,26 +286,21 @@ public class CreateDirectSchedule extends BaseActivity {
                         if(yaksokId != null) {
                             yaksok.setId(yaksokId);
 
-                            // 1. 전체 약속 리스트에 저장
-                            SprefsManager.addYaksok(CreateDirectSchedule.this, yaksok);
+                            SprefsManager.updateYaksok(ModifyYaksok.this, yaksok);
 
-                            // 2. 응답받은 알림용 NotificationYaksok 리스트 가져오기
                             List<NotificationYaksok> allNotifications = saveYaksokResponse.getNotifications();
 
-                            // 3. SharedPreferences에 기존 알림 리스트 제거후 새로 저장
-                            SprefsManager.setNotifications(CreateDirectSchedule.this, allNotifications);
+                            SprefsManager.setNotifications(ModifyYaksok.this, allNotifications);
 
-                            showToast("약속이 성공적으로 등록되었습니다.");
+                            showToast("약속이 성공적으로 수정되었습니다.");
 
-                            // 4. 메인 화면으로 이동하며 새로 생성된 리스트 전달
-                            Intent intent = new Intent(CreateDirectSchedule.this, MainActivity.class);
-                            //intent.putExtra("newNotifications", (ArrayList<NotificationYaksok>)newNotifications);
-                            startActivity(intent);
+                            Intent intent = new Intent();
+                            intent.putExtra("UPDATED_YAKSOK", yaksok);
+                            setResult(RESULT_OK, intent);
                             finish();
-                        }else{
+                        } else {
                             showToast("서버와의 통신 중에 문제가 발생하였습니다. 죄송합니다.");
-                            Log.e("CreateYaksokError", "약속ID를 가져오는데 실패하였습니다.");
-                            Log.e("CreateYaksokError", "yaksokId: " + yaksokId);
+                            Log.e("ModifyYaksokError", "약속ID를 가져오는데 실패하였습니다.");
                         }
                     } else {
                         showToast(result.getMessage());

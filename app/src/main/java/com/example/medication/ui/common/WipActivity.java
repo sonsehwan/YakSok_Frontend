@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.common;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -8,6 +8,8 @@ import com.example.medication.ui.base.BaseActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.medication.R;
 
 public class WipActivity extends BaseActivity {
 

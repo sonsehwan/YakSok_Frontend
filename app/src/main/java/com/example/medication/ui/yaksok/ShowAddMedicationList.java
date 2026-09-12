@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.yaksok;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 
+import com.example.medication.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class ShowAddMedicationList extends BottomSheetDialogFragment {

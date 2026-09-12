@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.medicine;
 
 import android.content.Intent;
 import android.os.Bundle;

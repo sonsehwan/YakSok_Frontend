@@ -31,27 +31,27 @@
             android:name=".ui.sharedyaksok.ShareYaksokDetail"
             android:exported="false" />
         <activity
-            android:name=".AddressSearch"
+            android:name=".ui.signup.AddressSearch"
             android:exported="false" />
         <activity
             android:name=".ui.chattingroom.ChattingRoom"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".DrugStoreDetail"
+            android:name=".ui.finddrugstore.DrugStoreDetail"
             android:exported="false" />
         <activity
-            android:name=".DrugStoreList"
+            android:name=".ui.finddrugstore.DrugStoreList"
             android:exported="false" />
         <activity
-            android:name=".CreatePaperEnvelope"
+            android:name=".ui.yaksok.CreatePaperEnvelope"
             android:exported="false" /> <!--  -->
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
         <activity
-            android:name=".ModifyYaksok"
+            android:name=".ui.yaksok.ModifyYaksok"
             android:exported="false" />
         <activity
             android:name=".ui.yaksok.YaksokDetail"
@@ -73,7 +73,7 @@
             android:name=".ui.yaksok.YaksokList"
             android:exported="false" />
         <activity
-            android:name=".MedicineSearchActivity"
+            android:name=".ui.medicine.MedicineSearchActivity"
             android:exported="false" />
         <activity
             android:name=".ui.myinfo.ModifyPassword"
@@ -82,16 +82,16 @@
             android:name=".ui.myinfo.MyInfo"
             android:exported="false" />
         <activity
-            android:name=".WipActivity"
+            android:name=".ui.common.WipActivity"
             android:exported="false" />
         <activity
             android:name=".ui.setting.Settings"
             android:exported="false" />
         <activity
-            android:name=".CreatePrescription"
+            android:name=".ui.yaksok.CreatePrescription"
             android:exported="false" />
         <activity
-            android:name=".CreateDirectSchedule"
+            android:name=".ui.yaksok.CreateDirectSchedule"
             android:exported="false" />
         <activity
             android:name=".ui.finddrugstore.FindDrugStore"
@@ -124,10 +124,10 @@
             android:name=".ui.main.MainActivity"
             android:exported="true" />
         <activity
-            android:name=".SharingPage"
+            android:name=".ui.sharedyaksok.SharingPage"
             android:exported="false" />
         <activity
-            android:name=".FriendList"
+            android:name=".ui.friend.FriendList"
             android:exported="false" />
         <activity
             android:name=".ui.chattingroom.ChatRoomList"

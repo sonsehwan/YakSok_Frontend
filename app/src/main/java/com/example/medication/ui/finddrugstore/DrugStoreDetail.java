@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.finddrugstore;
 
 import static com.example.medication.util.SprefsManager.getUser;
 
@@ -11,6 +11,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import com.example.medication.ui.base.BaseActivity;
 
+import com.example.medication.R;
 import com.example.medication.databinding.ActivityDrugStoreDetailBinding;
 import com.example.medication.model.DrugStore;
 import com.example.medication.model.request.ChatRoomRequest;

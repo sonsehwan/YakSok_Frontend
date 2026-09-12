@@ -19,8 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.example.medication.DrugStoreList;
-import com.example.medication.FriendList;
 import com.example.medication.R;
 import com.example.medication.adapter.NotificationMultiViewAdapter;
 import com.example.medication.model.NotificationListItem;
@@ -29,6 +27,8 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.ui.chattingroom.ChatRoomList;
+import com.example.medication.ui.finddrugstore.DrugStoreList;
+import com.example.medication.ui.friend.FriendList;
 import com.example.medication.ui.setting.Settings;
 import com.example.medication.ui.yaksok.YaksokList;
 import com.example.medication.util.InsetsUtil;

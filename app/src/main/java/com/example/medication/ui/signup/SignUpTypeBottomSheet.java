@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.signup;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,8 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.example.medication.ui.signup.SignUp_DrugStore;
-import com.example.medication.ui.signup.SignUp_Normal;
+import com.example.medication.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class SignUpTypeBottomSheet extends BottomSheetDialogFragment {

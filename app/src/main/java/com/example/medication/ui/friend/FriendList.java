@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.friend;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -22,6 +22,7 @@ import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.R;
 import com.example.medication.adapter.FriendListAdapter;
 import com.example.medication.adapter.ReceivedRequestAdapter;
 import com.example.medication.model.request.FriendRequestAnswerDto;
@@ -34,6 +35,7 @@ import com.example.medication.model.response.UserResponse;
 import com.example.medication.model.response.UserSearchResultDto;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.chattingroom.ChatRoomList;
+import com.example.medication.ui.common.WipActivity;
 import com.example.medication.ui.setting.Settings;
 import com.example.medication.ui.main.MainActivity;
 import com.example.medication.ui.yaksok.YaksokList;

@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.finddrugstore;
 
 import android.Manifest;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.LoadingDialog;
+import com.example.medication.R;
 import com.example.medication.adapter.DrugStoreAdapter;
 import com.example.medication.model.DrugStore;
 import com.example.medication.model.response.ApiResponse;

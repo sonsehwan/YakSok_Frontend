@@ -19,11 +19,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.DrugStoreList;
-import com.example.medication.FriendList;
 import com.example.medication.R;
-import com.example.medication.ShowAddMedicationList;
 import com.example.medication.adapter.ShareYaksokListAdapter;
+import com.example.medication.ui.finddrugstore.DrugStoreList;
+import com.example.medication.ui.friend.FriendList;
 import com.example.medication.adapter.SharedUserAdapter;
 import com.example.medication.adapter.YaksokListAdapter;
 import com.example.medication.model.Yaksok;

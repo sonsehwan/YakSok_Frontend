@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.sharedyaksok;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import com.example.medication.ui.base.BaseActivity;
 
+import com.example.medication.R;
+import com.example.medication.ui.common.WipActivity;
+import com.example.medication.ui.friend.FriendList;
 import com.example.medication.ui.login.Login;
 import com.example.medication.util.SprefsManager;
 

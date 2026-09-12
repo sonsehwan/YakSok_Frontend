@@ -1,4 +1,4 @@
-package com.example.medication;
+package com.example.medication.ui.yaksok;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -25,6 +26,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medication.InputView;
+import com.example.medication.LoadingDialog;
+import com.example.medication.R;
 import com.example.medication.adapter.AddMedicationSettingAdapter;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
@@ -37,43 +41,35 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.network.PillApi;
 import com.example.medication.network.YaksokApi;
 import com.example.medication.ui.main.MainActivity;
+import com.example.medication.ui.medicine.MedicineSearchActivity;
 import com.example.medication.util.SprefsManager;
-
-import com.google.firebase.ai.FirebaseAI;
-import com.google.firebase.ai.GenerativeModel;
-import com.google.firebase.ai.type.GenerativeBackend;
-import com.google.firebase.ai.type.Content;
-import com.google.firebase.ai.type.GenerateContentResponse;
-import com.google.firebase.ai.java.GenerativeModelFutures;
-
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
+import com.google.firebase.ai.FirebaseAI;
+import com.google.firebase.ai.GenerativeModel;
+import com.google.firebase.ai.java.GenerativeModelFutures;
+import com.google.firebase.ai.type.Content;
+import com.google.firebase.ai.type.GenerateContentResponse;
+import com.google.firebase.ai.type.GenerativeBackend;
 import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.text.Text;
-import com.google.mlkit.vision.text.TextRecognition;
-import com.google.mlkit.vision.text.TextRecognizer;
-import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CreatePrescription extends BaseActivity {
-
+public class CreatePaperEnvelope extends BaseActivity {
     private ActivityResultLauncher<String> galleryLauncher;
     private ActivityResultLauncher<Intent> searchLauncher;
 
@@ -84,19 +80,15 @@ public class CreatePrescription extends BaseActivity {
     private LinearLayout llDasage;
     private CheckBox cbMorning, cbLunch, cbDinner;
     private RadioGroup rgDosageTime;
+    private RadioButton rb_before, rb_after, rb_anytime;
     private FrameLayout btnAddPill;
     private Button btnRegister;
     private LoadingDialog loadingDialog;
+
     // 선택된 약 목록 리사이클러뷰 관련
     private RecyclerView rvSelectedPills;
     private AddMedicationSettingAdapter settingAdapter;
     private final List<PillRequest> selectedPills = new ArrayList<>();
-
-    // 처방전 스캔으로 인식한 약 이름을 서버에 조회하는 중인 건수.
-    // 조회가 비동기라, 전부 끝난 시점을 알아야 실패한 약을 한 번에 알려줄 수 있다.
-    private int pendingPillSearchCount = 0;
-    private final List<String> failedPillNames = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +108,7 @@ public class CreatePrescription extends BaseActivity {
         inputStartDate.setOnClickListener(v -> showDatePicker());
 
         btnAddPill.setOnClickListener(v -> {
-            Intent intent = new Intent(CreatePrescription.this, MedicineSearchActivity.class);
+            Intent intent = new Intent(CreatePaperEnvelope.this, MedicineSearchActivity.class);
             searchLauncher.launch(intent);
         });
 
@@ -131,7 +123,7 @@ public class CreatePrescription extends BaseActivity {
                 uri -> {
                     if (uri != null) {
                         Log.d("MLKit", "사진 주소 가져오기 성공: " + uri);
-                        recognizeTextFromImage(uri);
+                        analyzeTextWithGemini(uri);
                     } else {
                         Toast.makeText(this, "사진을 선택하지 않았습니다.", Toast.LENGTH_SHORT).show();
                         finish(); // 사진 안 고르면 액티비티 종료
@@ -155,11 +147,17 @@ public class CreatePrescription extends BaseActivity {
         inputSetLunchTime = findViewById(R.id.input_set_lunch_time);
         inputSetDinnerTime = findViewById(R.id.input_set_dinner_time);
         rgDosageTime = findViewById(R.id.rg_dosage_time);
+        rb_before = findViewById(R.id.rb_before);
+        rb_after = findViewById(R.id.rb_after);
+        rb_anytime = findViewById(R.id.rb_anytime);
         btnAddPill = findViewById(R.id.btn_add_pill);
         btnRegister = findViewById(R.id.btn_register);
         rvSelectedPills = findViewById(R.id.rv_selected_pills);
     }
 
+    /***
+     * 리사이클러 뷰 셋팅
+     */
     private void setupRecyclerView() {
         settingAdapter = new AddMedicationSettingAdapter(selectedPills);
         rvSelectedPills.setLayoutManager(new LinearLayoutManager(this));
@@ -248,6 +246,10 @@ public class CreatePrescription extends BaseActivity {
         dialog.show();
     }
 
+
+    /***
+     * 달력 날짜 선택
+     */
     private void showDatePicker() {
         Calendar cal = Calendar.getInstance();
         DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
@@ -257,6 +259,9 @@ public class CreatePrescription extends BaseActivity {
         dialog.show();
     }
 
+    /***
+     * 모든 항목이 입력되었는지 확인
+     */
     private boolean validateInput() {
         if (!inputStartDate.isValid() || !inputTitle.isValid() || !inputPrescriptionDays.isValid()) {
             Toast.makeText(this, "필수 항목을 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
@@ -293,6 +298,10 @@ public class CreatePrescription extends BaseActivity {
         return true;
     }
 
+
+    /***
+     *
+     */
     private void updateRegisterButtonState() {
         if (!selectedPills.isEmpty()) {
             btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFFEB3B));
@@ -303,50 +312,25 @@ public class CreatePrescription extends BaseActivity {
         }
     }
 
-    // =========================================================================
-    // ML Kit + Firebase AI 처방전 분석 로직 시작
-    // =========================================================================
+    // ========================================================================
 
-    private void recognizeTextFromImage(Uri imageUri) {
+    /***
+     * 제미나이 AI로 약 정보 추출
+     *
+     * @param imageUri
+     */
+    private void analyzeTextWithGemini(Uri imageUri) {
         loadingDialog.show();
+
+        String promptText = "너는 약봉투 도우미 AI야. 첨부된 '약봉투 이미지 원본'에서 정확한 약물 정보 리스트와 투약 시간을 추출해줘. 오직 JSON 형식으로만 반환해.\n\n" +
+                "포맷 예시: {\"medicationRecords\": [{\"dosageTime\": \"식전 30분\", \"pillList\": [{\"name\":\"써스펜정\",\"dose\":\"1\",\"frequency\":\"3\",\"days\":\"3\"}]}]}" +
+                "dosageTime은 약봉투 이미지에 동그라미나 체크표시로 확인할 수 있게 해둔 것을 골라야하고 식전으로 시작하는 것은 식전 30분으로 데이터를 넣고 식후로 시작하는 것은 식후 30분으로 데이터를 넣고 나머지는 직후로 넣는다."+
+                "약이름은 모빅캡슐7.5밀리그램 이렇게 작성되어 있으면 모빅캡슐7.5밀리그램 전부 데이터로 넣어줘야 한다 절대 모빅캡슐만 데이터로 넣으면 안된다. 또 셀리온정10밀리그램[10mg/1정]처럼 되어 있으면 [], (), {}안에 있는 것은 제외하고 셀리온정10밀리그램만 데이터로 넣어주면 된다.";
+
         try {
             InputImage image = InputImage.fromFilePath(this, imageUri);
-            TextRecognizer recognizer = TextRecognition.getClient(new KoreanTextRecognizerOptions.Builder().build());
+            Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
 
-            recognizer.process(image)
-                    .addOnSuccessListener(visionText -> {
-                        Log.d("MLKit", "🎉 온디바이스 1차 텍스트 추출 완료!");
-                        String alignedText = processExtractedDataWithLocation(visionText);
-
-                        try {
-                            Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                            analyzeTextWithGemini(imageBitmap, alignedText);
-                        } catch (IOException e) {
-                            Log.e("Image_Error", "비트맵 변환 실패", e);
-                            Toast.makeText(this, "이미지 처리에 실패했습니다.", Toast.LENGTH_SHORT).show();
-                            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("MLKit", "텍스트 인식 실패", e);
-                        Toast.makeText(this, "글자를 읽어내는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
-                        if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
-                    });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "이미지 파일을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
-            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
-        }
-    }
-
-    private void analyzeTextWithGemini(Bitmap imageBitmap, String alignedText) {
-        String promptText = "너는 처방전 도우미 AI야. 첨부된 '처방전 이미지 원본'과 1차 정렬된 '텍스트'를 교차 검증해서 정확한 약물 정보를 추출해줘. 오직 JSON 리스트 형식으로만 반환해.\n\n" +
-                "[1차 정렬된 텍스트]\n" + alignedText + "\n\n" +
-                "포맷 예시: [{\"name\":\"써스펜정\",\"dose\":\"1\",\"frequency\":\"3\",\"days\":\"3\"}]"+
-                "여기서 만약 추출한 약의 이름이 엑스메졸정 20mg처럼 띄어쓰기가 있으면 엑스메졸정20mg처럼 붙여서 저장해";
-
-        try {
             GenerativeModel gm = FirebaseAI.getInstance(GenerativeBackend.googleAI())
                     .generativeModel("gemini-2.5-flash");
 
@@ -363,19 +347,26 @@ public class CreatePrescription extends BaseActivity {
                 @Override
                 public void onSuccess(GenerateContentResponse result) {
                     String resultText = result.getText();
-                    Log.d("Firebase_AI", resultText);
                     parseAndDisplayGeminiResult(resultText);
-                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                    Log.d("Firebase_AI", resultText);
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
                     Log.e("Firebase_AI", "AI 분석 실패", t);
-                    Toast.makeText(CreatePrescription.this, "AI 분석 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreatePaperEnvelope.this, "AI 분석 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
                 }
             }, ContextCompat.getMainExecutor(this));
 
+        } catch (java.io.FileNotFoundException e) {
+            Log.e("Image_Error", "이미지 파일을 찾을 수 없습니다.", e);
+            Toast.makeText(this, "이미지 파일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+        } catch (java.io.IOException e) {
+            Log.e("Image_Error", "이미지 처리에 실패했습니다.", e);
+            Toast.makeText(this, "이미지 처리에 실패했습니다.", Toast.LENGTH_SHORT).show();
+            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
         } catch (Exception e) {
             Log.e("Firebase_Setup_Error", "모델 초기화 실패", e);
             Toast.makeText(this, "AI 모델을 준비하는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
@@ -383,183 +374,151 @@ public class CreatePrescription extends BaseActivity {
         }
     }
 
+    /***
+     * 제미나이로 추출한 약정보로 공공 API에서 실제 약 정보 가져오기
+     *
+     * @param aiResponseText
+     */
     private void parseAndDisplayGeminiResult(String aiResponseText) {
         try {
             String cleanJson = aiResponseText.replace("```json", "").replace("```", "").trim();
-            JSONArray medicineArray = new JSONArray(cleanJson);
 
-            if (medicineArray.length() > 0) {
-                int maxDays = 0;
-                int maxFreq = 0;
-                String firstMedName = "";
+            JSONObject rootObject = new JSONObject(cleanJson);
 
-                // 기존에 수동으로 등록된 약이 있다면 초기화 (처방전 스캔 기준 덮어쓰기)
-                selectedPills.clear();
-                failedPillNames.clear();
-                pendingPillSearchCount = medicineArray.length();
+            JSONArray recordsArray = rootObject.getJSONArray("medicationRecords");
 
-                // 모든 약 데이터를 돌며 가장 큰 days(투약일 수)와 frequency 추출 & 리스트에 등록
-                for(int i = 0; i < medicineArray.length(); i++) {
-                    JSONObject med = medicineArray.getJSONObject(i);
-                    String medName = med.getString("name");
-                    int medFreq = med.getInt("frequency");
-                    String medDosage = med.getString("dose");
+            if (recordsArray.length() > 0) {
+                JSONObject firstRecord = recordsArray.getJSONObject(0);
 
-                    PillApi api = NetworkClient.getMedicineApi();
-                    if (i == 0) firstMedName = medName;
+                String dosageTime = firstRecord.getString("dosageTime");
 
-                    api.searchPill(medName).enqueue(new Callback<ApiResponse<MedicineSearchResponse>>() {
-                        @Override
-                        public void onResponse(Call<ApiResponse<MedicineSearchResponse>> call, Response<ApiResponse<MedicineSearchResponse>> response) {
-                            if (!response.isSuccessful() || response.body() == null) {
-                                Log.w("PillSearch", "'" + medName + "' 조회 실패. HTTP " + response.code());
-                                failedPillNames.add(medName);
-                                onPillSearchFinished();
-                                return;
+                JSONArray medicineArray = firstRecord.getJSONArray("pillList");
+
+                if (medicineArray.length() > 0) {
+                    int maxDays = 0;
+                    int maxFreq = 0;
+                    String firstMedName = "";
+
+                    // 기존에 수동으로 등록된 약이 있다면 초기화 (처방전 스캔 기준 덮어쓰기)
+                    selectedPills.clear();
+
+                    int totalPills = medicineArray.length();
+                    AtomicInteger completedCalls = new AtomicInteger(0);
+
+                    // 모든 약 데이터를 돌며 가장 큰 days(투약일 수)와 frequency 추출 & 리스트에 등록
+                    for(int i = 0; i < medicineArray.length(); i++) {
+                        JSONObject med = medicineArray.getJSONObject(i);
+                        String medName = med.getString("name");
+                        int medFreq = med.getInt("frequency");
+                        String medDosage = med.getString("dose");
+
+                        PillApi api = NetworkClient.getMedicineApi();
+
+                        final int finalFreq = medFreq;
+                        final String finalDosage = medDosage;
+
+                        if(i == 0) firstMedName = medName;
+
+                        api.searchPill(medName).enqueue(new Callback<ApiResponse<MedicineSearchResponse>>() {
+                            @Override
+                            public void onResponse(Call<ApiResponse<MedicineSearchResponse>> call, Response<ApiResponse<MedicineSearchResponse>> response) {
+                                if (response.isSuccessful() && response.body() != null) {
+                                    MedicineSearchResponse data = response.body().getData();
+                                    if (data != null) {
+                                        selectedPills.add(new PillRequest(data.getImage(), finalFreq, finalDosage, data.getName()));
+
+                                        if (settingAdapter != null) {
+                                            settingAdapter.notifyItemInserted(selectedPills.size() - 1);
+                                        }
+                                        updateRegisterButtonState();
+                                    }
+                                }
+                                if (completedCalls.incrementAndGet() == totalPills) {
+                                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                                }
                             }
 
-                            MedicineSearchResponse data = response.body().getData();
-                            if (data == null) {
-                                // 서버는 200을 주지만 공공 API 조회 결과가 없으면 data 가 null 이다.
-                                Log.w("PillSearch", "'" + medName + "' 약 정보 없음 (data == null)");
-                                failedPillNames.add(medName);
-                                onPillSearchFinished();
-                                return;
+                            @Override
+                            public void onFailure(Call<ApiResponse<MedicineSearchResponse>> call, Throwable t) {
+                                Log.e("API_ERROR", "네트워크 오류: " + t.getMessage());
+                                if (completedCalls.incrementAndGet() == totalPills) {
+                                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                                }
                             }
+                        });
 
-                            selectedPills.add(new PillRequest(data.getImage(), medFreq, medDosage, data.getName()));
+                        // days, freq 계산 로직은 그대로 유지
+                        try {
+                            int days = Integer.parseInt(med.getString("days"));
+                            if(days > maxDays) maxDays = days;
 
-                            if (settingAdapter != null) {
-                                settingAdapter.notifyItemInserted(selectedPills.size() - 1);
-                            }
-                            updateRegisterButtonState();
-                            onPillSearchFinished();
+                            if(medFreq > maxFreq) maxFreq = medFreq;
+                        } catch (NumberFormatException e) {
+                            Log.e("Parsing", "숫자 변환 오류", e);
                         }
+                    }
 
-                        @Override
-                        public void onFailure(Call<ApiResponse<MedicineSearchResponse>> call, Throwable t) {
-                            Log.e("API_ERROR", "'" + medName + "' 네트워크 오류: " + t.getMessage());
-                            failedPillNames.add(medName);
-                            onPillSearchFinished();
+                    // 어댑터 새로고침 및 버튼 활성화 상태 업데이트
+                    if (settingAdapter != null) settingAdapter.notifyDataSetChanged();
+                    updateRegisterButtonState();
+
+                    String finalTitle = firstMedName;
+                    if (medicineArray.length() > 1) {
+                        finalTitle += " 외 " + (medicineArray.length() - 1) + "건";
+                    }
+
+                    String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+                    // 메인 스레드에서 UI 동적 업데이트
+                    if (inputTitle != null) inputTitle.setText(finalTitle);
+                    if (inputPrescriptionDays != null) inputPrescriptionDays.setText(String.valueOf(maxDays > 0 ? maxDays : 1));
+                    if (inputStartDate != null) inputStartDate.setText(currentDate);
+
+                    // frequency 로직에 따른 체크박스 자동 배분
+                    if (cbMorning != null && cbLunch != null && cbDinner != null) {
+                        cbMorning.setChecked(false);
+                        cbLunch.setChecked(false);
+                        cbDinner.setChecked(false);
+
+                        if (maxFreq == 1) {
+                            cbMorning.setChecked(true);
+                        } else if (maxFreq == 2) {
+                            cbMorning.setChecked(true);
+                            cbDinner.setChecked(true);
+                        } else if (maxFreq >= 3) {
+                            cbMorning.setChecked(true);
+                            cbLunch.setChecked(true);
+                            cbDinner.setChecked(true);
                         }
-                    });
-
-                    try {
-                        int days = Integer.parseInt(med.getString("days"));
-                        if(days > maxDays) maxDays = days;
-
-                        int freq = Integer.parseInt(med.getString("frequency"));
-                        if(freq > maxFreq) maxFreq = freq;
-                    } catch (NumberFormatException e) {
-                        Log.e("Parsing", "숫자 변환 오류", e);
                     }
-                }
 
-                // 어댑터 새로고침 및 버튼 활성화 상태 업데이트
-                if (settingAdapter != null) settingAdapter.notifyDataSetChanged();
-                updateRegisterButtonState();
-
-                String finalTitle = firstMedName;
-                if (medicineArray.length() > 1) {
-                    finalTitle += " 외 " + (medicineArray.length() - 1) + "건";
-                }
-
-                String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
-                // 메인 스레드에서 UI 동적 업데이트
-                if (inputTitle != null) inputTitle.setText(finalTitle);
-                if (inputPrescriptionDays != null) inputPrescriptionDays.setText(String.valueOf(maxDays > 0 ? maxDays : 1));
-                if (inputStartDate != null) inputStartDate.setText(currentDate);
-
-                // frequency 로직에 따른 체크박스 자동 배분
-                if (cbMorning != null && cbLunch != null && cbDinner != null) {
-                    cbMorning.setChecked(false);
-                    cbLunch.setChecked(false);
-                    cbDinner.setChecked(false);
-
-                    if (maxFreq == 1) {
-                        cbMorning.setChecked(true);
-                    } else if (maxFreq == 2) {
-                        cbMorning.setChecked(true);
-                        cbDinner.setChecked(true);
-                    } else if (maxFreq >= 3) {
-                        cbMorning.setChecked(true);
-                        cbLunch.setChecked(true);
-                        cbDinner.setChecked(true);
+                    if(dosageTime != null){
+                        if(dosageTime.equals("식전 30분")){
+                            rb_before.setChecked(true);
+                        }else if(dosageTime.equals("식후 30분")){
+                            rb_after.setChecked(true);
+                        }else if(dosageTime.equals("직후")){
+                            rb_anytime.setChecked(true);
+                        }
                     }
-                }
 
-                Toast.makeText(this, "처방전 정보 자동 입력 완료!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "처방전 정보 자동 입력 완료!", Toast.LENGTH_SHORT).show();
+                }else {
+                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                    Toast.makeText(this, "약봉투에서 약 정보를 찾지 못했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                Toast.makeText(this, "약봉투에서 정보를 찾지 못했습니다.", Toast.LENGTH_SHORT).show();
             }
 
         } catch (Exception e) {
             Log.e("Gemini_Parsing_Error", "응답 데이터 파싱 실패", e);
             Toast.makeText(this, "AI가 처방전을 명확히 식별하지 못했습니다.", Toast.LENGTH_SHORT).show();
+
+            // 구멍 1 방어: AI가 요상한 포맷으로 대답해서 파싱 에러 났을 때 무조건 종료
+            if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
         }
-    }
-
-    // 약 정보 조회가 하나 끝날 때마다 호출한다.
-    // 전부 끝났을 때 실패한 약이 있으면 사용자에게 한 번에 알린다.
-    // Retrofit 의 enqueue 콜백은 메인 스레드에서 실행되므로 별도 동기화가 필요 없다.
-    private void onPillSearchFinished() {
-        pendingPillSearchCount--;
-        if (pendingPillSearchCount > 0) return;
-
-        if (!failedPillNames.isEmpty()) {
-            Toast.makeText(this,
-                    String.join(", ", failedPillNames) + " 의 약 정보를 찾지 못했습니다.",
-                    Toast.LENGTH_LONG).show();
-        }
-        updateRegisterButtonState();
-    }
-
-    private String processExtractedDataWithLocation(Text visionText) {
-        List<Text.Line> allLines = new ArrayList<>();
-        for (Text.TextBlock block : visionText.getTextBlocks()) {
-            allLines.addAll(block.getLines());
-        }
-
-        Collections.sort(allLines, (l1, l2) -> {
-            if (l1.getBoundingBox() == null || l2.getBoundingBox() == null) return 0;
-            return Integer.compare(l1.getBoundingBox().centerY(), l2.getBoundingBox().centerY());
-        });
-
-        List<List<Text.Line>> rows = new ArrayList<>();
-        List<Text.Line> currentRow = new ArrayList<>();
-        int currentY = -1;
-
-        for (Text.Line line : allLines) {
-            if (line.getBoundingBox() == null) continue;
-            int y = line.getBoundingBox().centerY();
-
-            if (currentY == -1 || Math.abs(y - currentY) < 30) {
-                currentRow.add(line);
-                currentY = (currentY == -1) ? y : (currentY + y) / 2;
-            } else {
-                rows.add(currentRow);
-                currentRow = new ArrayList<>();
-                currentRow.add(line);
-                currentY = y;
-            }
-        }
-        if (!currentRow.isEmpty()) rows.add(currentRow);
-
-        for (List<Text.Line> row : rows) {
-            Collections.sort(row, (l1, l2) -> {
-                if (l1.getBoundingBox() == null || l2.getBoundingBox() == null) return 0;
-                return Integer.compare(l1.getBoundingBox().left, l2.getBoundingBox().left);
-            });
-        }
-
-        StringBuilder alignedTextBuilder = new StringBuilder();
-        for (List<Text.Line> row : rows) {
-            StringBuilder rowTextBuilder = new StringBuilder();
-            for (Text.Line line : row) {
-                rowTextBuilder.append(line.getText().trim()).append(" | ");
-            }
-            alignedTextBuilder.append(rowTextBuilder.toString()).append("\n");
-        }
-        return alignedTextBuilder.toString();
     }
 
     private void startCreateYaksok(){
@@ -610,21 +569,21 @@ public class CreatePrescription extends BaseActivity {
 
                         if(yaksokId != null) {
                             yaksok.setId(yaksokId);
-                            SprefsManager.addYaksok(CreatePrescription.this, yaksok);
+                            SprefsManager.addYaksok(CreatePaperEnvelope.this, yaksok);
 
                             List<NotificationYaksok> allNotifications = saveYaksokResponse.getNotifications();
-                            SprefsManager.setNotifications(CreatePrescription.this, allNotifications);
+                            SprefsManager.setNotifications(CreatePaperEnvelope.this, allNotifications);
 
-                            Toast.makeText(CreatePrescription.this, "약속이 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreatePaperEnvelope.this, "약속이 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(CreatePrescription.this, MainActivity.class);
+                            Intent intent = new Intent(CreatePaperEnvelope.this, MainActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
-                            Toast.makeText(CreatePrescription.this, "서버와의 통신 오류: 약속 ID 없음", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreatePaperEnvelope.this, "서버와의 통신 오류: 약속 ID 없음", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(CreatePrescription.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreatePaperEnvelope.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     handleErrorResponse(response);
@@ -633,7 +592,7 @@ public class CreatePrescription extends BaseActivity {
 
             @Override
             public void onFailure(Call<ApiResponse<SaveYaksokResponse>> call, Throwable t) {
-                Toast.makeText(CreatePrescription.this, "네트워크 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreatePaperEnvelope.this, "네트워크 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -651,5 +610,30 @@ public class CreatePrescription extends BaseActivity {
         } catch (Exception e) {
             Toast.makeText(this, "네트워크 오류 발생", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void searchSinglePill(String keyword) {
+        PillApi api = NetworkClient.getMedicineApi();
+
+        api.searchPill(keyword).enqueue(new Callback<ApiResponse<MedicineSearchResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<MedicineSearchResponse>> call, Response<ApiResponse<MedicineSearchResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    MedicineSearchResponse data = response.body().getData();
+                    if (data != null) {
+                        Log.d("API_SUCCESS", "약 이름: " + data.getName());
+                    } else {
+                        Toast.makeText(CreatePaperEnvelope.this, "해당 약 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(CreatePaperEnvelope.this, "데이터 로드 실패", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<MedicineSearchResponse>> call, Throwable t) {
+                Toast.makeText(CreatePaperEnvelope.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
