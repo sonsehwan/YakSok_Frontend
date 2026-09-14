@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity {
 
     private void applyTargetTabFromIntent(Intent intent){
         int targetTabId = intent.getIntExtra(EXTRA_TARGET_TAB, -1);
-        if(targetTabId == -1){
+        if(targetTabId != -1){
             bottomNav.setSelectedItemId(targetTabId);
         }
     }
