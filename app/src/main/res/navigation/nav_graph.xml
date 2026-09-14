@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.medication.ui.main.HomeFragment"
+        android:label="@string/nav_home_label"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_history"
+        android:name="com.example.medication.ui.yaksok.YaksokListFragment"
+        android:label="@string/nav_history_label"
+        tools:layout="@layout/fragment_yaksok_list" />
+
+    <fragment
+        android:id="@+id/nav_chat"
+        android:name="com.example.medication.ui.chattingroom.ChatRoomListFragment"
+        android:label="@string/nav_chat_label"
+        tools:layout="@layout/fragment_chat_room_list" />
+
+    <fragment
+        android:id="@+id/nav_friend"
+        android:name="com.example.medication.ui.friend.FriendListFragment"
+        android:label="@string/nav_friend_label"
+        tools:layout="@layout/fragment_friend_list" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.medication.ui.setting.SettingsFragment"
+        android:label="@string/nav_settings_label"
+        tools:layout="@layout/fragment_settings" />
+
+</navigation>

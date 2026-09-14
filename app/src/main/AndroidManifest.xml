@@ -70,9 +70,6 @@
         </service>
 
         <activity
-            android:name=".ui.yaksok.YaksokList"
-            android:exported="false" />
-        <activity
             android:name=".ui.medicine.MedicineSearchActivity"
             android:exported="false" />
         <activity
@@ -83,9 +80,6 @@
             android:exported="false" />
         <activity
             android:name=".ui.common.WipActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.setting.Settings"
             android:exported="false" />
         <activity
             android:name=".ui.yaksok.CreatePrescription"
@@ -125,12 +119,6 @@
             android:exported="true" />
         <activity
             android:name=".ui.sharedyaksok.SharingPage"
-            android:exported="false" />
-        <activity
-            android:name=".ui.friend.FriendList"
-            android:exported="false" />
-        <activity
-            android:name=".ui.chattingroom.ChatRoomList"
             android:exported="false" />
     </application>
 

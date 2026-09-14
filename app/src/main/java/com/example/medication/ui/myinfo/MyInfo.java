@@ -17,18 +17,18 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
-import com.example.medication.ui.base.BaseActivity;
 
 import com.example.medication.InputView;
 import com.example.medication.R;
-import com.example.medication.ui.setting.Settings;
 import com.example.medication.model.request.ModifyInfoRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
+import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.ui.finddrugstore.FindDrugStore;
 import com.example.medication.ui.login.Login;
+import com.example.medication.ui.main.MainActivity;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
 
@@ -178,22 +178,21 @@ public class MyInfo extends BaseActivity {
 
                     if(result.isBusinessSuccess()){
 
-                        // 로그인한 유저의 정보를 가져온다(이메일, 비밀번호, 닉네임)
                         UserResponse user = result.getData();
-                        //저장소에 저장
+
                         SprefsManager.setUserInfo(MyInfo.this, user);
 
                         Log.d("ModifyNickName", result.getMessage());
 
-                        Intent intent = new Intent(MyInfo.this, Settings.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        Intent intent = new Intent(MyInfo.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        intent.putExtra(MainActivity.EXTRA_TARGET_TAB, R.id.nav_settings);
                         startActivity(intent);
-                        finish();
-                    }else{// 서버와 연결은 성공했지만 요청을 승인할 수 없을 때
+                    }else{
                         showToast(result.getMessage());
                         Log.e("ModifiyNickName", result.getMessage());
                     }
-                }else{// 서버와 연결이 실패 했을 때
+                }else{
                     handleErrorResponse(response);
                 }
             }

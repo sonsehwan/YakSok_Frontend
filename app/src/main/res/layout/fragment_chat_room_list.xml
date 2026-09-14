@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.chattingroom.ChatRoomList"
+    tools:context=".ui.chattingroom.ChatRoomListFragment"
     tools:ignore="PrivateResource">
 
     <TextView
@@ -88,26 +88,10 @@
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:background="@color/page_bg"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rg_chat_type"
         tools:listitem="@layout/item_chat_room" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_bottom_nav"
-        android:elevation="12dp"
-        app:itemActiveIndicatorStyle="@null"
-        app:itemIconSize="24dp"
-        app:itemIconTint="@color/selector_nav_color"
-        app:itemPaddingBottom="20dp"
-        app:itemPaddingTop="20dp"
-        app:itemTextColor="@color/selector_nav_color"
-        app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_nav_menu"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

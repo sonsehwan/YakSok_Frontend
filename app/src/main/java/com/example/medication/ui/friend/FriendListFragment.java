@@ -7,6 +7,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
@@ -16,9 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import com.example.medication.ui.base.BaseActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,14 +37,9 @@ import com.example.medication.model.response.ReceivedFriendRequestDto;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.model.response.UserSearchResultDto;
 import com.example.medication.network.NetworkClient;
-import com.example.medication.ui.chattingroom.ChatRoomList;
 import com.example.medication.ui.common.WipActivity;
-import com.example.medication.ui.setting.Settings;
-import com.example.medication.ui.main.MainActivity;
-import com.example.medication.ui.yaksok.YaksokList;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -51,7 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FriendList extends BaseActivity {
+public class FriendListFragment extends Fragment {
 
     private RecyclerView rvFriendList;
     private FriendListAdapter adapter;
@@ -62,88 +60,59 @@ public class FriendList extends BaseActivity {
     private TextView tvRequestCount;
     private TextView tvFriendCount;
     private TextView tvEmptyFriend;
-    private BottomNavigationView bottomNav;
 
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_friend_list);
-        InsetsUtil.applySystemBarPadding(findViewById(R.id.main));
-
-        UserResponse user = SprefsManager.getUser(this);
-        if (user == null || user.getId() == null) {
-            Toast.makeText(this, "로그인 정보가 없습니다.", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
-        initViews();
-        setRecyclerView();
-
-        bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(FriendList.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            } else if (itemId == R.id.nav_history) {
-                Intent intent = new Intent(FriendList.this, YaksokList.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                return true;
-            } else if (itemId == R.id.nav_settings) {
-                Intent intent = new Intent(FriendList.this, Settings.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                return true;
-            }else if(itemId == R.id.nav_chat){
-                Intent intent = new Intent(FriendList.this, ChatRoomList.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                return true;
-            }else if (itemId == R.id.nav_friend){
-                return true;
-            }
-            return false;
-        });
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                              @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_friend_list, container, false);
     }
 
     @Override
-    protected void onResume() {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        InsetsUtil.applySystemBarPadding(view.findViewById(R.id.main));
+
+        UserResponse user = SprefsManager.getUser(requireContext());
+        if (user == null || user.getId() == null) {
+            Toast.makeText(requireContext(), "로그인 정보가 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        initViews(view);
+        setRecyclerView();
+    }
+
+    @Override
+    public void onResume() {
         super.onResume();
-        bottomNav.setSelectedItemId(R.id.nav_friend);
+        if (adapter == null) {
+            return; // onViewCreated에서 로그인 정보 없이 return한 경우
+        }
         fetchFriendList();
         updateRequestCount();
     }
 
-    private void initViews() {
-        btnMenu = findViewById(R.id.iv_menu);
-        btnAddFriend = findViewById(R.id.tv_add_friend);
-        layoutFriendRequest = findViewById(R.id.layout_friend_request);
-        tvRequestCount = findViewById(R.id.tv_request_count);
-        tvFriendCount = findViewById(R.id.tv_friend_count);
-        tvEmptyFriend = findViewById(R.id.tv_empty_friend);
+    private void initViews(View root) {
+        btnMenu = root.findViewById(R.id.iv_menu);
+        btnAddFriend = root.findViewById(R.id.tv_add_friend);
+        layoutFriendRequest = root.findViewById(R.id.layout_friend_request);
+        tvRequestCount = root.findViewById(R.id.tv_request_count);
+        tvFriendCount = root.findViewById(R.id.tv_friend_count);
+        tvEmptyFriend = root.findViewById(R.id.tv_empty_friend);
 
         btnAddFriend.setOnClickListener(v -> showAddFriendDialog());
         layoutFriendRequest.setOnClickListener(v -> showReceivedRequestDialog());
-        bottomNav = findViewById(R.id.bottom_navigation);
     }
 
     private void setRecyclerView() {
-        rvFriendList = findViewById(R.id.rv_yaksok_list);
-        rvFriendList.setLayoutManager(new LinearLayoutManager(this));
+        rvFriendList = requireView().findViewById(R.id.rv_yaksok_list);
+        rvFriendList.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         adapter = new FriendListAdapter(new ArrayList<>(), (friend, position) -> {
             // 약속 공유 기능 완성 후 연결 예정
-            Intent intent = new Intent(FriendList.this, WipActivity.class);
+            Intent intent = new Intent(requireContext(), WipActivity.class);
             startActivity(intent);
         }, this::showFriendActionsDialog);
         rvFriendList.setAdapter(adapter);
@@ -166,7 +135,7 @@ public class FriendList extends BaseActivity {
                     @Override
                     public void onFailure(Call<ApiResponse<FriendListDto>> call, Throwable t) {
                         Log.e("FriendList", "친구 목록 통신 실패: " + t.getMessage());
-                        Toast.makeText(FriendList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -183,7 +152,7 @@ public class FriendList extends BaseActivity {
     // 친구 항목을 길게 누르면 액션 메뉴를 띄운다.
     private void showFriendActionsDialog(FriendResponseDto friend) {
         String[] actions = {"삭제"};
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(requireContext())
                 .setTitle(friend.getNickname())
                 .setItems(actions, (dialog, which) -> {
                     if (which == 0) {
@@ -194,7 +163,7 @@ public class FriendList extends BaseActivity {
     }
 
     private void showDeleteConfirmDialog(FriendResponseDto friend) {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(requireContext())
                 .setTitle("친구 삭제")
                 .setMessage("'" + friend.getNickname() + "' 님을 내 친구 목록에서 삭제할까요?\n"
                         + "상대방 목록에는 내가 그대로 남습니다.")
@@ -211,7 +180,7 @@ public class FriendList extends BaseActivity {
                                            Response<ApiResponse<FriendListDto>> response) {
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().getData() != null) {
-                            Toast.makeText(FriendList.this, "친구를 삭제했습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "친구를 삭제했습니다.", Toast.LENGTH_SHORT).show();
 
                             bindFriendList(response.body().getData().getFriends());
                         } else {
@@ -222,7 +191,7 @@ public class FriendList extends BaseActivity {
                     @Override
                     public void onFailure(Call<ApiResponse<FriendListDto>> call, Throwable t) {
                         Log.e("FriendList", "친구 삭제 실패: " + t.getMessage());
-                        Toast.makeText(FriendList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -249,14 +218,14 @@ public class FriendList extends BaseActivity {
     }
 
     private void showAddFriendDialog() {
-        Dialog dialog = new Dialog(this);
+        Dialog dialog = new Dialog(requireContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_add_friend);
         if (dialog.getWindow() != null) {
             // 기본 창 배경을 없애야 둥근 모서리 밖으로 검은 모서리가 보이지 않는다
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.getWindow().setLayout(
-                    (int) (getResources().getDisplayMetrics().widthPixels * 0.88),
+                    (int) (requireContext().getResources().getDisplayMetrics().widthPixels * 0.88),
                     ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
@@ -271,7 +240,7 @@ public class FriendList extends BaseActivity {
         btnSearch.setOnClickListener(v -> {
             String nickname = etNickname.getText().toString().trim();
             if (TextUtils.isEmpty(nickname)) {
-                Toast.makeText(this, "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -303,7 +272,7 @@ public class FriendList extends BaseActivity {
                         @Override
                         public void onFailure(Call<ApiResponse<UserSearchResultDto>> call, Throwable t) {
                             Log.e("FriendList", "사용자 검색 실패: " + t.getMessage());
-                            Toast.makeText(FriendList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                         }
                     });
         });
@@ -319,7 +288,7 @@ public class FriendList extends BaseActivity {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            Toast.makeText(FriendList.this, "친구 요청을 보냈습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "친구 요청을 보냈습니다.", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         } else {
                             showError(response, "친구 요청에 실패했습니다.");
@@ -329,26 +298,26 @@ public class FriendList extends BaseActivity {
                     @Override
                     public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                         Log.e("FriendList", "친구 요청 실패: " + t.getMessage());
-                        Toast.makeText(FriendList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void showReceivedRequestDialog() {
-        Dialog dialog = new Dialog(this);
+        Dialog dialog = new Dialog(requireContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_received_request);
         if (dialog.getWindow() != null) {
             // 기본 창 배경을 없애야 둥근 모서리 밖으로 검은 모서리가 보이지 않는다
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.getWindow().setLayout(
-                    (int) (getResources().getDisplayMetrics().widthPixels * 0.88),
+                    (int) (requireContext().getResources().getDisplayMetrics().widthPixels * 0.88),
                     ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
         TextView tvEmpty = dialog.findViewById(R.id.tv_empty);
         RecyclerView rv = dialog.findViewById(R.id.rv_received_request);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         ReceivedRequestAdapter requestAdapter = new ReceivedRequestAdapter(
                 new ArrayList<>(),
@@ -376,7 +345,7 @@ public class FriendList extends BaseActivity {
                     @Override
                     public void onFailure(Call<ApiResponse<List<ReceivedFriendRequestDto>>> call, Throwable t) {
                         Log.e("FriendList", "받은 요청 조회 실패: " + t.getMessage());
-                        Toast.makeText(FriendList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -391,7 +360,7 @@ public class FriendList extends BaseActivity {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            Toast.makeText(FriendList.this,
+                            Toast.makeText(requireContext(),
                                     accept ? "친구 요청을 수락했습니다." : "친구 요청을 거절했습니다.",
                                     Toast.LENGTH_SHORT).show();
 
@@ -406,7 +375,7 @@ public class FriendList extends BaseActivity {
                     @Override
                     public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                         Log.e("FriendList", "친구 요청 응답 실패: " + t.getMessage());
-                        Toast.makeText(FriendList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -427,6 +396,6 @@ public class FriendList extends BaseActivity {
         } catch (Exception ignored) {
             // 파싱 실패 시 기본 메시지 사용
         }
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

@@ -3,15 +3,18 @@ package com.example.medication.ui.chattingroom;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import com.example.medication.ui.base.BaseActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,13 +25,8 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.ChatRoomListDto;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
-import com.example.medication.ui.friend.FriendList;
-import com.example.medication.ui.setting.Settings;
-import com.example.medication.ui.main.MainActivity;
-import com.example.medication.ui.yaksok.YaksokList;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +35,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChatRoomList extends BaseActivity {
+public class ChatRoomListFragment extends Fragment {
 
     private RecyclerView rvChatRooms;
     private TextView tvEmpty;
-    private BottomNavigationView bottomNav;
     private RadioGroup rgChatType;
 
     private boolean isOwner = false;
@@ -50,49 +47,34 @@ public class ChatRoomList extends BaseActivity {
     private final List<ChatRoomListDto> rooms = new ArrayList<>();
     private ChatRoomListAdapter adapter;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_chat_room_list);
-        InsetsUtil.applySystemBarPadding(findViewById(R.id.main_root));
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                              @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_chat_room_list, container, false);
+    }
 
-        initViews();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        InsetsUtil.applySystemBarPadding(view.findViewById(R.id.main_root));
+
+        initViews(view);
 
         adapter = new ChatRoomListAdapter(rooms, this::openChatRoom, this::showRoomActionsDialog);
-        rvChatRooms.setLayoutManager(new LinearLayoutManager(this));
+        rvChatRooms.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvChatRooms.setAdapter(adapter);
 
-        DividerItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        divider.setDrawable(ContextCompat.getDrawable(this, R.drawable.divider_chat_room));
+        DividerItemDecoration divider = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
+        divider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.divider_chat_room));
         rvChatRooms.addItemDecoration(divider);
 
         setupChatTypeToggle();
-
-        bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-
-            if (itemId == R.id.nav_chat) {
-                return true;
-            } else if (itemId == R.id.nav_home) {
-                moveTo(MainActivity.class);
-                return true;
-            } else if (itemId == R.id.nav_history) {
-                moveTo(YaksokList.class);
-                return true;
-            } else if (itemId == R.id.nav_friend) {
-                moveTo(FriendList.class);
-                return true;
-            } else if (itemId == R.id.nav_settings) {
-                moveTo(Settings.class);
-                return true;
-            }
-            return false;
-        });
     }
 
     private void setupChatTypeToggle() {
-        UserResponse user = SprefsManager.getUser(this);
+        UserResponse user = SprefsManager.getUser(requireContext());
         isOwner = user != null && "DRUGSTORE".equals(user.getRole());
 
         if (!isOwner) {
@@ -111,28 +93,19 @@ public class ChatRoomList extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        bottomNav.setSelectedItemId(R.id.nav_chat);
         loadChatRooms();
     }
 
-    private void initViews() {
-        rvChatRooms = findViewById(R.id.rv_chat_rooms);
-        tvEmpty = findViewById(R.id.tv_empty);
-        bottomNav = findViewById(R.id.bottom_navigation);
-        rgChatType = findViewById(R.id.rg_chat_type);
-    }
-
-    private void moveTo(Class<?> target) {
-        Intent intent = new Intent(ChatRoomList.this, target);
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
+    private void initViews(View root) {
+        rvChatRooms = root.findViewById(R.id.rv_chat_rooms);
+        tvEmpty = root.findViewById(R.id.tv_empty);
+        rgChatType = root.findViewById(R.id.rg_chat_type);
     }
 
     private void openChatRoom(ChatRoomListDto room) {
-        Intent intent = new Intent(ChatRoomList.this, ChattingRoom.class);
+        Intent intent = new Intent(requireContext(), ChattingRoom.class);
         intent.putExtra("roomId", room.getRoomId());
         intent.putExtra("myParticipantId", room.getMyParticipantId());
         intent.putExtra("roomName", room.getRoomName());
@@ -141,7 +114,7 @@ public class ChatRoomList extends BaseActivity {
 
     private void showRoomActionsDialog(ChatRoomListDto room) {
         String[] actions = {"삭제"};
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(requireContext())
                 .setTitle(room.getRoomName())
                 .setItems(actions, (dialog, which) -> {
                     if (which == 0) {
@@ -152,7 +125,7 @@ public class ChatRoomList extends BaseActivity {
     }
 
     private void showDeleteConfirmDialog(ChatRoomListDto room) {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(requireContext())
                 .setTitle("채팅방 나가기")
                 .setMessage("'" + room.getRoomName() + "' 채팅방을 목록에서 지울까요?")
                 .setPositiveButton("나가기", (dialog, which) -> deleteChatRoom(room))
@@ -177,13 +150,13 @@ public class ChatRoomList extends BaseActivity {
 
                             tvEmpty.setVisibility(rooms.isEmpty() ? View.VISIBLE : View.GONE);
                         } else {
-                            Toast.makeText(ChatRoomList.this, "채팅방을 지우지 못했습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "채팅방을 지우지 못했습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<List<ChatRoomListDto>>> call, Throwable t) {
-                        Toast.makeText(ChatRoomList.this, "서버와 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "서버와 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -209,14 +182,14 @@ public class ChatRoomList extends BaseActivity {
                     tvEmpty.setVisibility(rooms.isEmpty() ? View.VISIBLE : View.GONE);
                 } else {
                     Log.e("채팅목록", "조회 실패: " + response.code());
-                    Toast.makeText(ChatRoomList.this, "채팅방 목록을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "채팅방 목록을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<ChatRoomListDto>>> call, Throwable t) {
                 Log.e("채팅목록", "통신 실패: " + t.getMessage());
-                Toast.makeText(ChatRoomList.this, "서버와 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "서버와 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
