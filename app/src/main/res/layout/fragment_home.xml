@@ -131,7 +131,6 @@
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="오늘 약속은 3건 남았어요."
             android:textColor="#666666"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="@id/tv_date"

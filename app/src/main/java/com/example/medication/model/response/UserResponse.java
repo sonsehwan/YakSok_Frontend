@@ -16,6 +16,8 @@ public class UserResponse implements Serializable {
     private String role;
     @SerializedName("myDrugStore")
     private DrugStore myDrugStore;
+    @SerializedName("notificationEnabled")
+    private boolean notificationEnabled;
 
     public Long getId(){ return id;}
     public void setId(Long id){ this.id = id; }
@@ -33,5 +35,9 @@ public class UserResponse implements Serializable {
     }
     public DrugStore getMyDrugStore() {
         return myDrugStore;
+    }
+
+    public boolean isNotificationEnabled() {
+        return notificationEnabled;
     }
 }

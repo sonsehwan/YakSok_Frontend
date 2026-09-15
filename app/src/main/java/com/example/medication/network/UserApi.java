@@ -4,6 +4,7 @@ import com.example.medication.model.request.FirebaseTokenRequest;
 import com.example.medication.model.request.LoginRequest;
 import com.example.medication.model.request.ModifyInfoRequest;
 import com.example.medication.model.request.ModifyPasswordRequest;
+import com.example.medication.model.request.NotificationSettingRequest;
 import com.example.medication.model.request.UserRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.LoginResponse;
@@ -32,6 +33,9 @@ public interface UserApi {
 
     @DELETE("api/users")
     Call<ApiResponse<Void>> deleteUser();
+
+    @PATCH("/api/users/notification-setting")
+    Call<ApiResponse<UserResponse>> updateNotificationSetting(@Body NotificationSettingRequest request);
 
     @PATCH("/api/users/fcm-token")
     Call<ApiResponse<Void>> updateFcmToken(@Body FirebaseTokenRequest request);

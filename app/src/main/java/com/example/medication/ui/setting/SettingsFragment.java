@@ -6,17 +6,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.medication.R;
 import com.example.medication.model.request.FirebaseTokenRequest;
+import com.example.medication.model.request.NotificationSettingRequest;
 import com.example.medication.model.response.ApiResponse;
+import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.example.medication.ui.login.Login;
@@ -33,6 +37,7 @@ public class SettingsFragment extends Fragment {
 
     private ImageView ivLogout;
     private LinearLayout llMyInfo;
+    private SwitchCompat swNotification;
 
     @Nullable
     @Override
@@ -57,6 +62,35 @@ public class SettingsFragment extends Fragment {
         llMyInfo.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), MyInfo.class);
             startActivity(intent);
+        });
+
+        UserResponse user = SprefsManager.getUser(requireContext());
+        swNotification.setChecked(user != null && user.isNotificationEnabled());
+        swNotification.setOnCheckedChangeListener(this::onNotificationToggle);
+    }
+
+    private void onNotificationToggle(CompoundButton button, boolean enabled) {
+        UserApi api = NetworkClient.getApi();
+        api.updateNotificationSetting(new NotificationSettingRequest(enabled)).enqueue(new Callback<ApiResponse<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    SprefsManager.setUserInfo(requireContext(), response.body().getData());
+                } else {
+                    Log.e("NotificationSetting", "알림 설정 변경 실패");
+                    button.setOnCheckedChangeListener(null);
+                    button.setChecked(!enabled);
+                    button.setOnCheckedChangeListener(SettingsFragment.this::onNotificationToggle);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                Log.e("NotificationSetting", "네트워크 통신 실패: " + t.getMessage());
+                button.setOnCheckedChangeListener(null);
+                button.setChecked(!enabled);
+                button.setOnCheckedChangeListener(SettingsFragment.this::onNotificationToggle);
+            }
         });
     }
 
@@ -112,5 +146,6 @@ public class SettingsFragment extends Fragment {
     private void initViews(View root) {
         ivLogout = root.findViewById(R.id.iv_logout);
         llMyInfo = root.findViewById(R.id.ll_my_info);
+        swNotification = root.findViewById(R.id.sw_notification);
     }
 }
