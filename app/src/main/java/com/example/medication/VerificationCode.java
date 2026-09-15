@@ -15,7 +15,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.Locale;
 
-public class VerificationCodeView extends LinearLayout {
+public class VerificationCode extends LinearLayout {
 
     public interface OnResendListener { void onResend(); }
     public interface OnVerifyListener { void onVerify(String code); }
@@ -39,14 +39,14 @@ public class VerificationCodeView extends LinearLayout {
     private OnResendListener resendListener;
     private OnVerifyListener verifyListener;
 
-    public VerificationCodeView(Context context, @Nullable AttributeSet attrs) {
+    public VerificationCode(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
     private void init(Context context) {
         setOrientation(VERTICAL);
-        LayoutInflater.from(context).inflate(R.layout.view_verification_code, this, true);
+        LayoutInflater.from(context).inflate(R.layout.component_verification_code, this, true);
 
         inputCode = findViewById(R.id.input_code);
         tvExpiry = findViewById(R.id.tv_expiry);

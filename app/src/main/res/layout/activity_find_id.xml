@@ -67,7 +67,7 @@
             app:backgroundTint="@color/brand_surface"
             app:cornerRadius="12dp" />
 
-        <com.example.medication.VerificationCodeView
+        <com.example.medication.VerificationCode
             android:id="@+id/verification_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
