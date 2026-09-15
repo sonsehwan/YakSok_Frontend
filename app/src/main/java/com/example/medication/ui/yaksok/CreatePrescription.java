@@ -23,7 +23,7 @@ import com.example.medication.InputView;
 import com.example.medication.LoadingDialog;
 import com.example.medication.R;
 import com.example.medication.adapter.AddMedicationSettingAdapter;
-import com.example.medication.databinding.ActivityCreateDirectScheduleBinding;
+import com.example.medication.databinding.ActivityCreatePrescriptionBinding;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.CreateYakSokRequest;
@@ -73,7 +73,7 @@ import retrofit2.Response;
 
 public class CreatePrescription extends BaseActivity {
 
-    private ActivityCreateDirectScheduleBinding binding;
+    private ActivityCreatePrescriptionBinding binding;
 
     private ActivityResultLauncher<String> galleryLauncher;
     private ActivityResultLauncher<Intent> searchLauncher;
@@ -92,7 +92,7 @@ public class CreatePrescription extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityCreateDirectScheduleBinding.inflate(getLayoutInflater());
+        binding = ActivityCreatePrescriptionBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // 1. UI 및 컴포넌트 초기화
