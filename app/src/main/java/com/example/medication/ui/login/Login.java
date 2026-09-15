@@ -8,13 +8,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.medication.InputView;
-import com.example.medication.R;
+import com.example.medication.databinding.ActivityLoginBinding;
 import com.example.medication.model.request.FirebaseTokenRequest;
 import com.example.medication.ui.signup.SignUpTypeBottomSheet;
 import com.example.medication.model.request.LoginRequest;
@@ -34,12 +31,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Login extends BaseActivity {
-    private InputView inputLoginId;
-    private InputView inputPw;
-    private Button btnLogin;
-    private TextView tvGoSignUp;
-    private TextView tvFindId;
-    private TextView tvFindPw;
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,27 +47,26 @@ public class Login extends BaseActivity {
         }
 
         // 로그인이 안되어 있을 때만 로그인 화면을 보여주기 시작
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        initViews();
+        binding.btnLogin.setOnClickListener(v -> startLogin());
 
-        btnLogin.setOnClickListener(v -> startLogin());
-
-        tvGoSignUp.setOnClickListener(v -> {
+        binding.tvGoSignup.setOnClickListener(v -> {
             SignUpTypeBottomSheet sheet = new SignUpTypeBottomSheet();
             sheet.show(getSupportFragmentManager(), "sign_up_type");
         });
 
-        tvFindId.setOnClickListener(v -> startActivity(new Intent(this, FindId.class)));
-        tvFindPw.setOnClickListener(v -> startActivity(new Intent(this, FindPassword.class)));
+        binding.tvFindId.setOnClickListener(v -> startActivity(new Intent(this, FindId.class)));
+        binding.tvFindPw.setOnClickListener(v -> startActivity(new Intent(this, FindPassword.class)));
     }
 
     private void startLogin(){
-        if(!inputLoginId.isValid() || !inputPw.isValid()){
+        if(!binding.inputLoginId.isValid() || !binding.inputPw.isValid()){
             return;
         }
-        String loginId = inputLoginId.getText();
-        String password = inputPw.getText();
+        String loginId = binding.inputLoginId.getText();
+        String password = binding.inputPw.getText();
 
         LoginRequest request = new LoginRequest(loginId, password);
 
@@ -178,8 +169,8 @@ public class Login extends BaseActivity {
                 if (errorResponse != null && errorResponse.getMessage() != null) {
                     String message = errorResponse.getMessage();
 
-                    if (message.contains("비밀번호")) inputPw.showError(message);
-                    else if (message.contains("아이디") || message.contains("사용자")) inputLoginId.showError(message);
+                    if (message.contains("비밀번호")) binding.inputPw.showError(message);
+                    else if (message.contains("아이디") || message.contains("사용자")) binding.inputLoginId.showError(message);
                     else showToast(message);
                 } else {
                     // JSON 형태가 아니거나 메세지가 없는 경우
@@ -190,15 +181,6 @@ public class Login extends BaseActivity {
             // IOException 및 Gson 파싱 에러(JsonSyntaxException)를 모두 잡아서 앱 강제종료 방지
             showToast("서버 응답을 분석할 수 없습니다.");
         }
-    }
-
-    private void initViews() {
-        inputLoginId = findViewById(R.id.input_login_id);
-        inputPw = findViewById(R.id.input_pw);
-        btnLogin = findViewById(R.id.btn_login);
-        tvGoSignUp = findViewById(R.id.tv_go_signup);
-        tvFindId = findViewById(R.id.tv_find_id);
-        tvFindPw = findViewById(R.id.tv_find_pw);
     }
 
     private void showToast(String message){

@@ -3,18 +3,15 @@ package com.example.medication.adapter;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
+import com.example.medication.databinding.ItemNotificationBinding;
+import com.example.medication.databinding.ItemTimeHeaderBinding;
 import com.example.medication.model.NotificationListItem;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.response.ApiResponse;
@@ -81,11 +78,11 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if(viewType == NotificationListItem.TYPE_HEADER){
-            View v = inflater.inflate(R.layout.item_time_header, parent, false);
-            return new HeaderViewHolder(v);
+            ItemTimeHeaderBinding binding = ItemTimeHeaderBinding.inflate(inflater, parent, false);
+            return new HeaderViewHolder(binding);
         }else{
-            View v = inflater.inflate(R.layout.item_notification, parent, false);
-            return new ItemViewHolder(v);
+            ItemNotificationBinding binding = ItemNotificationBinding.inflate(inflater, parent, false);
+            return new ItemViewHolder(binding);
         }
     }
 
@@ -95,10 +92,10 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
         if(holder instanceof HeaderViewHolder){
             NotificationListItem.HeaderItem header = (NotificationListItem.HeaderItem) item;
             HeaderViewHolder h = (HeaderViewHolder) holder;
-            h.tvTitle.setText(header.getTitle());
+            h.binding.tvTimeTitle.setText(header.getTitle());
 
             boolean isCollapsed = collapsedCategories.contains(header.getTimeCategory());
-            h.ivArrow.setRotation(isCollapsed ? 0 : 90); // 바인딩 시점엔 애니메이션 없이 현재 상태를 바로 반영
+            h.binding.ivArrow.setRotation(isCollapsed ? 0 : 90); // 바인딩 시점엔 애니메이션 없이 현재 상태를 바로 반영
 
             h.itemView.setOnClickListener(v -> {
                 boolean willCollapse;
@@ -109,7 +106,7 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
                     collapsedCategories.add(header.getTimeCategory());
                     willCollapse = true;
                 }
-                h.ivArrow.animate().rotation(willCollapse ? 0 : 90).setDuration(200).start(); // 클릭했을 때만 회전 애니메이션
+                h.binding.ivArrow.animate().rotation(willCollapse ? 0 : 90).setDuration(200).start(); // 클릭했을 때만 회전 애니메이션
                 updateVisibleItems();
             });
         }else if (holder instanceof ItemViewHolder) {
@@ -117,17 +114,17 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
             ItemViewHolder h = (ItemViewHolder) holder;
             NotificationYaksok data = noti.getData();
 
-            h.tvName.setText(data.getTitle());
-            h.tvTime.setText(data.getTime());
-            h.tvInfo.setText(data.getInstruction());
+            h.binding.tvNotificationName.setText(data.getTitle());
+            h.binding.tvNotificationTime.setText(data.getTime());
+            h.binding.tvNotificationInfo.setText(data.getInstruction());
 
-            h.cbDone.setOnCheckedChangeListener(null); // 리스너 간섭 방지
-            h.cbDone.setChecked(data.isTaken());
-            h.cbDone.setText(data.isTaken() ? "완료" : "미복용");
+            h.binding.cbDone.setOnCheckedChangeListener(null); // 리스너 간섭 방지
+            h.binding.cbDone.setChecked(data.isTaken());
+            h.binding.cbDone.setText(data.isTaken() ? "완료" : "미복용");
             holder.itemView.setAlpha(data.isTaken() ? 0.5f : 1.0f);
 
-            h.cbDone.setOnClickListener(v -> {
-                h.cbDone.setChecked(data.isTaken());
+            h.binding.cbDone.setOnClickListener(v -> {
+                h.binding.cbDone.setChecked(data.isTaken());
 
                 int currentPos = holder.getBindingAdapterPosition();
                 if (currentPos != RecyclerView.NO_POSITION) {
@@ -196,24 +193,20 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle;
-        ImageView ivArrow;
-        HeaderViewHolder(View itemView) {
-            super(itemView);
-            tvTitle = itemView.findViewById(R.id.tv_time_title);
-            ivArrow = itemView.findViewById(R.id.iv_arrow);
+        ItemTimeHeaderBinding binding;
+
+        HeaderViewHolder(@NonNull ItemTimeHeaderBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvTime, tvInfo;
-        CheckBox cbDone;
-        ItemViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_notification_name);
-            tvTime = itemView.findViewById(R.id.tv_notification_time);
-            tvInfo = itemView.findViewById(R.id.tv_notification_info);
-            cbDone = itemView.findViewById(R.id.cb_done);
+        ItemNotificationBinding binding;
+
+        ItemViewHolder(@NonNull ItemNotificationBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

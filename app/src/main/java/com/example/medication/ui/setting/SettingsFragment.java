@@ -7,16 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.medication.R;
+import com.example.medication.databinding.FragmentSettingsBinding;
 import com.example.medication.model.request.FirebaseTokenRequest;
 import com.example.medication.model.request.NotificationSettingRequest;
 import com.example.medication.model.response.ApiResponse;
@@ -35,38 +32,42 @@ import retrofit2.Response;
 
 public class SettingsFragment extends Fragment {
 
-    private ImageView ivLogout;
-    private LinearLayout llMyInfo;
-    private SwitchCompat swNotification;
+    private FragmentSettingsBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        binding = FragmentSettingsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        InsetsUtil.applySystemBarPadding(view.findViewById(R.id.main));
+        InsetsUtil.applySystemBarPadding(binding.main);
 
-        initViews(view);
         setupClickListeners();
     }
 
-    private void setupClickListeners() {
-        ivLogout.setOnClickListener(v -> showLogOutDialog());
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 
-        llMyInfo.setOnClickListener(v -> {
+    private void setupClickListeners() {
+        binding.ivLogout.setOnClickListener(v -> showLogOutDialog());
+
+        binding.llMyInfo.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), MyInfo.class);
             startActivity(intent);
         });
 
         UserResponse user = SprefsManager.getUser(requireContext());
-        swNotification.setChecked(user != null && user.isNotificationEnabled());
-        swNotification.setOnCheckedChangeListener(this::onNotificationToggle);
+        binding.swNotification.setChecked(user != null && user.isNotificationEnabled());
+        binding.swNotification.setOnCheckedChangeListener(this::onNotificationToggle);
     }
 
     private void onNotificationToggle(CompoundButton button, boolean enabled) {
@@ -143,9 +144,4 @@ public class SettingsFragment extends Fragment {
         });
     }
 
-    private void initViews(View root) {
-        ivLogout = root.findViewById(R.id.iv_logout);
-        llMyInfo = root.findViewById(R.id.ll_my_info);
-        swNotification = root.findViewById(R.id.sw_notification);
-    }
 }

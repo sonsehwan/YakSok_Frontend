@@ -1,14 +1,15 @@
 package com.example.medication.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
+import com.example.medication.databinding.ItemMyTextMessageBinding;
+import com.example.medication.databinding.ItemMyYaksokShareMessageBinding;
+import com.example.medication.databinding.ItemOtherTextMessageBinding;
+import com.example.medication.databinding.ItemOtherYaksokShareMessageBinding;
 import com.example.medication.model.ChatMessage;
 import com.google.android.material.button.MaterialButton;
 
@@ -67,16 +68,16 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         switch (viewType) {
             case VIEW_TYPE_MY_TEXT:
                 return new MyTextViewHolder(
-                        inflater.inflate(R.layout.item_my_text_message, parent, false));
+                        ItemMyTextMessageBinding.inflate(inflater, parent, false));
             case VIEW_TYPE_OTHER_TEXT:
                 return new OtherTextViewHolder(
-                        inflater.inflate(R.layout.item_other_text_message, parent, false));
+                        ItemOtherTextMessageBinding.inflate(inflater, parent, false));
             case VIEW_TYPE_MY_SHARE:
                 return new MyShareViewHolder(
-                        inflater.inflate(R.layout.item_my_yaksok_share_message, parent, false));
+                        ItemMyYaksokShareMessageBinding.inflate(inflater, parent, false));
             default:
                 return new OtherShareViewHolder(
-                        inflater.inflate(R.layout.item_other_yaksok_share_message, parent, false));
+                        ItemOtherYaksokShareMessageBinding.inflate(inflater, parent, false));
         }
     }
 
@@ -86,29 +87,29 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (holder instanceof MyTextViewHolder) {
             MyTextViewHolder h = (MyTextViewHolder) holder;
-            h.tvName.setText(msg.getSenderNickname());
-            h.tvMessage.setText(msg.getMessage());
-            h.tvTime.setText(formatTime(msg.getCreatedAt()));
+            h.binding.tvMyName.setText(msg.getSenderNickname());
+            h.binding.tvMyMessage.setText(msg.getMessage());
+            h.binding.tvMyTime.setText(formatTime(msg.getCreatedAt()));
 
         } else if (holder instanceof OtherTextViewHolder) {
             OtherTextViewHolder h = (OtherTextViewHolder) holder;
-            h.tvName.setText(msg.getSenderNickname());
-            h.tvMessage.setText(msg.getMessage());
-            h.tvTime.setText(formatTime(msg.getCreatedAt()));
+            h.binding.tvOtherName.setText(msg.getSenderNickname());
+            h.binding.tvOtherMessage.setText(msg.getMessage());
+            h.binding.tvOtherTime.setText(formatTime(msg.getCreatedAt()));
 
         } else if (holder instanceof MyShareViewHolder) {
             MyShareViewHolder h = (MyShareViewHolder) holder;
-            h.tvName.setText(msg.getSenderNickname());
-            h.tvYaksokName.setText(msg.getMessage());
-            h.tvTime.setText(formatTime(msg.getCreatedAt()));
-            bindYaksokButton(h.btnYaksok, msg);
+            h.binding.tvMyName.setText(msg.getSenderNickname());
+            h.binding.tvYaksokName.setText(msg.getMessage());
+            h.binding.tvMyTime.setText(formatTime(msg.getCreatedAt()));
+            bindYaksokButton(h.binding.btnOtherYaksok, msg);
 
         } else if (holder instanceof OtherShareViewHolder) {
             OtherShareViewHolder h = (OtherShareViewHolder) holder;
-            h.tvName.setText(msg.getSenderNickname());
-            h.tvYaksokName.setText(msg.getMessage());
-            h.tvTime.setText(formatTime(msg.getCreatedAt()));
-            bindYaksokButton(h.btnYaksok, msg);
+            h.binding.tvOtherName.setText(msg.getSenderNickname());
+            h.binding.tvYaksokName.setText(msg.getMessage());
+            h.binding.tvOtherTime.setText(formatTime(msg.getCreatedAt()));
+            bindYaksokButton(h.binding.btnOtherYaksok, msg);
         }
     }
 
@@ -137,50 +138,38 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     static class MyTextViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvMessage, tvTime;
+        ItemMyTextMessageBinding binding;
 
-        MyTextViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_my_name);
-            tvMessage = itemView.findViewById(R.id.tv_my_message);
-            tvTime = itemView.findViewById(R.id.tv_my_time);
+        MyTextViewHolder(@NonNull ItemMyTextMessageBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 
     static class OtherTextViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvMessage, tvTime;
+        ItemOtherTextMessageBinding binding;
 
-        OtherTextViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_other_name);
-            tvMessage = itemView.findViewById(R.id.tv_other_message);
-            tvTime = itemView.findViewById(R.id.tv_other_time);
+        OtherTextViewHolder(@NonNull ItemOtherTextMessageBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 
     static class MyShareViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvYaksokName, tvTime;
-        MaterialButton btnYaksok;
+        ItemMyYaksokShareMessageBinding binding;
 
-        MyShareViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_my_name);
-            tvYaksokName = itemView.findViewById(R.id.tv_yaksok_name);
-            tvTime = itemView.findViewById(R.id.tv_my_time);
-            btnYaksok = itemView.findViewById(R.id.btn_other_yaksok);
+        MyShareViewHolder(@NonNull ItemMyYaksokShareMessageBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 
     static class OtherShareViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvYaksokName, tvTime;
-        MaterialButton btnYaksok;
+        ItemOtherYaksokShareMessageBinding binding;
 
-        OtherShareViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_other_name);
-            tvYaksokName = itemView.findViewById(R.id.tv_yaksok_name);
-            tvTime = itemView.findViewById(R.id.tv_other_time);
-            btnYaksok = itemView.findViewById(R.id.btn_other_yaksok);
+        OtherShareViewHolder(@NonNull ItemOtherYaksokShareMessageBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

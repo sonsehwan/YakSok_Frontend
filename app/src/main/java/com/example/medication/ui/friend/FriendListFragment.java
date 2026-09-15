@@ -11,9 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,9 +23,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
 import com.example.medication.adapter.FriendListAdapter;
 import com.example.medication.adapter.ReceivedRequestAdapter;
+import com.example.medication.databinding.DialogAddFriendBinding;
+import com.example.medication.databinding.DialogReceivedRequestBinding;
+import com.example.medication.databinding.FragmentFriendListBinding;
 import com.example.medication.model.request.FriendRequestAnswerDto;
 import com.example.medication.model.request.FriendRequestCreateDto;
 import com.example.medication.model.response.ApiResponse;
@@ -51,28 +51,22 @@ import retrofit2.Response;
 
 public class FriendListFragment extends Fragment {
 
-    private RecyclerView rvFriendList;
+    private FragmentFriendListBinding binding;
     private FriendListAdapter adapter;
-
-    private ImageView btnMenu;
-    private TextView btnAddFriend;
-    private LinearLayout layoutFriendRequest;
-    private TextView tvRequestCount;
-    private TextView tvFriendCount;
-    private TextView tvEmptyFriend;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_friend_list, container, false);
+        binding = FragmentFriendListBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        InsetsUtil.applySystemBarPadding(view.findViewById(R.id.main));
+        InsetsUtil.applySystemBarPadding(binding.main);
 
         UserResponse user = SprefsManager.getUser(requireContext());
         if (user == null || user.getId() == null) {
@@ -80,7 +74,7 @@ public class FriendListFragment extends Fragment {
             return;
         }
 
-        initViews(view);
+        initViews();
         setRecyclerView();
     }
 
@@ -94,28 +88,26 @@ public class FriendListFragment extends Fragment {
         updateRequestCount();
     }
 
-    private void initViews(View root) {
-        btnMenu = root.findViewById(R.id.iv_menu);
-        btnAddFriend = root.findViewById(R.id.tv_add_friend);
-        layoutFriendRequest = root.findViewById(R.id.layout_friend_request);
-        tvRequestCount = root.findViewById(R.id.tv_request_count);
-        tvFriendCount = root.findViewById(R.id.tv_friend_count);
-        tvEmptyFriend = root.findViewById(R.id.tv_empty_friend);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 
-        btnAddFriend.setOnClickListener(v -> showAddFriendDialog());
-        layoutFriendRequest.setOnClickListener(v -> showReceivedRequestDialog());
+    private void initViews() {
+        binding.tvAddFriend.setOnClickListener(v -> showAddFriendDialog());
+        binding.layoutFriendRequest.setOnClickListener(v -> showReceivedRequestDialog());
     }
 
     private void setRecyclerView() {
-        rvFriendList = requireView().findViewById(R.id.rv_yaksok_list);
-        rvFriendList.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvYaksokList.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         adapter = new FriendListAdapter(new ArrayList<>(), (friend, position) -> {
             // 약속 공유 기능 완성 후 연결 예정
             Intent intent = new Intent(requireContext(), WipActivity.class);
             startActivity(intent);
         }, this::showFriendActionsDialog);
-        rvFriendList.setAdapter(adapter);
+        binding.rvYaksokList.setAdapter(adapter);
     }
 
     private void fetchFriendList() {
@@ -145,8 +137,8 @@ public class FriendListFragment extends Fragment {
         adapter.updateData(friends);
 
         int count = (friends == null) ? 0 : friends.size();
-        tvFriendCount.setText("내 친구 " + count);
-        tvEmptyFriend.setVisibility(count == 0 ? TextView.VISIBLE : TextView.GONE);
+        binding.tvFriendCount.setText("내 친구 " + count);
+        binding.tvEmptyFriend.setVisibility(count == 0 ? TextView.VISIBLE : TextView.GONE);
     }
 
     // 친구 항목을 길게 누르면 액션 메뉴를 띄운다.
@@ -207,7 +199,7 @@ public class FriendListFragment extends Fragment {
                                 && response.body().getData() != null) {
                             count = response.body().getData().size();
                         }
-                        tvRequestCount.setText(count + "개 받음");
+                        binding.tvRequestCount.setText(count + "개 받음");
                     }
 
                     @Override
@@ -220,7 +212,8 @@ public class FriendListFragment extends Fragment {
     private void showAddFriendDialog() {
         Dialog dialog = new Dialog(requireContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_add_friend);
+        DialogAddFriendBinding dialogBinding = DialogAddFriendBinding.inflate(LayoutInflater.from(requireContext()));
+        dialog.setContentView(dialogBinding.getRoot());
         if (dialog.getWindow() != null) {
             // 기본 창 배경을 없애야 둥근 모서리 밖으로 검은 모서리가 보이지 않는다
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -229,15 +222,13 @@ public class FriendListFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
-        EditText etNickname = dialog.findViewById(R.id.et_nickname);
-        Button btnSearch = dialog.findViewById(R.id.btn_search);
-        LinearLayout layoutResult = dialog.findViewById(R.id.layout_result);
-        TextView tvResultAvatar = dialog.findViewById(R.id.tv_result_avatar);
-        TextView tvResultNickname = dialog.findViewById(R.id.tv_result_nickname);
-        TextView tvResultEmail = dialog.findViewById(R.id.tv_result_email);
-        Button btnSendRequest = dialog.findViewById(R.id.btn_send_request);
+        EditText etNickname = dialogBinding.etNickname;
+        LinearLayout layoutResult = dialogBinding.layoutResult;
+        TextView tvResultAvatar = dialogBinding.tvResultAvatar;
+        TextView tvResultNickname = dialogBinding.tvResultNickname;
+        TextView tvResultEmail = dialogBinding.tvResultEmail;
 
-        btnSearch.setOnClickListener(v -> {
+        dialogBinding.btnSearch.setOnClickListener(v -> {
             String nickname = etNickname.getText().toString().trim();
             if (TextUtils.isEmpty(nickname)) {
                 Toast.makeText(requireContext(), "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
@@ -262,7 +253,7 @@ public class FriendListFragment extends Fragment {
                                 tvResultEmail.setText(found.getEmail());
                                 layoutResult.setVisibility(LinearLayout.VISIBLE);
 
-                                btnSendRequest.setOnClickListener(b ->
+                                dialogBinding.btnSendRequest.setOnClickListener(b ->
                                         sendFriendRequest(found.getUserId(), dialog));
                             } else {
                                 showError(response, "사용자를 찾을 수 없습니다.");
@@ -306,7 +297,8 @@ public class FriendListFragment extends Fragment {
     private void showReceivedRequestDialog() {
         Dialog dialog = new Dialog(requireContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_received_request);
+        DialogReceivedRequestBinding dialogBinding = DialogReceivedRequestBinding.inflate(LayoutInflater.from(requireContext()));
+        dialog.setContentView(dialogBinding.getRoot());
         if (dialog.getWindow() != null) {
             // 기본 창 배경을 없애야 둥근 모서리 밖으로 검은 모서리가 보이지 않는다
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -315,8 +307,8 @@ public class FriendListFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
-        TextView tvEmpty = dialog.findViewById(R.id.tv_empty);
-        RecyclerView rv = dialog.findViewById(R.id.rv_received_request);
+        TextView tvEmpty = dialogBinding.tvEmpty;
+        RecyclerView rv = dialogBinding.rvReceivedRequest;
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         ReceivedRequestAdapter requestAdapter = new ReceivedRequestAdapter(

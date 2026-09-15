@@ -1,15 +1,12 @@
 package com.example.medication.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
+import com.example.medication.databinding.ItemReceivedRequestBinding;
 import com.example.medication.model.response.ReceivedFriendRequestDto;
 
 import java.util.List;
@@ -31,21 +28,21 @@ public class ReceivedRequestAdapter extends RecyclerView.Adapter<ReceivedRequest
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_received_request, parent, false);
-        return new ViewHolder(view);
+        ItemReceivedRequestBinding binding = ItemReceivedRequestBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ReceivedFriendRequestDto item = items.get(position);
 
-        holder.tvNickname.setText(item.getNickname());
-        holder.tvEmail.setText(item.getEmail());
-        holder.tvAvatar.setText(initialOf(item.getNickname()));
+        holder.binding.tvNickname.setText(item.getNickname());
+        holder.binding.tvEmail.setText(item.getEmail());
+        holder.binding.tvAvatar.setText(initialOf(item.getNickname()));
 
-        holder.btnAccept.setOnClickListener(v -> listener.onAnswer(item, true));
-        holder.btnReject.setOnClickListener(v -> listener.onAnswer(item, false));
+        holder.binding.btnAccept.setOnClickListener(v -> listener.onAnswer(item, true));
+        holder.binding.btnReject.setOnClickListener(v -> listener.onAnswer(item, false));
     }
 
     // 닉네임 첫 글자를 아바타에 표시
@@ -68,16 +65,11 @@ public class ReceivedRequestAdapter extends RecyclerView.Adapter<ReceivedRequest
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNickname, tvEmail, tvAvatar;
-        Button btnAccept, btnReject;
+        ItemReceivedRequestBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvNickname = itemView.findViewById(R.id.tv_nickname);
-            tvEmail = itemView.findViewById(R.id.tv_email);
-            tvAvatar = itemView.findViewById(R.id.tv_avatar);
-            btnAccept = itemView.findViewById(R.id.btn_accept);
-            btnReject = itemView.findViewById(R.id.btn_reject);
+        public ViewHolder(@NonNull ItemReceivedRequestBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

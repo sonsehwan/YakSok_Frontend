@@ -6,8 +6,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.medication.ui.base.BaseActivity;
@@ -15,15 +13,14 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.R;
 import com.example.medication.adapter.ChattingRoomAdapter;
+import com.example.medication.databinding.ActivityChattingRoomBinding;
 import com.example.medication.model.ChatMessage;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.sharedyaksok.ShareYaksokDetail;
-import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -55,16 +52,14 @@ public class ChattingRoom extends BaseActivity {
 
     private volatile boolean chatReady = false;
 
-    private RecyclerView rvMessages;
+    private ActivityChattingRoomBinding binding;
     private ChattingRoomAdapter chattingRoomAdapter;
-    private EditText etMessage;
-    private TextView tvRoomName;
-    private MaterialButton btnSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chatting_room);
+        binding = ActivityChattingRoomBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // 상태바 / 하단 네비게이션 바 색상 설정
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.brand_surface));
@@ -86,8 +81,6 @@ public class ChattingRoom extends BaseActivity {
             windowInsetsController.setAppearanceLightNavigationBars(true);
         }
 
-        initViews();
-
         Intent intent = getIntent();
         roomId = intent.getLongExtra("roomId", -1);
         roomName = intent.getStringExtra("roomName");
@@ -105,7 +98,7 @@ public class ChattingRoom extends BaseActivity {
             return;
         }
 
-        tvRoomName.setText(roomName != null ? roomName : "상담방");
+        binding.tvRoomName.setText(roomName != null ? roomName : "상담방");
 
         chattingRoomAdapter = new ChattingRoomAdapter(myParticipantId, sharedYaksokId -> {
             Intent shareIntent = new Intent(ChattingRoom.this, ShareYaksokDetail.class);
@@ -113,15 +106,15 @@ public class ChattingRoom extends BaseActivity {
             startActivity(shareIntent);
         });
 
-        rvMessages.setLayoutManager(new LinearLayoutManager(this));
-        rvMessages.setAdapter(chattingRoomAdapter);
+        binding.rvChatMessages.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvChatMessages.setAdapter(chattingRoomAdapter);
 
         loadPreviousMessages();
 
         connectStomp();
 
-        btnSend.setOnClickListener(v -> {
-            String text = etMessage.getText().toString().trim();
+        binding.btnSend.setOnClickListener(v -> {
+            String text = binding.etMessage.getText().toString().trim();
             if (text.isEmpty()) return;
 
             if (!chatReady) {
@@ -130,7 +123,7 @@ public class ChattingRoom extends BaseActivity {
             }
 
             sendMessage(text);
-            etMessage.setText("");
+            binding.etMessage.setText("");
         });
     }
 
@@ -150,7 +143,7 @@ public class ChattingRoom extends BaseActivity {
                                     chattingRoomAdapter.addMessage(msg);
                                 }
 
-                                rvMessages.scrollToPosition(chattingRoomAdapter.getItemCount() - 1);
+                                binding.rvChatMessages.scrollToPosition(chattingRoomAdapter.getItemCount() - 1);
 
                                 Log.d(TAG, "과거 메시지 " + pastMessages.size() + "개 로드 완료");
                             }
@@ -205,7 +198,7 @@ public class ChattingRoom extends BaseActivity {
 
                     runOnUiThread(() -> {
                         chattingRoomAdapter.addMessage(receivedMessage);
-                        rvMessages.scrollToPosition(chattingRoomAdapter.getItemCount() - 1);
+                        binding.rvChatMessages.scrollToPosition(chattingRoomAdapter.getItemCount() - 1);
                     });
                 }, throwable -> {
                     Log.e(TAG, "구독 중 에러 발생", throwable);
@@ -247,7 +240,7 @@ public class ChattingRoom extends BaseActivity {
                     Log.e(TAG, "메시지 전송 실패", throwable);
                     runOnUiThread(() -> {
                         Toast.makeText(this, "메시지를 보내지 못했어요. 다시 시도해 주세요.", Toast.LENGTH_SHORT).show();
-                        etMessage.setText(text);   // 입력 내용 복구
+                        binding.etMessage.setText(text);   // 입력 내용 복구
                     });
                 });
     }
@@ -263,12 +256,5 @@ public class ChattingRoom extends BaseActivity {
         if (mStompClient != null) {
             mStompClient.disconnect();
         }
-    }
-
-    private void initViews() {
-        tvRoomName = findViewById(R.id.tv_room_name);
-        rvMessages = findViewById(R.id.rv_chat_messages);
-        etMessage = findViewById(R.id.et_message);
-        btnSend = findViewById(R.id.btn_send);
     }
 }

@@ -1,6 +1,5 @@
 package com.example.medication.ui.yaksok;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -22,12 +19,12 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.R;
 import com.example.medication.adapter.ShareYaksokListAdapter;
 import com.example.medication.adapter.SharedUserAdapter;
 import com.example.medication.adapter.YaksokListAdapter;
+import com.example.medication.databinding.FragmentYaksokListBinding;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.SharedUser;
@@ -37,7 +34,6 @@ import com.example.medication.ui.sharedyaksok.ShareYaksokDetail;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.example.medication.util.YaksokEventBus;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +44,10 @@ import retrofit2.Response;
 
 public class YaksokListFragment extends Fragment implements YaksokEventBus.Listener {
 
-    private TextView tvMyYaksok, tvSharedYaksok;
-    private RecyclerView rvYaksokList, rvSharedUserList;
+    private FragmentYaksokListBinding binding;
     private YaksokListAdapter adapter;
     private ShareYaksokListAdapter shareYaksokListAdapter;
     private SharedUserAdapter sharedUserAdapter;
-    private FloatingActionButton fabScan;
-    private ImageView ivMenu;
 
     private Long currentSenderId;
     private boolean isMyYaksokTab = true;
@@ -72,23 +65,30 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_yaksok_list, container, false);
+        binding = FragmentYaksokListBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        InsetsUtil.applySystemBarPadding(view.findViewById(R.id.main));
+        InsetsUtil.applySystemBarPadding(binding.getRoot());
 
-        initViews(view);
+        initViews();
         setupDrawerButton();
         selectMyYaksokTab();
 
-        fabScan.setOnClickListener(v -> {
+        binding.fabScan.setOnClickListener(v -> {
             ShowAddMedicationList bottomSheet = new ShowAddMedicationList();
             bottomSheet.show(getParentFragmentManager(), "show_create_list");
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -114,26 +114,17 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
         refreshCurrentTab();
     }
 
-    @SuppressLint("CutPasteId")
-    private void initViews(View root) {
-        tvMyYaksok = root.findViewById(R.id.tv_my_yaksok);
-        tvSharedYaksok = root.findViewById(R.id.tv_shared_yaksok);
+    private void initViews() {
+        binding.rvYaksokList.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        rvYaksokList = root.findViewById(R.id.rv_yaksok_list);
-        rvYaksokList.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        rvSharedUserList = root.findViewById(R.id.rv_share_user_list);
-        rvSharedUserList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvShareUserList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
 
         sharedUserAdapter = new SharedUserAdapter(new ArrayList<>(), (user, position) ->
                 fetchSharedYaksokBySender(user.getUserId()));
-        rvSharedUserList.setAdapter(sharedUserAdapter);
+        binding.rvShareUserList.setAdapter(sharedUserAdapter);
 
-        tvMyYaksok.setOnClickListener(v -> selectMyYaksokTab());
-        tvSharedYaksok.setOnClickListener(v -> selectSharedYaksokTab());
-
-        fabScan = root.findViewById(R.id.fab_scan);
-        ivMenu = root.findViewById(R.id.iv_menu);
+        binding.tvMyYaksok.setOnClickListener(v -> selectMyYaksokTab());
+        binding.tvSharedYaksok.setOnClickListener(v -> selectSharedYaksokTab());
 
         adapter = new YaksokListAdapter(new ArrayList<>(), new YaksokListAdapter.OnItemClickListener() {
             @Override
@@ -143,7 +134,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
                 detailActivityLauncher.launch(intent);
             }
         });
-        rvYaksokList.setAdapter(adapter);
+        binding.rvYaksokList.setAdapter(adapter);
 
         shareYaksokListAdapter = new ShareYaksokListAdapter(new ArrayList<>(), new ShareYaksokListAdapter.OnItemClickListener() {
             @Override
@@ -162,7 +153,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
     }
 
     private void setupDrawerButton() {
-        ivMenu.setOnClickListener(v ->
+        binding.ivMenu.setOnClickListener(v ->
                 ((DrawerLayout) requireActivity().findViewById(R.id.drawer_layout)).openDrawer(GravityCompat.START));
     }
 
@@ -213,27 +204,27 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
 
     private void selectMyYaksokTab() {
         isMyYaksokTab = true;
-        tvMyYaksok.setBackgroundResource(R.drawable.bg_touch_my_yaksok_list);
-        tvSharedYaksok.setBackgroundResource(R.drawable.bg_black_border);
+        binding.tvMyYaksok.setBackgroundResource(R.drawable.bg_touch_my_yaksok_list);
+        binding.tvSharedYaksok.setBackgroundResource(R.drawable.bg_black_border);
 
-        rvSharedUserList.setVisibility(View.GONE);
-        rvYaksokList.setVisibility(View.VISIBLE);
+        binding.rvShareUserList.setVisibility(View.GONE);
+        binding.rvYaksokList.setVisibility(View.VISIBLE);
 
-        rvYaksokList.setAdapter(adapter);
+        binding.rvYaksokList.setAdapter(adapter);
         fetchYaksokList();
     }
 
     private void selectSharedYaksokTab() {
         isMyYaksokTab = false;
-        tvSharedYaksok.setBackgroundResource(R.drawable.bg_touch_shared_yaksok_list);
-        tvMyYaksok.setBackgroundResource(R.drawable.bg_black_border);
+        binding.tvSharedYaksok.setBackgroundResource(R.drawable.bg_touch_shared_yaksok_list);
+        binding.tvMyYaksok.setBackgroundResource(R.drawable.bg_black_border);
 
         currentSenderId = null;
 
         shareYaksokListAdapter.updateData(new ArrayList<>());
-        rvYaksokList.setAdapter(shareYaksokListAdapter);
+        binding.rvYaksokList.setAdapter(shareYaksokListAdapter);
 
-        rvSharedUserList.setVisibility(View.VISIBLE);
+        binding.rvShareUserList.setVisibility(View.VISIBLE);
         fetchSharedUserList();
     }
 

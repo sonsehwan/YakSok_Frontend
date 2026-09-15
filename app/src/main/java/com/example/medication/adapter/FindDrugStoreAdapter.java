@@ -1,14 +1,12 @@
 package com.example.medication.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
+import com.example.medication.databinding.ItemSimpleDrugstoreBinding;
 import com.example.medication.model.SearchDrugStore;
 
 import java.util.List;
@@ -36,17 +34,17 @@ public class FindDrugStoreAdapter extends RecyclerView.Adapter<FindDrugStoreAdap
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // item_simple_drugstore.xml 레이아웃을 뷰 객체로 팽창(Inflate)
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_simple_drugstore, parent, false);
-        return new ViewHolder(view);
+        ItemSimpleDrugstoreBinding binding = ItemSimpleDrugstoreBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SearchDrugStore store = drugStores.get(position);
 
-        holder.tvName.setText(store.getDutyName());
-        holder.tvAddress.setText(store.getDutyAddr());
+        holder.binding.tvDrugstoreName.setText(store.getDutyName());
+        holder.binding.tvDrugstoreAddress.setText(store.getDutyAddr());
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
@@ -61,13 +59,11 @@ public class FindDrugStoreAdapter extends RecyclerView.Adapter<FindDrugStoreAdap
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName;
-        TextView tvAddress;
+        ItemSimpleDrugstoreBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_drugstore_name);
-            tvAddress = itemView.findViewById(R.id.tv_drugstore_address);
+        public ViewHolder(@NonNull ItemSimpleDrugstoreBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

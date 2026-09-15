@@ -1,14 +1,12 @@
 package com.example.medication.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
+import com.example.medication.databinding.ItemFriendBinding;
 import com.example.medication.model.response.FriendResponseDto;
 
 import java.util.List;
@@ -43,17 +41,17 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
-        return new ViewHolder(view);
+        ItemFriendBinding binding = ItemFriendBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FriendResponseDto item = items.get(position);
 
-        holder.tvFriendName.setText(item.getNickname());
-        holder.tvFriendEmail.setText(item.getEmail());
-        holder.tvAvatar.setText(initialOf(item.getNickname()));
+        holder.binding.tvTimeFriendName.setText(item.getNickname());
+        holder.binding.tvFriendEmail.setText(item.getEmail());
+        holder.binding.tvAvatar.setText(initialOf(item.getNickname()));
 
         holder.itemView.setOnClickListener(v -> {
             int pos = holder.getBindingAdapterPosition();
@@ -92,13 +90,11 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvFriendName, tvFriendEmail, tvAvatar;
+        ItemFriendBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvFriendName = itemView.findViewById(R.id.tv_time_friend_name);
-            tvFriendEmail = itemView.findViewById(R.id.tv_friend_email);
-            tvAvatar = itemView.findViewById(R.id.tv_avatar);
+        public ViewHolder(@NonNull ItemFriendBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

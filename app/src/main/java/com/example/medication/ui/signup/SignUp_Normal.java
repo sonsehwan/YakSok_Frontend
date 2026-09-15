@@ -8,15 +8,13 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.medication.ui.base.BaseActivity;
 
-import com.example.medication.InputView;
+import com.example.medication.databinding.ActivitySignUpNormalBinding;
 import com.example.medication.ui.login.Login;
-import com.example.medication.R;
 import com.example.medication.model.request.UserRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
@@ -31,18 +29,16 @@ import retrofit2.Response;
 
 public class SignUp_Normal extends BaseActivity {
 
-    private InputView inputLoginId, inputEmail, inputPw, inputCheckPw, inputNickName;
+    private ActivitySignUpNormalBinding binding;
 
-    private Button btnFinish;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up_normal );
+        binding = ActivitySignUpNormalBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        initViews();
-
-        inputCheckPw.setOnValidateListener(text ->{
-            String originalPw = inputPw.getText();
+        binding.inputCheckPw.setOnValidateListener(text ->{
+            String originalPw = binding.inputPw.getText();
             if(!text.equals(originalPw)){
                 return "비밀번호가 일치하지 않습니다.";
             }
@@ -52,7 +48,7 @@ public class SignUp_Normal extends BaseActivity {
         Intent intent = getIntent();
         String type = intent.getStringExtra("SignUp_Type");
 
-        btnFinish.setOnClickListener(v -> {startSignUp(type);});
+        binding.btnFinish.setOnClickListener(v -> {startSignUp(type);});
     }
 
     @Override
@@ -93,21 +89,21 @@ public class SignUp_Normal extends BaseActivity {
     }
 
     private void startSignUp(String type){
-        boolean isLoginIdValid = inputLoginId.isValid();
-        boolean isEmailVaild = inputEmail.isValid();
-        boolean isPwVaild = inputPw.isValid();
-        boolean isCheckPw = inputCheckPw.isValid();
-        boolean isNickName = inputNickName.isValid();
+        boolean isLoginIdValid = binding.inputLoginId.isValid();
+        boolean isEmailVaild = binding.inputEmail.isValid();
+        boolean isPwVaild = binding.inputPw.isValid();
+        boolean isCheckPw = binding.inputCheckPw.isValid();
+        boolean isNickName = binding.inputNickname.isValid();
 
         if(!isLoginIdValid || !isEmailVaild || !isPwVaild || !isCheckPw || !isNickName){
             showToast("입력 정보를 다시 확인해주세요.");
             return;
         }
 
-        String loginId = inputLoginId.getText();
-        String email = inputEmail.getText();
-        String pw = inputPw.getText();
-        String nickName = inputNickName.getText();
+        String loginId = binding.inputLoginId.getText();
+        String email = binding.inputEmail.getText();
+        String pw = binding.inputPw.getText();
+        String nickName = binding.inputNickname.getText();
         String role = type;
 
 
@@ -155,11 +151,11 @@ public class SignUp_Normal extends BaseActivity {
                 String message = errorResponse.getMessage();
 
                 if(message.contains("아이디")){
-                    inputLoginId.showError(message);
+                    binding.inputLoginId.showError(message);
                 }else if(message.contains("이메일")){
-                    inputEmail.showError(message);
+                    binding.inputEmail.showError(message);
                 }else if(message.contains("닉네임")){
-                    inputNickName.showError(message);
+                    binding.inputNickname.showError(message);
                 }else{
                     showToast(message);
                 }
@@ -175,14 +171,5 @@ public class SignUp_Normal extends BaseActivity {
 
     private void showToast(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void initViews() {
-        inputLoginId = findViewById(R.id.input_login_id);
-        inputEmail = findViewById(R.id.input_email);
-        inputPw = findViewById(R.id.input_pw);
-        inputCheckPw = findViewById(R.id.input_check_pw);
-        inputNickName = findViewById(R.id.input_nickname);
-        btnFinish = findViewById(R.id.btn_finish);
     }
 }

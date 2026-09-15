@@ -3,16 +3,14 @@ package com.example.medication.adapter;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.R;
+import com.example.medication.databinding.ItemYaksokBinding;
 import com.example.medication.model.Yaksok;
 
 import java.util.List;
@@ -35,9 +33,8 @@ public class ShareYaksokListAdapter extends RecyclerView.Adapter<ShareYaksokList
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_yaksok, parent, false);
-        return new ViewHolder(view);
+        ItemYaksokBinding binding = ItemYaksokBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -45,9 +42,9 @@ public class ShareYaksokListAdapter extends RecyclerView.Adapter<ShareYaksokList
         Yaksok item = items.get(position);
 
         String owner = item.getOwnerNickname();
-        holder.tvTitle.setText(owner != null ? owner + "님의 " + item.getTitle() : item.getTitle());
+        holder.binding.tvYaksokTitle.setText(owner != null ? owner + "님의 " + item.getTitle() : item.getTitle());
 
-        holder.tvPeriod.setText(item.getStartDate() + " 부터 " + item.getPrescriptionDays() + "일간");
+        holder.binding.tvYaksokPeriod.setText(item.getStartDate() + " 부터 " + item.getPrescriptionDays() + "일간");
 
         // 원본을 참조하므로 상대방이 약을 먹을 때마다 이 값이 최신으로 바뀐다.
         updateProgress(holder, item.getCurrentClearNotifications(), item.getTotalNotifications());
@@ -66,8 +63,8 @@ public class ShareYaksokListAdapter extends RecyclerView.Adapter<ShareYaksokList
         // 0%면 게이지가 아무것도 안 그려져 비어 보이므로, 링을 꽉 채운 뒤 빨간색으로 표시한다.
         int visualPercent = (percent == 0) ? 100 : percent;
 
-        holder.progressBar.setProgress(visualPercent);
-        holder.tvPercent.setText(percent + "%");
+        holder.binding.statusYaksok.setProgress(visualPercent);
+        holder.binding.tvProgressPercent.setText(percent + "%");
 
         Context context = holder.itemView.getContext();
         int tintColor;
@@ -80,7 +77,7 @@ public class ShareYaksokListAdapter extends RecyclerView.Adapter<ShareYaksokList
             tintColor = ContextCompat.getColor(context, R.color.status_pending);
         }
 
-        holder.progressBar.setProgressTintList(ColorStateList.valueOf(tintColor));
+        holder.binding.statusYaksok.setProgressTintList(ColorStateList.valueOf(tintColor));
     }
 
     @Override
@@ -95,15 +92,11 @@ public class ShareYaksokListAdapter extends RecyclerView.Adapter<ShareYaksokList
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvPeriod, tvPercent;
-        ProgressBar progressBar;
+        ItemYaksokBinding binding;
 
-        ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvTitle = itemView.findViewById(R.id.tv_yaksok_title);
-            tvPeriod = itemView.findViewById(R.id.tv_yaksok_period);
-            tvPercent = itemView.findViewById(R.id.tv_progress_percent);
-            progressBar = itemView.findViewById(R.id.status_yaksok);
+        ViewHolder(@NonNull ItemYaksokBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

@@ -1,14 +1,12 @@
 package com.example.medication.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
+import com.example.medication.databinding.ItemChatRoomBinding;
 import com.example.medication.model.response.ChatRoomListDto;
 
 import java.util.List;
@@ -36,9 +34,8 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_chat_room, parent, false);
-        return new ViewHolder(view);
+        ItemChatRoomBinding binding = ItemChatRoomBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -53,24 +50,20 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView tvRoomName;
-        private final TextView tvLastMessage;
-        private final TextView tvTime;
+        ItemChatRoomBinding binding;
 
-        ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvRoomName = itemView.findViewById(R.id.tv_room_name);
-            tvLastMessage = itemView.findViewById(R.id.tv_last_message);
-            tvTime = itemView.findViewById(R.id.tv_time);
+        ViewHolder(@NonNull ItemChatRoomBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(ChatRoomListDto room) {
-            tvRoomName.setText(room.getRoomName());
+            binding.tvRoomName.setText(room.getRoomName());
 
             String last = room.getLastMessage();
-            tvLastMessage.setText(last != null ? last : "아직 대화가 없어요.");
+            binding.tvLastMessage.setText(last != null ? last : "아직 대화가 없어요.");
 
-            tvTime.setText(formatTime(room.getLastMessageAt()));
+            binding.tvTime.setText(formatTime(room.getLastMessageAt()));
 
             itemView.setOnClickListener(v -> listener.onRoomClick(room));
             itemView.setOnLongClickListener(v -> {

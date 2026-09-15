@@ -1,16 +1,13 @@
 package com.example.medication.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.medication.R;
+import com.example.medication.databinding.ItemSimpleMedicineInfoBinding;
 import com.example.medication.model.response.MedicineSearchResponse;
 
 import java.util.ArrayList;
@@ -46,9 +43,9 @@ public class MedicineAdapter extends RecyclerView.Adapter<MedicineAdapter.Medici
     @NonNull
     @Override
     public MedicineViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_simple_medicine_info, parent, false);
-        return new MedicineViewHolder(view);
+        ItemSimpleMedicineInfoBinding binding = ItemSimpleMedicineInfoBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new MedicineViewHolder(binding);
     }
 
     @Override
@@ -56,14 +53,14 @@ public class MedicineAdapter extends RecyclerView.Adapter<MedicineAdapter.Medici
         MedicineSearchResponse medicine = medicineList.get(position);
 
         // 약 이름 설정
-        holder.tvName.setText(medicine.getName());
+        holder.binding.tvMedicineName.setText(medicine.getName());
 
         // Glide를 사용하여 공공데이터 이미지 URL 로드
         Glide.with(holder.itemView.getContext())
                 .load(medicine.getImage())
                 .placeholder(android.R.drawable.ic_menu_report_image)
                 .error(android.R.drawable.ic_menu_close_clear_cancel)
-                .into(holder.ivImage);
+                .into(holder.binding.ivMedicine);
 
         // 아이템 클릭 이벤트 바인딩
         holder.itemView.setOnClickListener(v -> {
@@ -79,13 +76,11 @@ public class MedicineAdapter extends RecyclerView.Adapter<MedicineAdapter.Medici
     }
 
     public static class MedicineViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivImage;
-        TextView tvName;
+        ItemSimpleMedicineInfoBinding binding;
 
-        public MedicineViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ivImage = itemView.findViewById(R.id.iv_medicine);
-            tvName = itemView.findViewById(R.id.tv_medicine_name);
+        public MedicineViewHolder(@NonNull ItemSimpleMedicineInfoBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

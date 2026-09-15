@@ -8,12 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -21,13 +16,13 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.ui.chattingroom.ChattingRoom;
-import com.example.medication.InputView;
 import com.example.medication.R;
 import com.example.medication.adapter.DetailYaksokMedicationAdapter;
 import com.example.medication.adapter.FriendListAdapter;
+import com.example.medication.databinding.ActivityYaksokDetailBinding;
+import com.example.medication.databinding.DialogSelectFriendBinding;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.FriendChatRoomRequest;
 import com.example.medication.model.request.PillRequest;
@@ -50,15 +45,9 @@ import retrofit2.Response;
 
 public class YaksokDetail extends BaseActivity {
 
-    private ImageView ivBack, ivMenu;
-    private InputView inputStartDate, inputTitle, inputPrescriptionDays;
-    private InputView inputSetMorningTime, inputSetLunchTime, inputSetDinnerTime;
-    private LinearLayout llDasage;
-    private CheckBox cbMorning, cbLunch, cbDinner;
-    private RadioGroup rgDosageTime;
+    private ActivityYaksokDetailBinding binding;
 
     // 선택된 약 목록 리사이클러뷰 관련
-    private RecyclerView rvSelectedPills;
     private DetailYaksokMedicationAdapter settingAdapter;
     private final List<PillRequest> selectedPills = new ArrayList<>();
     private Yaksok originalYaksok;
@@ -68,9 +57,9 @@ public class YaksokDetail extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_yaksok_detail);
+        binding = ActivityYaksokDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        initViews();
         setupRecyclerView();
 
         modifyLauncher = registerForActivityResult(
@@ -90,9 +79,9 @@ public class YaksokDetail extends BaseActivity {
 
         originalYaksok = (Yaksok)getIntent().getSerializableExtra("YAKSOK_DATA");
 
-        ivBack.setOnClickListener(v -> finish());
+        binding.ivBack.setOnClickListener(v -> finish());
 
-        ivMenu.setOnClickListener(view -> {
+        binding.ivMenu.setOnClickListener(view -> {
             showMenu(view, originalYaksok);
         });
 
@@ -105,9 +94,9 @@ public class YaksokDetail extends BaseActivity {
     }
 
     private void populateViews(Yaksok yaksok){
-        if(yaksok.getTitle() != null) inputTitle.setText(yaksok.getTitle());
-        if (yaksok.getStartDate() != null) inputStartDate.setText(yaksok.getStartDate());
-        inputPrescriptionDays.setText(String.valueOf(yaksok.getPrescriptionDays()));
+        if(yaksok.getTitle() != null) binding.inputCardTitle.setText(yaksok.getTitle());
+        if (yaksok.getStartDate() != null) binding.inputStartDate.setText(yaksok.getStartDate());
+        binding.inputPrescriptionDays.setText(String.valueOf(yaksok.getPrescriptionDays()));
 
         if(yaksok.getPills() != null && !yaksok.getPills().isEmpty()) {
             selectedPills.clear();
@@ -116,54 +105,54 @@ public class YaksokDetail extends BaseActivity {
         }
 
         if (yaksok.isTakeMorning()) {
-            cbMorning.setChecked(true);
-            inputSetMorningTime.setVisibility(View.VISIBLE);
-            if (yaksok.getTimeMorning() != null) inputSetMorningTime.setText(yaksok.getTimeMorning());
+            binding.cbMorning.setChecked(true);
+            binding.inputSetMorningTime.setVisibility(View.VISIBLE);
+            if (yaksok.getTimeMorning() != null) binding.inputSetMorningTime.setText(yaksok.getTimeMorning());
         }
         if (yaksok.isTakeLunch()) {
-            cbLunch.setChecked(true);
-            inputSetLunchTime.setVisibility(View.VISIBLE);
-            if (yaksok.getTimeLunch() != null) inputSetLunchTime.setText(yaksok.getTimeLunch());
+            binding.cbLunch.setChecked(true);
+            binding.inputSetLunchTime.setVisibility(View.VISIBLE);
+            if (yaksok.getTimeLunch() != null) binding.inputSetLunchTime.setText(yaksok.getTimeLunch());
         }
         if (yaksok.isTakeDinner()) {
-            cbDinner.setChecked(true);
-            inputSetDinnerTime.setVisibility(View.VISIBLE);
-            if (yaksok.getTimeDinner() != null) inputSetDinnerTime.setText(yaksok.getTimeDinner());
+            binding.cbDinner.setChecked(true);
+            binding.inputSetDinnerTime.setVisibility(View.VISIBLE);
+            if (yaksok.getTimeDinner() != null) binding.inputSetDinnerTime.setText(yaksok.getTimeDinner());
         }
 
         String dosageTime = yaksok.getDosageTime();
         if (dosageTime != null) {
             if (dosageTime.equals("식전 30분")) {
-                rgDosageTime.check(R.id.rb_before);
+                binding.rgDosageTime.check(R.id.rb_before);
             } else if (dosageTime.equals("식후 30분")) {
-                rgDosageTime.check(R.id.rb_after);
+                binding.rgDosageTime.check(R.id.rb_after);
             } else { // 직후
-                rgDosageTime.check(R.id.rb_anytime);
+                binding.rgDosageTime.check(R.id.rb_anytime);
             }
         }
     }
 
     private void disableAllInteractions() {
-        cbMorning.setEnabled(false);
-        cbLunch.setEnabled(false);
-        cbDinner.setEnabled(false);
+        binding.cbMorning.setEnabled(false);
+        binding.cbLunch.setEnabled(false);
+        binding.cbDinner.setEnabled(false);
 
-        inputSetMorningTime.setClickable(false);
-        inputSetMorningTime.setFocusable(false);
-        inputSetLunchTime.setClickable(false);
-        inputSetLunchTime.setFocusable(false);
-        inputSetDinnerTime.setClickable(false);
-        inputSetDinnerTime.setFocusable(false);
+        binding.inputSetMorningTime.setClickable(false);
+        binding.inputSetMorningTime.setFocusable(false);
+        binding.inputSetLunchTime.setClickable(false);
+        binding.inputSetLunchTime.setFocusable(false);
+        binding.inputSetDinnerTime.setClickable(false);
+        binding.inputSetDinnerTime.setFocusable(false);
 
-        for (int i = 0; i < rgDosageTime.getChildCount(); i++) {
-            rgDosageTime.getChildAt(i).setEnabled(false);
+        for (int i = 0; i < binding.rgDosageTime.getChildCount(); i++) {
+            binding.rgDosageTime.getChildAt(i).setEnabled(false);
         }
     }
 
     private void setupRecyclerView() {
         settingAdapter = new DetailYaksokMedicationAdapter(selectedPills);
-        rvSelectedPills.setLayoutManager(new LinearLayoutManager(this));
-        rvSelectedPills.setAdapter(settingAdapter);
+        binding.rvSelectedPills.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvSelectedPills.setAdapter(settingAdapter);
     }
 
     private void showDeleteConfirmDialog(Yaksok yaksok) {
@@ -211,8 +200,9 @@ public class YaksokDetail extends BaseActivity {
             return;
         }
 
+        DialogSelectFriendBinding dialogBinding = DialogSelectFriendBinding.inflate(getLayoutInflater());
         Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_select_friend);
+        dialog.setContentView(dialogBinding.getRoot());
 
         if (dialog.getWindow() != null) {
             // 기본 창 배경을 없애야 둥근 모서리 밖으로 검은 모서리가 보이지 않는다
@@ -222,16 +212,13 @@ public class YaksokDetail extends BaseActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
-        RecyclerView rvFriend = dialog.findViewById(R.id.rv_select_friend);
-        TextView tvEmpty = dialog.findViewById(R.id.tv_empty);
-
         FriendListAdapter adapter = new FriendListAdapter(new ArrayList<>(), (friend, position) -> {
             dialog.dismiss();
             openChatRoomAndShare(friend, yaksok);
         });
 
-        rvFriend.setLayoutManager(new LinearLayoutManager(this));
-        rvFriend.setAdapter(adapter);
+        dialogBinding.rvSelectFriend.setLayoutManager(new LinearLayoutManager(this));
+        dialogBinding.rvSelectFriend.setAdapter(adapter);
 
         NetworkClient.getFriendApi().getFriendList()
                 .enqueue(new Callback<ApiResponse<FriendListDto>>() {
@@ -242,7 +229,7 @@ public class YaksokDetail extends BaseActivity {
                                 && response.body().getData() != null) {
                             List<FriendResponseDto> friends = response.body().getData().getFriends();
                             adapter.updateData(friends);
-                            tvEmpty.setVisibility(
+                            dialogBinding.tvEmpty.setVisibility(
                                     (friends == null || friends.isEmpty()) ? View.VISIBLE : View.GONE);
                         } else {
                             showToast("친구 목록을 불러오지 못했습니다.");
@@ -343,23 +330,6 @@ public class YaksokDetail extends BaseActivity {
             return false;
         });
         menu.show();
-    }
-
-    private void initViews() {
-        ivBack = findViewById(R.id.iv_back);
-        ivMenu = findViewById(R.id.iv_menu);
-        inputStartDate = findViewById(R.id.input_start_date);
-        inputTitle = findViewById(R.id.input_card_title);
-        inputPrescriptionDays = findViewById(R.id.input_prescriptionDays);
-        llDasage = findViewById(R.id.ll_dasage);
-        cbMorning = findViewById(R.id.cb_morning);
-        cbLunch = findViewById(R.id.cb_lunch);
-        cbDinner = findViewById(R.id.cb_dinner);
-        inputSetMorningTime = findViewById(R.id.input_set_morning_time);
-        inputSetLunchTime = findViewById(R.id.input_set_lunch_time);
-        inputSetDinnerTime = findViewById(R.id.input_set_dinner_time);
-        rgDosageTime = findViewById(R.id.rg_dosage_time);
-        rvSelectedPills = findViewById(R.id.rv_selected_pills);
     }
 
     private void showToast(String message) {

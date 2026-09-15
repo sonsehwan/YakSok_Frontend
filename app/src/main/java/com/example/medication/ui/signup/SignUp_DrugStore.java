@@ -9,9 +9,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -19,8 +17,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import com.example.medication.ui.base.BaseActivity;
 import androidx.core.content.ContextCompat;
 
-import com.example.medication.InputView;
 import com.example.medication.R;
+import com.example.medication.databinding.ActivitySignUpDrugstoreBinding;
 import com.example.medication.model.SearchDrugStore;
 import com.example.medication.model.request.UserRequest;
 import com.example.medication.model.response.ApiResponse;
@@ -28,7 +26,6 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.example.medication.ui.finddrugstore.FindDrugStore;
 import com.example.medication.ui.login.Login;
-import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -39,10 +36,7 @@ import retrofit2.Response;
 
 public class SignUp_DrugStore extends BaseActivity {
 
-    private InputView inputLoginId, inputEmail, inputPw, inputCheckPw, inputNickName;
-    private Button btnSignUp, btnFindDrugStore;
-    private TextView tvDrugstore, tvDrugstoreError;
-    private MaterialCardView mcvFindDrugstore;
+    private ActivitySignUpDrugstoreBinding binding;
 
     private ActivityResultLauncher<Intent> findDrugStoreLauncher;
 
@@ -51,20 +45,20 @@ public class SignUp_DrugStore extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up_drugstore );
+        binding = ActivitySignUpDrugstoreBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        initViews();
         setupFindDrugStoreLauncher();
 
-        inputCheckPw.setOnValidateListener(text ->{
-            String originalPw = inputPw.getText();
+        binding.inputCheckPw.setOnValidateListener(text ->{
+            String originalPw = binding.inputPw.getText();
             if(!text.equals(originalPw)){
                 return "비밀번호가 일치하지 않습니다.";
             }
             return null;
         });
 
-        btnFindDrugStore.setOnClickListener(v -> {
+        binding.btnFindDrugstore.setOnClickListener(v -> {
             Intent intent = new Intent(this, FindDrugStore.class);
             intent.putExtra("INTENT_TYPE", "sign_up");
             findDrugStoreLauncher.launch(intent);
@@ -73,7 +67,7 @@ public class SignUp_DrugStore extends BaseActivity {
         Intent getIntent = getIntent();
         String type = getIntent.getStringExtra("SignUp_Type");
 
-        btnSignUp.setOnClickListener(v -> {
+        binding.btnSignUp.setOnClickListener(v -> {
             if(!checkValid()){
                 return;
             }
@@ -119,11 +113,11 @@ public class SignUp_DrugStore extends BaseActivity {
     }
 
     private boolean checkValid(){
-        boolean isLoginIdValid = inputLoginId.isValid();
-        boolean isEmailVaild = inputEmail.isValid();
-        boolean isPwVaild = inputPw.isValid();
-        boolean isCheckPw = inputCheckPw.isValid();
-        boolean isNickName = inputNickName.isValid();
+        boolean isLoginIdValid = binding.inputLoginId.isValid();
+        boolean isEmailVaild = binding.inputEmail.isValid();
+        boolean isPwVaild = binding.inputPw.isValid();
+        boolean isCheckPw = binding.inputCheckPw.isValid();
+        boolean isNickName = binding.inputNickname.isValid();
 
         boolean isDrugStoreValid = true;
         if(drugStore == null){
@@ -151,7 +145,7 @@ public class SignUp_DrugStore extends BaseActivity {
                             showToast("약국 정보를 가져오는데 실패하였습니다.");
                         }else{
                             hideDrugStoreError();
-                            tvDrugstore.setText(drugStore.getDutyName());
+                            binding.tvDrugstore.setText(drugStore.getDutyName());
                         }
                     }
                 }
@@ -159,10 +153,10 @@ public class SignUp_DrugStore extends BaseActivity {
     }
 
     private void startSignUp(String type, SearchDrugStore drugStore){
-        String loginId = inputLoginId.getText();
-        String email = inputEmail.getText();
-        String pw = inputPw.getText();
-        String nickName = inputNickName.getText();
+        String loginId = binding.inputLoginId.getText();
+        String email = binding.inputEmail.getText();
+        String pw = binding.inputPw.getText();
+        String nickName = binding.inputNickname.getText();
         String role = type;
 
         UserRequest request = new UserRequest(loginId, email, pw, nickName, drugStore, role);
@@ -209,11 +203,11 @@ public class SignUp_DrugStore extends BaseActivity {
                 String message = errorResponse.getMessage();
 
                 if(message.contains("아이디")){
-                    inputLoginId.showError(message);
+                    binding.inputLoginId.showError(message);
                 }else if(message.contains("이메일")){
-                    inputEmail.showError(message);
+                    binding.inputEmail.showError(message);
                 }else if(message.contains("닉네임")){
-                    inputNickName.showError(message);
+                    binding.inputNickname.showError(message);
                 }else if(message.contains("약국")){
                     showDrugStoreError(message);
                 }else{
@@ -230,30 +224,17 @@ public class SignUp_DrugStore extends BaseActivity {
     }
 
     private void showDrugStoreError(String message){
-        tvDrugstoreError.setText(message);
-        tvDrugstoreError.setVisibility(View.VISIBLE);
-        mcvFindDrugstore.setStrokeColor(Color.parseColor("#FF0000"));
+        binding.tvDrugstoreError.setText(message);
+        binding.tvDrugstoreError.setVisibility(View.VISIBLE);
+        binding.mcvFindDrugstore.setStrokeColor(Color.parseColor("#FF0000"));
     }
 
     private void hideDrugStoreError(){
-        tvDrugstoreError.setVisibility(View.GONE);
-        mcvFindDrugstore.setStrokeColor(ContextCompat.getColor(this, R.color.brand_icon));
+        binding.tvDrugstoreError.setVisibility(View.GONE);
+        binding.mcvFindDrugstore.setStrokeColor(ContextCompat.getColor(this, R.color.brand_icon));
     }
 
     private void showToast(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void initViews() {
-        inputLoginId = findViewById(R.id.input_login_id);
-        inputEmail = findViewById(R.id.input_email);
-        inputPw = findViewById(R.id.input_pw);
-        inputCheckPw = findViewById(R.id.input_check_pw);
-        inputNickName = findViewById(R.id.input_nickname);
-        btnFindDrugStore = findViewById(R.id.btn_find_drugstore);
-        btnSignUp = findViewById(R.id.btn_sign_up);
-        tvDrugstore = findViewById(R.id.tv_drugstore);
-        tvDrugstoreError = findViewById(R.id.tv_drugstore_error);
-        mcvFindDrugstore = findViewById(R.id.mcv_find_drugstore);
     }
 }

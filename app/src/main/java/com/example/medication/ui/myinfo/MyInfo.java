@@ -8,18 +8,14 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 
-import com.example.medication.InputView;
 import com.example.medication.R;
+import com.example.medication.databinding.ActivityMyInfoBinding;
 import com.example.medication.model.request.ModifyInfoRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
@@ -40,60 +36,47 @@ import retrofit2.Response;
 
 public class MyInfo extends BaseActivity {
 
-    private ImageView ivBack;
-    private InputView inputNickname;
-    private Button btnChangePw, btnSaveInfo, btnWithdraw, btnFindDrugStore;
-    private TextView tvLabelDrugstore;
-    private TextView tvDrugstore;
-    private LinearLayout llFindDrugstore;
+    private ActivityMyInfoBinding binding;
 
     private ActivityResultLauncher<Intent> findDrugStoreLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_info);
+        binding = ActivityMyInfoBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        ivBack = findViewById(R.id.iv_back);
-        inputNickname = findViewById(R.id.input_nickname);
-        btnChangePw = findViewById(R.id.btn_change_pw);
-        btnSaveInfo = findViewById(R.id.btn_save_info);
-        btnFindDrugStore = findViewById(R.id.btn_find_drugstore);
-        btnWithdraw = findViewById(R.id.btn_withdraw);
-        tvLabelDrugstore = findViewById(R.id.tv_label_drugstore);
-        tvDrugstore = findViewById(R.id.tv_drugstore);
-        llFindDrugstore = findViewById(R.id.ll_find_drugstore);
-        btnWithdraw.setOnClickListener(v -> showWithdrawConfirmDialog());
+        binding.btnWithdraw.setOnClickListener(v -> showWithdrawConfirmDialog());
 
         // 기존에 저장된 닉네임을 불러와서 미리 채워둡니다.
         String currentNickname = SprefsManager.getUserNickName(this);
-        inputNickname.setText(currentNickname);
+        binding.inputNickname.setText(currentNickname);
 
         // 약국 회원일 때만 약국 등록 영역을 노출합니다.
         UserResponse currentUser = SprefsManager.getUser(this);
         if (currentUser != null && Objects.equals(currentUser.getRole(), "DRUGSTORE")) {
-            tvLabelDrugstore.setVisibility(View.VISIBLE);
-            llFindDrugstore.setVisibility(View.VISIBLE);
+            binding.tvLabelDrugstore.setVisibility(View.VISIBLE);
+            binding.llFindDrugstore.setVisibility(View.VISIBLE);
 
             if (currentUser.getMyDrugStore() != null) {
-                tvDrugstore.setText(currentUser.getMyDrugStore().getDutyName());
+                binding.tvDrugstore.setText(currentUser.getMyDrugStore().getDutyName());
             }
         }
 
         // 뒤로가기 버튼 클릭 이벤트
-        ivBack.setOnClickListener(v -> finish());
+        binding.ivBack.setOnClickListener(v -> finish());
 
         // 수정하기 버튼 클릭 이벤트
-        btnSaveInfo.setOnClickListener(v -> {
+        binding.btnSaveInfo.setOnClickListener(v -> {
             startModify();
         });
 
-        btnChangePw.setOnClickListener(v->{
+        binding.btnChangePw.setOnClickListener(v->{
             Intent intent = new Intent(this, ModifyPassword.class);
             startActivity(intent);
         });
 
-        btnFindDrugStore.setOnClickListener(view -> {
+        binding.btnFindDrugstore.setOnClickListener(view -> {
             Intent intent = new Intent(this, FindDrugStore.class);
             intent.putExtra("INTENT_TYPE", "modify");
             startActivity(intent);
@@ -157,12 +140,12 @@ public class MyInfo extends BaseActivity {
     }
 
     private void startModify(){
-        if(!inputNickname.isValid()){
+        if(!binding.inputNickname.isValid()){
             return;
         }
 
         Long userId = SprefsManager.getUserId(MyInfo.this);
-        String nickname = inputNickname.getText();
+        String nickname = binding.inputNickname.getText();
 
         ModifyInfoRequest request = new ModifyInfoRequest(userId, nickname);
 

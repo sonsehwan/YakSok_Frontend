@@ -5,35 +5,40 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.example.medication.R;
+import com.example.medication.databinding.BottomSheetSignUpTypeBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class SignUpTypeBottomSheet extends BottomSheetDialogFragment {
+
+    private BottomSheetSignUpTypeBinding binding;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @NonNull Bundle savedInstanceStatue) {
-        View view = inflater.inflate(R.layout.bottom_sheet_sign_up_type, container, false);
+        binding = BottomSheetSignUpTypeBinding.inflate(inflater, container, false);
 
-        TextView user_type = view.findViewById(R.id.user_type);
-        TextView drugStore_type = view.findViewById(R.id.drugStore_type);
-
-        user_type.setOnClickListener(v -> {
+        binding.userType.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), SignUp_Normal.class);
             intent.putExtra("SignUp_Type", "NORMAL");
             startActivity(intent);
             dismiss();
         });
 
-        drugStore_type.setOnClickListener(v -> {
+        binding.drugStoreType.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), SignUp_DrugStore.class);
             intent.putExtra("SignUp_Type", "DRUGSTORE");
             startActivity(intent);
             dismiss();
         });
 
-        return view;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -18,8 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.LoadingDialog;
-import com.example.medication.R;
 import com.example.medication.adapter.DrugStoreAdapter;
+import com.example.medication.databinding.ActivityDrugStoreListBinding;
 import com.example.medication.model.DrugStore;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.DrugStoreApi;
@@ -36,10 +35,9 @@ import retrofit2.Response;
 
 public class DrugStoreList extends BaseActivity {
 
-    private RecyclerView rvDrugstoreList;
+    private ActivityDrugStoreListBinding binding;
     private DrugStoreAdapter adapter;
     private LoadingDialog loadingDialog;
-    private ImageView ivBack;
 
     private int currentPage = 1;
     private boolean isLoading = false;
@@ -53,7 +51,8 @@ public class DrugStoreList extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_drug_store_list);
+        binding = ActivityDrugStoreListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         initViews();
         loadingDialog = new LoadingDialog(this);
@@ -121,19 +120,17 @@ public class DrugStoreList extends BaseActivity {
     }
 
     private void initViews() {
-        ivBack = findViewById(R.id.iv_back);
         // 사이드 메뉴로 진입하는 화면이라 하단 네비 대신 뒤로가기로 나간다.
-        ivBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+        binding.ivBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
-        rvDrugstoreList = findViewById(R.id.rv_drugstore_list);
-        rvDrugstoreList.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvDrugstoreList.setLayoutManager(new LinearLayoutManager(this));
 
         setupRecyclerView();
     }
 
     private void setupRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvDrugstoreList.setLayoutManager(layoutManager);
+        binding.rvDrugstoreList.setLayoutManager(layoutManager);
 
         adapter = new DrugStoreAdapter(currentLat, currentLng);
         adapter.setOnItemClickListener(drugStore -> {
@@ -141,9 +138,9 @@ public class DrugStoreList extends BaseActivity {
             intent.putExtra("drugStore", drugStore);
             startActivity(intent);
         });
-        rvDrugstoreList.setAdapter(adapter);
+        binding.rvDrugstoreList.setAdapter(adapter);
 
-        rvDrugstoreList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        binding.rvDrugstoreList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);

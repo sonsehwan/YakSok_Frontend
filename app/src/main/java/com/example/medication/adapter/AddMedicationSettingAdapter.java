@@ -3,17 +3,13 @@ package com.example.medication.adapter;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.medication.R;
+import com.example.medication.databinding.ItemAddMedicationSettingBinding;
 import com.example.medication.model.request.PillRequest;
 
 import java.util.List;
@@ -29,8 +25,9 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_add_medication_setting, parent, false);
-        return new ViewHolder(view);
+        ItemAddMedicationSettingBinding binding = ItemAddMedicationSettingBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -41,15 +38,15 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
                 .load(item.getImage())
                 .placeholder(android.R.drawable.ic_menu_report_image)
                 .error(android.R.drawable.ic_menu_close_clear_cancel)
-                .into(holder.ivImage);
+                .into(holder.binding.ivPillImg);
 
         if (holder.dosageWatcher != null) {
-            holder.etDosage.removeTextChangedListener(holder.dosageWatcher);
+            holder.binding.etDosageValue.removeTextChangedListener(holder.dosageWatcher);
         }
 
-        holder.tvName.setText(item.getName());
-        holder.tvFreq.setText(item.getDailyFrequency() + " 번");
-        holder.etDosage.setText(item.getDosage());
+        holder.binding.tvPillName.setText(item.getName());
+        holder.binding.tvFreqValue.setText(item.getDailyFrequency() + " 번");
+        holder.binding.etDosageValue.setText(item.getDosage());
 
         holder.dosageWatcher = new TextWatcher() {
             @Override
@@ -63,9 +60,9 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
             @Override
             public void afterTextChanged(Editable s) {}
         };
-        holder.etDosage.addTextChangedListener(holder.dosageWatcher);
+        holder.binding.etDosageValue.addTextChangedListener(holder.dosageWatcher);
 
-        holder.btnFreqPlus.setOnClickListener(v -> {
+        holder.binding.btnFreqPlus.setOnClickListener(v -> {
             int currentPos = holder.getBindingAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION) {
                 item.setDailyFrequency(item.getDailyFrequency() + 1);
@@ -73,7 +70,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
             }
         });
 
-        holder.btnFreqMinus.setOnClickListener(v -> {
+        holder.binding.btnFreqMinus.setOnClickListener(v -> {
             int currentPos = holder.getBindingAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION && item.getDailyFrequency() > 1) {
                 item.setDailyFrequency(item.getDailyFrequency() - 1);
@@ -81,7 +78,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
             }
         });
 
-        holder.btnRemove.setOnClickListener(v -> {
+        holder.binding.btnRemove.setOnClickListener(v -> {
             int currentPos = holder.getBindingAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION) {
                 items.remove(currentPos);
@@ -97,22 +94,12 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivImage;
-        TextView tvName, tvDays, tvFreq;
-        EditText etDosage;
-        TextView btnDaysPlus, btnDaysMinus, btnFreqPlus, btnFreqMinus;
-        ImageView btnRemove;
+        ItemAddMedicationSettingBinding binding;
         TextWatcher dosageWatcher;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ivImage = itemView.findViewById(R.id.iv_pill_img);
-            tvName = itemView.findViewById(R.id.tv_pill_name);
-            tvFreq = itemView.findViewById(R.id.tv_freq_value);
-            etDosage = itemView.findViewById(R.id.et_dosage_value);
-            btnFreqPlus = itemView.findViewById(R.id.btn_freq_plus);
-            btnFreqMinus = itemView.findViewById(R.id.btn_freq_minus);
-            btnRemove = itemView.findViewById(R.id.btn_remove);
+        public ViewHolder(@NonNull ItemAddMedicationSettingBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

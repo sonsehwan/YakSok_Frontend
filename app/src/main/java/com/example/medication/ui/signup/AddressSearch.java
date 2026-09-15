@@ -5,10 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.example.medication.R;
+import com.example.medication.databinding.ActivityAddressSearchBinding;
 import com.example.medication.ui.base.BaseActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -16,14 +15,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class AddressSearch extends BaseActivity {
 
-    private WebView webView;
+    private ActivityAddressSearchBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_address_search);
-
-        webView = findViewById(R.id.webView);
+        binding = ActivityAddressSearchBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // webView 대신 최상단 루트 뷰(android.R.id.content)에 Insets를 적용해야 완벽하게 상단바에서 밀려납니다.
         View rootView = findViewById(android.R.id.content);
@@ -33,15 +31,15 @@ public class AddressSearch extends BaseActivity {
             return insets;
         });
 
-        WebSettings webSettings = webView.getSettings();
+        WebSettings webSettings = binding.webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 
-        webView.addJavascriptInterface(new KakaoJavaScriptInterface(), "Android");
+        binding.webView.addJavascriptInterface(new KakaoJavaScriptInterface(), "Android");
 
-        webView.setWebViewClient(new WebViewClient());
+        binding.webView.setWebViewClient(new WebViewClient());
 
-        webView.loadUrl("https://sonsehwan.github.io/Kakao_address/kakao_address.html");
+        binding.webView.loadUrl("https://sonsehwan.github.io/Kakao_address/kakao_address.html");
     }
 
     private class KakaoJavaScriptInterface {

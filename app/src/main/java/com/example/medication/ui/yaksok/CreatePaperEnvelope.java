@@ -9,13 +9,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -30,6 +23,7 @@ import com.example.medication.InputView;
 import com.example.medication.LoadingDialog;
 import com.example.medication.R;
 import com.example.medication.adapter.AddMedicationSettingAdapter;
+import com.example.medication.databinding.ActivityCreateDirectScheduleBinding;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.CreateYakSokRequest;
@@ -70,33 +64,24 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CreatePaperEnvelope extends BaseActivity {
+    private ActivityCreateDirectScheduleBinding binding;
+
     private ActivityResultLauncher<String> galleryLauncher;
     private ActivityResultLauncher<Intent> searchLauncher;
 
-    // UI 컴포넌트들
-    private ImageView ivBack;
-    private InputView inputStartDate, inputTitle, inputPrescriptionDays;
-    private InputView inputSetMorningTime, inputSetLunchTime, inputSetDinnerTime;
-    private LinearLayout llDasage;
-    private CheckBox cbMorning, cbLunch, cbDinner;
-    private RadioGroup rgDosageTime;
-    private RadioButton rb_before, rb_after, rb_anytime;
-    private FrameLayout btnAddPill;
-    private Button btnRegister;
     private LoadingDialog loadingDialog;
 
     // 선택된 약 목록 리사이클러뷰 관련
-    private RecyclerView rvSelectedPills;
     private AddMedicationSettingAdapter settingAdapter;
     private final List<PillRequest> selectedPills = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_direct_schedule);
+        binding = ActivityCreateDirectScheduleBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // 1. UI 및 컴포넌트 초기화
-        initViews();
         setupRecyclerView();
         setupSearchLauncher();
         setupTimePickerLogic();
@@ -104,15 +89,15 @@ public class CreatePaperEnvelope extends BaseActivity {
         loadingDialog = new LoadingDialog(this);
 
         // 2. 기본 클릭 이벤트 설정
-        ivBack.setOnClickListener(v -> finish());
-        inputStartDate.setOnClickListener(v -> showDatePicker());
+        binding.ivBack.setOnClickListener(v -> finish());
+        binding.inputStartDate.setOnClickListener(v -> showDatePicker());
 
-        btnAddPill.setOnClickListener(v -> {
+        binding.btnAddPill.setOnClickListener(v -> {
             Intent intent = new Intent(CreatePaperEnvelope.this, MedicineSearchActivity.class);
             searchLauncher.launch(intent);
         });
 
-        btnRegister.setOnClickListener(v -> {
+        binding.btnRegister.setOnClickListener(v -> {
             if(!validateInput()) return;
             startCreateYaksok();
         });
@@ -134,34 +119,13 @@ public class CreatePaperEnvelope extends BaseActivity {
         galleryLauncher.launch("image/*");
     }
 
-    private void initViews() {
-        ivBack = findViewById(R.id.iv_back);
-        inputStartDate = findViewById(R.id.input_start_date);
-        inputTitle = findViewById(R.id.input_card_title);
-        inputPrescriptionDays = findViewById(R.id.input_prescriptionDays);
-        llDasage = findViewById(R.id.ll_dasage);
-        cbMorning = findViewById(R.id.cb_morning);
-        cbLunch = findViewById(R.id.cb_lunch);
-        cbDinner = findViewById(R.id.cb_dinner);
-        inputSetMorningTime = findViewById(R.id.input_set_morning_time);
-        inputSetLunchTime = findViewById(R.id.input_set_lunch_time);
-        inputSetDinnerTime = findViewById(R.id.input_set_dinner_time);
-        rgDosageTime = findViewById(R.id.rg_dosage_time);
-        rb_before = findViewById(R.id.rb_before);
-        rb_after = findViewById(R.id.rb_after);
-        rb_anytime = findViewById(R.id.rb_anytime);
-        btnAddPill = findViewById(R.id.btn_add_pill);
-        btnRegister = findViewById(R.id.btn_register);
-        rvSelectedPills = findViewById(R.id.rv_selected_pills);
-    }
-
     /***
      * 리사이클러 뷰 셋팅
      */
     private void setupRecyclerView() {
         settingAdapter = new AddMedicationSettingAdapter(selectedPills);
-        rvSelectedPills.setLayoutManager(new LinearLayoutManager(this));
-        rvSelectedPills.setAdapter(settingAdapter);
+        binding.rvSelectedPills.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvSelectedPills.setAdapter(settingAdapter);
 
         settingAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -191,22 +155,22 @@ public class CreatePaperEnvelope extends BaseActivity {
 
     private void setupTimePickerLogic(){
         // 아침 체크박스 로직
-        cbMorning.setOnCheckedChangeListener((button, isChecked) -> {
-            inputSetMorningTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        binding.cbMorning.setOnCheckedChangeListener((button, isChecked) -> {
+            binding.inputSetMorningTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
-        inputSetMorningTime.setOnClickListener(v -> showTimePicker(inputSetMorningTime, 8, 0));
+        binding.inputSetMorningTime.setOnClickListener(v -> showTimePicker(binding.inputSetMorningTime, 8, 0));
 
         // 점심 체크박스 로직
-        cbLunch.setOnCheckedChangeListener((button, isChecked) -> {
-            inputSetLunchTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        binding.cbLunch.setOnCheckedChangeListener((button, isChecked) -> {
+            binding.inputSetLunchTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
-        inputSetLunchTime.setOnClickListener(v -> showTimePicker(inputSetLunchTime, 12, 0));
+        binding.inputSetLunchTime.setOnClickListener(v -> showTimePicker(binding.inputSetLunchTime, 12, 0));
 
         // 저녁 체크박스 로직
-        cbDinner.setOnCheckedChangeListener((button, isChecked) -> {
-            inputSetDinnerTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        binding.cbDinner.setOnCheckedChangeListener((button, isChecked) -> {
+            binding.inputSetDinnerTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
-        inputSetDinnerTime.setOnClickListener(v -> showTimePicker(inputSetDinnerTime, 18, 0));
+        binding.inputSetDinnerTime.setOnClickListener(v -> showTimePicker(binding.inputSetDinnerTime, 18, 0));
     }
 
     private void showTimePicker(InputView targetInputView, int defaultHour, int defaultMinute) {
@@ -254,7 +218,7 @@ public class CreatePaperEnvelope extends BaseActivity {
         Calendar cal = Calendar.getInstance();
         DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
             String dateStr = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month + 1, dayOfMonth);
-            inputStartDate.setText(dateStr);
+            binding.inputStartDate.setText(dateStr);
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         dialog.show();
     }
@@ -263,25 +227,25 @@ public class CreatePaperEnvelope extends BaseActivity {
      * 모든 항목이 입력되었는지 확인
      */
     private boolean validateInput() {
-        if (!inputStartDate.isValid() || !inputTitle.isValid() || !inputPrescriptionDays.isValid()) {
+        if (!binding.inputStartDate.isValid() || !binding.inputCardTitle.isValid() || !binding.inputPrescriptionDays.isValid()) {
             Toast.makeText(this, "필수 항목을 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if(!cbMorning.isChecked() && !cbLunch.isChecked() && !cbDinner.isChecked()){
-            llDasage.setBackgroundResource(R.drawable.bg_error_border);
+        if(!binding.cbMorning.isChecked() && !binding.cbLunch.isChecked() && !binding.cbDinner.isChecked()){
+            binding.llDasage.setBackgroundResource(R.drawable.bg_error_border);
             Toast.makeText(this, "투약 횟수를 선택해주세요.", Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            llDasage.setBackgroundResource(R.drawable.bg_yellow_border);
+            binding.llDasage.setBackgroundResource(R.drawable.bg_yellow_border);
         }
 
-        if(rgDosageTime.getCheckedRadioButtonId() == -1){
-            rgDosageTime.setBackgroundResource(R.drawable.bg_error_border);
+        if(binding.rgDosageTime.getCheckedRadioButtonId() == -1){
+            binding.rgDosageTime.setBackgroundResource(R.drawable.bg_error_border);
             Toast.makeText(this, "투약 시간을 선택해주세요.", Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            rgDosageTime.setBackgroundResource(R.drawable.bg_yellow_border);
+            binding.rgDosageTime.setBackgroundResource(R.drawable.bg_yellow_border);
         }
 
         if (selectedPills.isEmpty()) {
@@ -304,11 +268,11 @@ public class CreatePaperEnvelope extends BaseActivity {
      */
     private void updateRegisterButtonState() {
         if (!selectedPills.isEmpty()) {
-            btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFFEB3B));
-            btnRegister.setTextColor(0xFF000000);
+            binding.btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFFEB3B));
+            binding.btnRegister.setTextColor(0xFF000000);
         } else {
-            btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE0E0E0));
-            btnRegister.setTextColor(0xFFFFFFFF);
+            binding.btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE0E0E0));
+            binding.btnRegister.setTextColor(0xFFFFFFFF);
         }
     }
 
@@ -470,35 +434,35 @@ public class CreatePaperEnvelope extends BaseActivity {
                     String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
                     // 메인 스레드에서 UI 동적 업데이트
-                    if (inputTitle != null) inputTitle.setText(finalTitle);
-                    if (inputPrescriptionDays != null) inputPrescriptionDays.setText(String.valueOf(maxDays > 0 ? maxDays : 1));
-                    if (inputStartDate != null) inputStartDate.setText(currentDate);
+                    if (binding.inputCardTitle != null) binding.inputCardTitle.setText(finalTitle);
+                    if (binding.inputPrescriptionDays != null) binding.inputPrescriptionDays.setText(String.valueOf(maxDays > 0 ? maxDays : 1));
+                    if (binding.inputStartDate != null) binding.inputStartDate.setText(currentDate);
 
                     // frequency 로직에 따른 체크박스 자동 배분
-                    if (cbMorning != null && cbLunch != null && cbDinner != null) {
-                        cbMorning.setChecked(false);
-                        cbLunch.setChecked(false);
-                        cbDinner.setChecked(false);
+                    if (binding.cbMorning != null && binding.cbLunch != null && binding.cbDinner != null) {
+                        binding.cbMorning.setChecked(false);
+                        binding.cbLunch.setChecked(false);
+                        binding.cbDinner.setChecked(false);
 
                         if (maxFreq == 1) {
-                            cbMorning.setChecked(true);
+                            binding.cbMorning.setChecked(true);
                         } else if (maxFreq == 2) {
-                            cbMorning.setChecked(true);
-                            cbDinner.setChecked(true);
+                            binding.cbMorning.setChecked(true);
+                            binding.cbDinner.setChecked(true);
                         } else if (maxFreq >= 3) {
-                            cbMorning.setChecked(true);
-                            cbLunch.setChecked(true);
-                            cbDinner.setChecked(true);
+                            binding.cbMorning.setChecked(true);
+                            binding.cbLunch.setChecked(true);
+                            binding.cbDinner.setChecked(true);
                         }
                     }
 
                     if(dosageTime != null){
                         if(dosageTime.equals("식전 30분")){
-                            rb_before.setChecked(true);
+                            binding.rbBefore.setChecked(true);
                         }else if(dosageTime.equals("식후 30분")){
-                            rb_after.setChecked(true);
+                            binding.rbAfter.setChecked(true);
                         }else if(dosageTime.equals("직후")){
-                            rb_anytime.setChecked(true);
+                            binding.rbAnytime.setChecked(true);
                         }
                     }
 
@@ -522,19 +486,19 @@ public class CreatePaperEnvelope extends BaseActivity {
     }
 
     private void startCreateYaksok(){
-        String startDate = inputStartDate.getText();
-        String title = inputTitle.getText();
-        int prescriptionDays = Integer.parseInt(inputPrescriptionDays.getText());
+        String startDate = binding.inputStartDate.getText();
+        String title = binding.inputCardTitle.getText();
+        int prescriptionDays = Integer.parseInt(binding.inputPrescriptionDays.getText());
 
-        boolean takeMorning = cbMorning.isChecked();
-        boolean takeLunch = cbLunch.isChecked();
-        boolean takeDinner = cbDinner.isChecked();
+        boolean takeMorning = binding.cbMorning.isChecked();
+        boolean takeLunch = binding.cbLunch.isChecked();
+        boolean takeDinner = binding.cbDinner.isChecked();
 
-        String timeMorning = takeMorning ? inputSetMorningTime.getText() : null;
-        String timeLunch = takeLunch ? inputSetLunchTime.getText() : null;
-        String timeDinner = takeDinner ? inputSetDinnerTime.getText() : null;
+        String timeMorning = takeMorning ? binding.inputSetMorningTime.getText() : null;
+        String timeLunch = takeLunch ? binding.inputSetLunchTime.getText() : null;
+        String timeDinner = takeDinner ? binding.inputSetDinnerTime.getText() : null;
 
-        int selectedId = rgDosageTime.getCheckedRadioButtonId();
+        int selectedId = binding.rgDosageTime.getCheckedRadioButtonId();
         String dosageTime = "";
         if(selectedId == R.id.rb_before) dosageTime = "식전 30분";
         else if(selectedId == R.id.rb_after) dosageTime = "식후 30분";

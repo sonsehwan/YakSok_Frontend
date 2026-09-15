@@ -7,9 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +21,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.example.medication.R;
 import com.example.medication.adapter.NotificationMultiViewAdapter;
+import com.example.medication.databinding.FragmentHomeBinding;
 import com.example.medication.model.NotificationListItem;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.response.ApiResponse;
@@ -46,10 +44,7 @@ import retrofit2.Response;
 
 public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
 
-    private TextView tvDate, tvGreeting, tvSummary, tvProgressPercent;
-    private ProgressBar progressMain;
-    private RecyclerView rvNotification;
-    private ImageView ivMenu, ivPrevDate, ivNextDate, ivCalendar;
+    private FragmentHomeBinding binding;
     private Calendar selectedCalendar;
 
     private NotificationMultiViewAdapter adapter;
@@ -61,15 +56,15 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initViews(view);
-        InsetsUtil.applySystemBarPadding(view.findViewById(R.id.main_root));
+        InsetsUtil.applySystemBarPadding(binding.mainRoot);
 
         selectedCalendar = Calendar.getInstance();
         updateDateHeader();
@@ -78,14 +73,14 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
 
         allNotifications = new ArrayList<>();
         notificationYaksokList = new ArrayList<>();
-        rvNotification.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvMedication.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        RecyclerView.ItemAnimator animator = rvNotification.getItemAnimator();
+        RecyclerView.ItemAnimator animator = binding.rvMedication.getItemAnimator();
         if (animator instanceof SimpleItemAnimator) {
             ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
         }
 
-        ivMenu.setOnClickListener(v ->
+        binding.ivMenu.setOnClickListener(v ->
                 ((DrawerLayout) requireActivity().findViewById(R.id.drawer_layout)).openDrawer(GravityCompat.START));
     }
 
@@ -110,27 +105,33 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
     public void onYaksokDataChanged() {
         loadNotificationList();
     }
 
     private void setNickName() {
         String nickName = SprefsManager.getUserNickName(requireContext());
-        tvGreeting.setText(nickName + "님!");
+        binding.tvGreeting.setText(nickName + "님!");
     }
 
     private void setupDateNavigation() {
-        ivPrevDate.setOnClickListener(v -> {
+        binding.ivPrevDate.setOnClickListener(v -> {
             selectedCalendar.add(Calendar.DAY_OF_MONTH, -1);
             onDateChanged();
         });
 
-        ivNextDate.setOnClickListener(v -> {
+        binding.ivNextDate.setOnClickListener(v -> {
             selectedCalendar.add(Calendar.DAY_OF_MONTH, +1);
             onDateChanged();
         });
 
-        ivCalendar.setOnClickListener(v -> {
+        binding.ivCalendar.setOnClickListener(v -> {
             new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
                 selectedCalendar.set(year, month, dayOfMonth);
                 onDateChanged();
@@ -145,7 +146,7 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
 
     private void updateDateHeader() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 M월 d일 EEEE", Locale.KOREAN);
-        tvDate.setText(sdf.format(selectedCalendar.getTime()));
+        binding.tvDate.setText(sdf.format(selectedCalendar.getTime()));
     }
 
     private String getSelectedDateString() {
@@ -227,7 +228,7 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
 
         if (adapter == null) {
             adapter = new NotificationMultiViewAdapter(notiList, this::updateProgress);
-            rvNotification.setAdapter(adapter);
+            binding.rvMedication.setAdapter(adapter);
         } else {
             adapter.updateData(notiList);
         }
@@ -247,21 +248,21 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
         }
         if (percent == 0) visualPercent = 100;
 
-        progressMain.setProgress(visualPercent);
-        tvProgressPercent.setText(percent + "%");
+        binding.progressMain.setProgress(visualPercent);
+        binding.tvProgressPercent.setText(percent + "%");
 
         if (percent == 0) {
-            progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_missed)));
+            binding.progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_missed)));
         } else if (percent == 100) {
-            progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_done)));
+            binding.progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_done)));
         } else {
-            progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_pending)));
+            binding.progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_pending)));
         }
 
         int remain = total - done;
         String todayString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         boolean isToday = todayString.equals(getSelectedDateString());
-        tvSummary.setText((isToday ? "오늘" : "이 날의") + " 약속은 " + remain + "건 남았어요.");
+        binding.tvSummary.setText((isToday ? "오늘" : "이 날의") + " 약속은 " + remain + "건 남았어요.");
 
         List<NotificationYaksok> allSavedList = SprefsManager.getNotificationList(requireContext());
         if (allSavedList != null) {
@@ -279,18 +280,5 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
 
     private void showToast(String message) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void initViews(View root) {
-        tvDate = root.findViewById(R.id.tv_date);
-        tvGreeting = root.findViewById(R.id.tv_greeting);
-        tvSummary = root.findViewById(R.id.tv_summary);
-        tvProgressPercent = root.findViewById(R.id.tv_progress_percent);
-        progressMain = root.findViewById(R.id.progress_main);
-        rvNotification = root.findViewById(R.id.rv_medication);
-        ivMenu = root.findViewById(R.id.iv_menu);
-        ivPrevDate = root.findViewById(R.id.iv_prev_date);
-        ivNextDate = root.findViewById(R.id.iv_next_date);
-        ivCalendar = root.findViewById(R.id.iv_calendar);
     }
 }

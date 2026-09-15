@@ -6,8 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,10 +15,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.R;
 import com.example.medication.adapter.ChatRoomListAdapter;
+import com.example.medication.databinding.FragmentChatRoomListBinding;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.ChatRoomListDto;
 import com.example.medication.model.response.UserResponse;
@@ -37,9 +35,7 @@ import retrofit2.Response;
 
 public class ChatRoomListFragment extends Fragment {
 
-    private RecyclerView rvChatRooms;
-    private TextView tvEmpty;
-    private RadioGroup rgChatType;
+    private FragmentChatRoomListBinding binding;
 
     private boolean isOwner = false;
     private boolean showConsult = false;
@@ -51,24 +47,23 @@ public class ChatRoomListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                               @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_chat_room_list, container, false);
+        binding = FragmentChatRoomListBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        InsetsUtil.applySystemBarPadding(view.findViewById(R.id.main_root));
-
-        initViews(view);
+        InsetsUtil.applySystemBarPadding(binding.mainRoot);
 
         adapter = new ChatRoomListAdapter(rooms, this::openChatRoom, this::showRoomActionsDialog);
-        rvChatRooms.setLayoutManager(new LinearLayoutManager(requireContext()));
-        rvChatRooms.setAdapter(adapter);
+        binding.rvChatRooms.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvChatRooms.setAdapter(adapter);
 
         DividerItemDecoration divider = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
         divider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.divider_chat_room));
-        rvChatRooms.addItemDecoration(divider);
+        binding.rvChatRooms.addItemDecoration(divider);
 
         setupChatTypeToggle();
     }
@@ -78,15 +73,15 @@ public class ChatRoomListFragment extends Fragment {
         isOwner = user != null && "DRUGSTORE".equals(user.getRole());
 
         if (!isOwner) {
-            rgChatType.setVisibility(View.GONE);
+            binding.rgChatType.setVisibility(View.GONE);
             return;
         }
 
-        rgChatType.setVisibility(View.VISIBLE);
-        rgChatType.check(R.id.rb_chat_friend);
+        binding.rgChatType.setVisibility(View.VISIBLE);
+        binding.rgChatType.check(R.id.rb_chat_friend);
         showConsult = false;
 
-        rgChatType.setOnCheckedChangeListener((group, checkedId) -> {
+        binding.rgChatType.setOnCheckedChangeListener((group, checkedId) -> {
             showConsult = checkedId == R.id.rb_chat_consult;
             loadChatRooms();
         });
@@ -98,10 +93,10 @@ public class ChatRoomListFragment extends Fragment {
         loadChatRooms();
     }
 
-    private void initViews(View root) {
-        rvChatRooms = root.findViewById(R.id.rv_chat_rooms);
-        tvEmpty = root.findViewById(R.id.tv_empty);
-        rgChatType = root.findViewById(R.id.rg_chat_type);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void openChatRoom(ChatRoomListDto room) {
@@ -148,7 +143,7 @@ public class ChatRoomListFragment extends Fragment {
                             }
                             adapter.notifyDataSetChanged();
 
-                            tvEmpty.setVisibility(rooms.isEmpty() ? View.VISIBLE : View.GONE);
+                            binding.tvEmpty.setVisibility(rooms.isEmpty() ? View.VISIBLE : View.GONE);
                         } else {
                             Toast.makeText(requireContext(), "채팅방을 지우지 못했습니다.", Toast.LENGTH_SHORT).show();
                         }
@@ -179,7 +174,7 @@ public class ChatRoomListFragment extends Fragment {
                     }
                     adapter.notifyDataSetChanged();
 
-                    tvEmpty.setVisibility(rooms.isEmpty() ? View.VISIBLE : View.GONE);
+                    binding.tvEmpty.setVisibility(rooms.isEmpty() ? View.VISIBLE : View.GONE);
                 } else {
                     Log.e("채팅목록", "조회 실패: " + response.code());
                     Toast.makeText(requireContext(), "채팅방 목록을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show();

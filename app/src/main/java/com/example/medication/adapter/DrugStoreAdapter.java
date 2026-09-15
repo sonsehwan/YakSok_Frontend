@@ -1,14 +1,12 @@
 package com.example.medication.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
+import com.example.medication.databinding.ItemDrugstoreBinding;
 import com.example.medication.model.DrugStore;
 import com.example.medication.util.LocationUtil;
 
@@ -54,21 +52,22 @@ public class DrugStoreAdapter extends RecyclerView.Adapter<DrugStoreAdapter.View
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_drugstore, parent, false);
-        return new ViewHolder(view);
+        ItemDrugstoreBinding binding = ItemDrugstoreBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DrugStore item = items.get(position);
 
-        holder.tvName.setText(item.getDutyName());
+        holder.binding.tvDrugstoreName.setText(item.getDutyName());
 
 
-        holder.tvHours.setText(formatTime(item.getStartTime(), item.getEndTime()));
+        holder.binding.tvDrugstoreHours.setText(formatTime(item.getStartTime(), item.getEndTime()));
 
         String distance = calculateDistance(myLat, myLng, item);
-        holder.tvDistance.setText(distance);
+        holder.binding.tvDrugstoreDistance.setText(distance);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
@@ -82,12 +81,10 @@ public class DrugStoreAdapter extends RecyclerView.Adapter<DrugStoreAdapter.View
         return items.size();
     }
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvHours, tvDistance;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_drugstore_name);
-            tvHours = itemView.findViewById(R.id.tv_drugstore_hours);
-            tvDistance = itemView.findViewById(R.id.tv_drugstore_distance);
+        ItemDrugstoreBinding binding;
+        public ViewHolder(@NonNull ItemDrugstoreBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 

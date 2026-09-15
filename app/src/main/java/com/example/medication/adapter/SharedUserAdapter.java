@@ -1,14 +1,12 @@
 package com.example.medication.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
+import com.example.medication.databinding.ItemSharedUserNameBinding;
 import com.example.medication.model.response.SharedUser;
 
 import java.util.List;
@@ -30,15 +28,15 @@ public class SharedUserAdapter extends RecyclerView.Adapter<SharedUserAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shared_user_name, parent, false);
-        return new SharedUserAdapter.ViewHolder(view);
+        ItemSharedUserNameBinding binding = ItemSharedUserNameBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new SharedUserAdapter.ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SharedUserAdapter.ViewHolder holder, int position) {
         SharedUser item = items.get(position);
 
-        holder.tvNickName.setText(item.getNickName());
+        holder.binding.tvNickname.setText(item.getNickName());
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
@@ -59,11 +57,11 @@ public class SharedUserAdapter extends RecyclerView.Adapter<SharedUserAdapter.Vi
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNickName;
+        ItemSharedUserNameBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvNickName = itemView.findViewById(R.id.tv_nickname);
+        public ViewHolder(@NonNull ItemSharedUserNameBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

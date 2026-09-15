@@ -8,16 +8,13 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import com.example.medication.ui.base.BaseActivity;
 
-import com.example.medication.InputView;
-import com.example.medication.R;
+import com.example.medication.databinding.ActivityModifyPasswordBinding;
 import com.example.medication.model.request.ModifyPasswordRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
@@ -34,45 +31,37 @@ import retrofit2.Response;
 
 public class ModifyPassword extends BaseActivity {
 
-    private InputView currentPassword;
-    private InputView newPassword;
-    private InputView checkPassword;
-    private ImageView btnBack;
-    private Button btnFinish;
+    private ActivityModifyPasswordBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_modify_password);
+        binding = ActivityModifyPasswordBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        initViews();
+        binding.btnBack.setOnClickListener(v -> finish());
 
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> finish());
-        }
-
-        checkPassword.setOnValidateListener(text -> {
-            if (newPassword == null) return null;
-            String originalPw = newPassword.getText();
+        binding.inputCheckPw.setOnValidateListener(text -> {
+            String originalPw = binding.inputNewPw.getText();
             if (!text.equals(originalPw)) {
                 return "비밀번호가 일치하지 않습니다.";
             }
             return null;
         });
 
-        btnFinish.setOnClickListener(v -> {startModify();});
+        binding.btnModifyPw.setOnClickListener(v -> {startModify();});
     }
 
     private void startModify(){
-        if (!currentPassword.isValid() || !newPassword.isValid() || !checkPassword.isValid()) {
+        if (!binding.inputCurrentPw.isValid() || !binding.inputNewPw.isValid() || !binding.inputCheckPw.isValid()) {
             showToast("입력 정보를 다시 확인해주세요.");
             return;
         }
 
         Long userId = SprefsManager.getUserId(ModifyPassword.this);
-        String currentPw = currentPassword.getText();
-        String newPw = newPassword.getText();
+        String currentPw = binding.inputCurrentPw.getText();
+        String newPw = binding.inputNewPw.getText();
 
         ModifyPasswordRequest request = new ModifyPasswordRequest(userId, currentPw, newPw);
 
@@ -172,13 +161,5 @@ public class ModifyPassword extends BaseActivity {
         }
         // 9. 위에서 정의한 로직 외의 기본적인 터치 이벤트 처리는 부모 클래스로 넘깁니다.
         return super.dispatchTouchEvent(event);
-    }
-
-    private void initViews(){
-        currentPassword = findViewById(R.id.input_current_pw);
-        newPassword = findViewById(R.id.input_new_pw);
-        checkPassword = findViewById(R.id.input_check_pw);
-        btnBack = findViewById(R.id.btn_back);
-        btnFinish = findViewById(R.id.btn_modify_pw);
     }
 }

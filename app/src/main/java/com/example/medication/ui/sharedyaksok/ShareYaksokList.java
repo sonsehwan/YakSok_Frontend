@@ -4,18 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
 import com.example.medication.adapter.ShareYaksokListAdapter;
+import com.example.medication.databinding.ActivityShareYaksokListBinding;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
@@ -32,10 +29,7 @@ import retrofit2.Response;
 
 public class ShareYaksokList extends BaseActivity implements YaksokEventBus.Listener{
 
-    private ImageView ivBack;
-    private TextView tvEmpty;
-    private TextView tvHeaderTitle;
-    private RecyclerView rvShareYaksok;
+    private ActivityShareYaksokListBinding binding;
 
     private final List<Yaksok> items = new ArrayList<>();
     private ShareYaksokListAdapter adapter;
@@ -47,17 +41,16 @@ public class ShareYaksokList extends BaseActivity implements YaksokEventBus.List
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_share_yaksok_list);
+        binding = ActivityShareYaksokListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         if (getIntent().hasExtra("senderId")) {
             senderId = getIntent().getLongExtra("senderId", -1);
         }
         senderNickname = getIntent().getStringExtra("senderNickname");
 
-        initViews();
-
         if (senderNickname != null) {
-            tvHeaderTitle.setText(senderNickname + "님이 공유한 약속");
+            binding.tvHeaderTitle.setText(senderNickname + "님이 공유한 약속");
         }
 
         adapter = new ShareYaksokListAdapter(items, new ShareYaksokListAdapter.OnItemClickListener() {
@@ -76,10 +69,10 @@ public class ShareYaksokList extends BaseActivity implements YaksokEventBus.List
             }
         });
 
-        rvShareYaksok.setLayoutManager(new LinearLayoutManager(this));
-        rvShareYaksok.setAdapter(adapter);
+        binding.rvShareYaksok.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvShareYaksok.setAdapter(adapter);
 
-        ivBack.setOnClickListener(v -> finish());
+        binding.ivBack.setOnClickListener(v -> finish());
     }
 
     @Override
@@ -106,13 +99,6 @@ public class ShareYaksokList extends BaseActivity implements YaksokEventBus.List
         loadSharedYaksokList();
     }
 
-    private void initViews() {
-        ivBack = findViewById(R.id.iv_back);
-        tvEmpty = findViewById(R.id.tv_empty);
-        tvHeaderTitle = findViewById(R.id.tv_header_title);
-        rvShareYaksok = findViewById(R.id.rv_share_yaksok);
-    }
-
     private void loadSharedYaksokList() {
         Long userId = SprefsManager.getUserId(this);
 
@@ -130,7 +116,7 @@ public class ShareYaksokList extends BaseActivity implements YaksokEventBus.List
                             }
                             adapter.notifyDataSetChanged();
 
-                            tvEmpty.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
+                            binding.tvEmpty.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
                         } else {
                             Log.e("공유약속목록", "조회 실패: " + response.code());
                             showToast("공유 약속 목록을 가져오지 못했습니다.");
