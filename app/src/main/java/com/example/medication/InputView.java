@@ -32,6 +32,7 @@ public class InputView extends LinearLayout {
     }
 
     private ImageView icon;
+    private TextView tvLabel;
     private EditText editText;
     private ImageView imgToggle;
     private TextView tvError;
@@ -58,8 +59,8 @@ public class InputView extends LinearLayout {
 
     // 상태별 색상 상수
     private final int COLOR_ERROR = Color.parseColor("#FF0000");      // 에러 시 빨간색
-    private final int COLOR_GUIDE = Color.parseColor("#999999");      // 평상시 가이드 회색
-    private final int COLOR_DEFAULT_STROKE = ContextCompat.getColor(getContext(), R.color.brand_icon);
+    private final int COLOR_GUIDE = ContextCompat.getColor(getContext(), R.color.g400);   // 평상시 가이드 회색
+    private final int COLOR_DEFAULT_STROKE = ContextCompat.getColor(getContext(), R.color.g100);
 
     private final String idPattern = "^[a-z0-9]{8,20}$";
     private final String passwordPattern = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+])[A-Za-z\\d!@#$%^&*()_+]{8,16}$";
@@ -83,6 +84,7 @@ public class InputView extends LinearLayout {
         LayoutInflater.from(context).inflate(R.layout.input, this, true);
 
         icon = findViewById(R.id.img_icon);
+        tvLabel = findViewById(R.id.tv_label);
         editText = findViewById(R.id.et_input);
         imgToggle = findViewById(R.id.img_password_toggle);
         tvError = findViewById(R.id.tv_error);
@@ -92,6 +94,7 @@ public class InputView extends LinearLayout {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.InputView, 0, 0);
             try {
                 String hint = a.getString(R.styleable.InputView_hintText);
+                String labelText = a.getString(R.styleable.InputView_labelText);
                 int iconRes = a.getResourceId(R.styleable.InputView_iconSrc, 0);
                 isPasswordType = a.getBoolean(R.styleable.InputView_isPassword, false);
                 isReadOnly = a.getBoolean(R.styleable.InputView_isReadOnly, false);
@@ -122,6 +125,11 @@ public class InputView extends LinearLayout {
 
                 if (hint != null) editText.setHint(hint);
                 if (iconRes != 0) icon.setImageResource(iconRes);
+
+                if (labelText != null) {
+                    tvLabel.setText(labelText);
+                    tvLabel.setVisibility(View.VISIBLE);
+                }
 
                 if(helperText != null){
                     tvError.setText(helperText);

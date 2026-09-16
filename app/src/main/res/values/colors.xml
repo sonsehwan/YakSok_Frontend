@@ -34,4 +34,15 @@
     <color name="status_done">#16A34A</color>
     <color name="status_pending">#F59E0B</color>
     <color name="status_missed">#E11D48</color>
+
+    <!-- 디자인 시스템 토큰(yaksok_design.pen). flow별로 화면을 옮길 때마다 쓰는 만큼만 추가한다. -->
+    <color name="p100">#FFF4E6</color>
+    <color name="p600">#FD7E14</color>
+    <color name="p700">#F76707</color>
+    <color name="g100">#DFE1E2</color>
+    <color name="g300">#A9AEB1</color>
+    <color name="g400">#8D9297</color>
+    <color name="g500">#71767A</color>
+    <color name="g700">#3D4551</color>
+    <color name="g900">#1C1D1F</color>
 </resources>
