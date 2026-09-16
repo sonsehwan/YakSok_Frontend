@@ -82,6 +82,9 @@
             android:name=".ui.common.WipActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.friend.Profile"
+            android:exported="false" />
+        <activity
             android:name=".ui.yaksok.CreatePrescription"
             android:exported="false" />
         <activity

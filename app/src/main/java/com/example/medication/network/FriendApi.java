@@ -4,7 +4,9 @@ import com.example.medication.model.request.FriendRequestAnswerDto;
 import com.example.medication.model.request.FriendRequestCreateDto;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.FriendListDto;
+import com.example.medication.model.response.FriendQrCodeDto;
 import com.example.medication.model.response.ReceivedFriendRequestDto;
+import com.example.medication.model.response.UserProfileDto;
 import com.example.medication.model.response.UserSearchResultDto;
 
 import java.util.List;
@@ -41,6 +43,14 @@ public interface FriendApi {
             @Path("requestId") Long requestId,
             @Body FriendRequestAnswerDto answer);
 
+
+    // 내 QR 코드 발급/재발급 ("내 QR 보여주기" 화면을 열 때마다 호출, 5분 후 만료)
+    @POST("/api/friend/qr-code")
+    Call<ApiResponse<FriendQrCodeDto>> issueQrCode();
+
+    // QR 코드로 알아낸 사용자 프로필 + 나와의 관계 상태 조회
+    @GET("/api/friend/profile/{code}")
+    Call<ApiResponse<UserProfileDto>> getUserProfile(@Path("code") String code);
 
     /**
      *  친구 관계 API
