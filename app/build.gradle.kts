@@ -74,6 +74,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.mlkit:text-recognition-korean:16.0.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.firebase:firebase-ai")
     implementation("com.kakao.sdk:v2-all:2.23.4")

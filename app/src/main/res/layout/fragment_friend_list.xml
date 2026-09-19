@@ -36,19 +36,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_add_friend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        android:background="?attr/selectableItemBackground"
+    <ImageView
+        android:id="@+id/iv_qr"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
+        android:contentDescription="QR로 친구 추가"
         android:focusable="true"
         android:padding="8dp"
-        android:text="친구 추가"
-        android:textColor="#1A1A1A"
-        android:textSize="15sp"
-        android:textStyle="bold"
+        android:src="@drawable/ic_lc_qr_code"
+        app:layout_constraintBottom_toBottomOf="@id/tv_header_title"
+        app:layout_constraintEnd_toStartOf="@id/iv_add_friend"
+        app:layout_constraintTop_toTopOf="@id/tv_header_title" />
+
+    <ImageView
+        android:id="@+id/iv_add_friend"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:contentDescription="친구 추가"
+        android:focusable="true"
+        android:padding="8dp"
+        android:src="@drawable/ic_lc_user_plus"
         app:layout_constraintBottom_toBottomOf="@id/tv_header_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_header_title" />

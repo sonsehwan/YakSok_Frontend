@@ -10,8 +10,6 @@ import android.widget.Toast;
 
 import com.example.medication.ui.base.BaseActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.medication.R;
@@ -68,17 +66,6 @@ public class ChattingRoom extends BaseActivity {
         // Android 10 이상에서 네비게이션 바 대비 효과 제거
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             getWindow().setNavigationBarContrastEnforced(false);
-        }
-
-        WindowInsetsControllerCompat windowInsetsController =
-                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-
-        // 상태바 아이콘을 어둡게 표시
-        windowInsetsController.setAppearanceLightStatusBars(true);
-
-        // Android 8.0 이상에서 하단 네비게이션 아이콘을 어둡게 표시
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            windowInsetsController.setAppearanceLightNavigationBars(true);
         }
 
         Intent intent = getIntent();

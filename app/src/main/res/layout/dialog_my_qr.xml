@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="26dp"
+    android:paddingBottom="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="내 QR 코드"
+        android:textColor="#1A1A1A"
+        android:textSize="19sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="상대방이 이 화면을 카메라로 찍으면 친구 추가가 시작돼요"
+        android:textColor="#9A9A9A"
+        android:textSize="13sp" />
+
+    <ImageView
+        android:id="@+id/iv_qr_code"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:background="@drawable/bg_setting_item" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="5분 후 자동으로 만료돼요"
+        android:textColor="#B0B0B0"
+        android:textSize="12sp" />
+</LinearLayout>
