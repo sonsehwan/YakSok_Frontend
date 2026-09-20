@@ -164,6 +164,7 @@ public class FriendListFragment extends Fragment {
                 .setOrientationLocked(true)
                 .setBeepEnabled(false)
                 .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                .setCaptureActivity(PortraitCaptureActivity.class)
                 .setPrompt("QR코드를 화면 안에 맞춰주세요.");
         qrScanLauncher.launch(options);
     }

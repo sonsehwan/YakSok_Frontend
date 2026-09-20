@@ -118,14 +118,11 @@
             android:name=".ui.main.MainActivity"
             android:exported="true" />
 
-        <!-- zxing-android-embedded의 기본 CaptureActivity는 라이브러리 매니페스트에
-             screenOrientation="landscape"로 선언돼 있어, 앱의 세로 고정(BaseActivity)이
-             적용 안 되고 스캔 화면이 가로로 뜬다. 세로로 덮어쓴다. -->
         <activity
-            android:name="com.journeyapps.barcodescanner.CaptureActivity"
-            android:screenOrientation="portrait"
+            android:name=".ui.friend.PortraitCaptureActivity"
+            android:exported="false"
             android:stateNotNeeded="true"
-            tools:replace="screenOrientation" />
+            android:theme="@style/zxing_CaptureTheme" />
     </application>
 
 </manifest>
