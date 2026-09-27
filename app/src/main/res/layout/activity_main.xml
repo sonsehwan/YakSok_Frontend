@@ -22,19 +22,30 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation" />
 
+        <View
+            android:id="@+id/bottom_navigation_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/g100"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="70dp"
             android:background="@drawable/bg_bottom_nav"
-            android:elevation="12dp"
             app:itemIconSize="24dp"
-            app:itemIconTint="@color/selector_nav_color"
-            app:itemTextColor="@color/selector_nav_color"
+            app:itemIconTint="@color/selector_nav_icon_color"
+            app:itemTextColor="@color/selector_nav_text_color"
+            app:itemTextAppearanceActive="@style/TextAppearance.BottomNav.Active"
+            app:itemTextAppearanceInactive="@style/TextAppearance.BottomNav.Inactive"
             app:labelVisibilityMode="labeled"
             app:itemActiveIndicatorStyle="@null"
-            app:itemPaddingTop="20dp"
-            app:itemPaddingBottom="20dp"
+            app:itemPaddingTop="8dp"
+            app:itemPaddingBottom="8dp"
             app:menu="@menu/bottom_nav_menu"
             app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -43,18 +54,11 @@
     <!-- 사이드 메뉴 -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/side_nav_view"
-        android:layout_width="wrap_content"
+        android:layout_width="288dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/white"
+        android:background="@drawable/bg_nav_drawer_panel"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_spacer"
-        app:itemIconTint="@color/brand_icon"
-        app:itemTextColor="@color/neutral_800"
-        app:itemIconSize="28dp"
-        app:itemIconPadding="24dp"
-        app:itemHorizontalPadding="20dp"
-        app:itemTextAppearance="@style/TextAppearance.SideMenu.Item"
-        app:menu="@menu/side_menu" />
+        app:headerLayout="@layout/nav_header" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -11,7 +11,10 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -42,6 +45,12 @@ public class MainActivity extends BaseActivity {
 
         setupDrawer();
         requestNotificationPermission();
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigation, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), systemBars.bottom);
+            return insets;
+        });
     }
 
     private void requestNotificationPermission() {
@@ -70,14 +79,9 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setupDrawer() {
-        binding.sideNavView.setNavigationItemSelectedListener(item -> {
+        binding.sideNavView.getHeaderView(0).findViewById(R.id.side_drugstore).setOnClickListener(v -> {
             binding.drawerLayout.closeDrawer(GravityCompat.START);
-
-            if (item.getItemId() == R.id.side_drugstore) {
-                startActivity(new Intent(MainActivity.this, DrugStoreList.class));
-                return true;
-            }
-            return false;
+            startActivity(new Intent(MainActivity.this, DrugStoreList.class));
         });
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {

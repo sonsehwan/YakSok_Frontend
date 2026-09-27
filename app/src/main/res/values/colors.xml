@@ -37,6 +37,7 @@
 
     <!-- 디자인 시스템 토큰(yaksok_design.pen). flow별로 화면을 옮길 때마다 쓰는 만큼만 추가한다. -->
     <color name="g20">#F7F9FA</color>
+    <color name="g50">#F1F3F6</color>
     <color name="p100">#FFF4E6</color>
     <color name="p600">#FD7E14</color>
     <color name="p700">#F76707</color>
