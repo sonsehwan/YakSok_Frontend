@@ -19,7 +19,6 @@ import com.example.medication.InputView;
 import com.example.medication.R;
 import com.example.medication.adapter.AddMedicationSettingAdapter;
 import com.example.medication.databinding.ActivityModifyYaksokBinding;
-import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.CreateYakSokRequest;
 import com.example.medication.model.request.PillRequest;
@@ -64,13 +63,11 @@ public class ModifyYaksok extends BaseActivity {
         binding.ivBack.setOnClickListener(v -> finish());
         binding.inputStartDate.setOnClickListener(v -> showDatePicker());
 
-        // 약 추가 버튼 클릭 시 검색 화면 이동
         binding.btnAddPill.setOnClickListener(v -> {
             Intent intent = new Intent(ModifyYaksok.this, MedicineSearchActivity.class);
             searchLauncher.launch(intent);
         });
 
-        // 약속 수정 버튼
         binding.btnRegister.setOnClickListener(v -> {
             if(!validateInput()) return;
             startModifyYaksok();
@@ -274,10 +271,6 @@ public class ModifyYaksok extends BaseActivity {
                             yaksok.setId(yaksokId);
 
                             SprefsManager.updateYaksok(ModifyYaksok.this, yaksok);
-
-                            List<NotificationYaksok> allNotifications = saveYaksokResponse.getNotifications();
-
-                            SprefsManager.setNotifications(ModifyYaksok.this, allNotifications);
 
                             showToast("약속이 성공적으로 수정되었습니다.");
 

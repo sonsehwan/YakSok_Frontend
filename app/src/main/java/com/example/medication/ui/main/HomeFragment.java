@@ -105,6 +105,7 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        adapter = null;
         binding = null;
     }
 

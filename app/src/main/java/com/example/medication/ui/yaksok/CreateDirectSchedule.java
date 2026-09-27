@@ -19,7 +19,6 @@ import com.example.medication.InputView;
 import com.example.medication.R;
 import com.example.medication.adapter.AddMedicationSettingAdapter;
 import com.example.medication.databinding.ActivityCreatePrescriptionBinding;
-import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.CreateYakSokRequest;
 import com.example.medication.model.request.PillRequest;
@@ -46,7 +45,6 @@ public class CreateDirectSchedule extends BaseActivity {
 
     private ActivityCreatePrescriptionBinding binding;
 
-    // 선택된 약 목록 리사이클러뷰 관련
     private AddMedicationSettingAdapter settingAdapter;
     private final List<PillRequest> selectedPills = new ArrayList<>();
 
@@ -65,13 +63,11 @@ public class CreateDirectSchedule extends BaseActivity {
         binding.ivBack.setOnClickListener(v -> finish());
         binding.inputStartDate.setOnClickListener(v -> showDatePicker());
 
-        // 약 추가 버튼 클릭 시 검색 화면 이동
         binding.btnAddPill.setOnClickListener(v -> {
             Intent intent = new Intent(CreateDirectSchedule.this, MedicineSearchActivity.class);
             searchLauncher.launch(intent);
         });
 
-        // 약속 등록 버튼
         binding.btnRegister.setOnClickListener(v -> {
             if(!validateInput()) return;
             startCreateYaksok();
@@ -79,19 +75,17 @@ public class CreateDirectSchedule extends BaseActivity {
     }
 
     private void setupTimePickerLogic(){
-        // 아침 체크박스 로직
+
         binding.cbMorning.setOnCheckedChangeListener((button, isChecked) -> {
             binding.inputSetMorningTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
         binding.inputSetMorningTime.setOnClickListener(v -> showTimePicker(binding.inputSetMorningTime, 8, 0));
 
-        // 점심 체크박스 로직
         binding.cbLunch.setOnCheckedChangeListener((button, isChecked) -> {
             binding.inputSetLunchTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
         binding.inputSetLunchTime.setOnClickListener(v -> showTimePicker(binding.inputSetLunchTime, 12, 0));
 
-        // 저녁 체크박스 로직
         binding.cbDinner.setOnCheckedChangeListener((button, isChecked) -> {
             binding.inputSetDinnerTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
@@ -104,7 +98,6 @@ public class CreateDirectSchedule extends BaseActivity {
 
         String currentTimeStr = targetInputView.getText();
 
-        // 현재 입력된 텍스트가 있으면 파싱하여 다이얼로그 초기값으로 설정
         if (currentTimeStr != null && !currentTimeStr.isEmpty()) {
             try {
                 String[] parts = currentTimeStr.split(" ");
@@ -183,7 +176,6 @@ public class CreateDirectSchedule extends BaseActivity {
         boolean takeLunch = binding.cbLunch.isChecked();
         boolean takeDinner = binding.cbDinner.isChecked();
 
-        // 체크되지 않은 알림 시간은 null로 전송
         String timeMorning = takeMorning ? binding.inputSetMorningTime.getText() : null;
         String timeLunch = takeLunch ? binding.inputSetLunchTime.getText() : null;
         String timeDinner = takeDinner ? binding.inputSetDinnerTime.getText() : null;
@@ -225,18 +217,10 @@ public class CreateDirectSchedule extends BaseActivity {
                         if(yaksokId != null) {
                             yaksok.setId(yaksokId);
 
-                            // 1. 전체 약속 리스트에 저장
                             SprefsManager.addYaksok(CreateDirectSchedule.this, yaksok);
-
-                            // 2. 응답받은 알림용 NotificationYaksok 리스트 가져오기
-                            List<NotificationYaksok> allNotifications = saveYaksokResponse.getNotifications();
-
-                            // 3. SharedPreferences에 기존 알림 리스트 제거후 새로 저장
-                            SprefsManager.setNotifications(CreateDirectSchedule.this, allNotifications);
 
                             showToast("약속이 성공적으로 등록되었습니다.");
 
-                            // 4. 메인 화면으로 이동하며 새로 생성된 리스트 전달
                             Intent intent = new Intent(CreateDirectSchedule.this, MainActivity.class);
                             //intent.putExtra("newNotifications", (ArrayList<NotificationYaksok>)newNotifications);
                             startActivity(intent);
