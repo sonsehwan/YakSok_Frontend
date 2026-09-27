@@ -51,6 +51,7 @@ public class ResetPassword extends BaseActivity {
         });
 
         binding.btnConfirm.setOnClickListener(v -> confirm());
+        binding.ivBack.setOnClickListener(v -> finish());
     }
 
     private void confirm() {

@@ -37,25 +37,20 @@ public class FindId extends BaseActivity {
         binding = ActivityFindIdBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.btnSendCode.setOnClickListener(v -> sendCode(false));
-        binding.verificationCode.setOnResendListener(() -> sendCode(true));
+        binding.verificationCode.setOnSendListener(email -> sendCode(email, false));
+        binding.verificationCode.setOnResendListener(email -> sendCode(email, true));
         binding.verificationCode.setOnVerifyListener(this::verify);
         binding.btnGoLogin.setOnClickListener(v -> goLogin());
+        binding.ivBack.setOnClickListener(v -> finish());
     }
 
-    private void sendCode(boolean resend) {
-        if (!binding.inputEmail.isValid()) {
-            return;
-        }
-        String email = binding.inputEmail.getText();
-
+    private void sendCode(String email, boolean resend) {
         AuthApi api = NetworkClient.getAuthApi();
         api.sendFindIdCode(new FindIdSendCodeRequest(email)).enqueue(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isBusinessSuccess()) {
                     sentEmail = email;
-                    if (!resend) binding.btnSendCode.setVisibility(View.GONE);
                     binding.verificationCode.start();
                     showToast("인증코드를 이메일로 발송했습니다.");
                 } else {
@@ -96,12 +91,10 @@ public class FindId extends BaseActivity {
 
     private void showResult(String loginId) {
         binding.verificationCode.stop();
-        binding.inputEmail.setVisibility(View.GONE);
-        binding.btnSendCode.setVisibility(View.GONE);
-        binding.verificationCode.setVisibility(View.GONE);
+        binding.groupInput.setVisibility(View.GONE);
 
-        binding.tvResult.setText("회원님의 아이디는\n[ " + loginId + " ] 입니다.");
-        binding.tvResult.setVisibility(View.VISIBLE);
+        binding.tvLoginId.setText(loginId);
+        binding.groupResult.setVisibility(View.VISIBLE);
         binding.btnGoLogin.setVisibility(View.VISIBLE);
     }
 
