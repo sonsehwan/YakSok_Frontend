@@ -9,44 +9,55 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.login.Login">
 
-    <ImageView
-        android:id="@+id/iv_logo"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="80dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_yellow_pill" />
-
-    <TextView
-        android:id="@+id/tv_welcome"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ll_brand"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="나를 위한 약속"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_logo" />
+        android:layout_marginTop="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_logo_mark">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                app:tint="@color/white"
+                app:srcCompat="@drawable/ic_pill" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_welcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="약 먹을 시간,\n약속이 챙겨드릴게요"
+            android:textColor="@color/g900"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:lineSpacingMultiplier="1.36" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_input_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="40dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/tv_welcome">
+        app:layout_constraintTop_toBottomOf="@+id/ll_brand">
 
         <com.example.medication.InputView
             android:id="@+id/input_login_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:hintText="아이디를 입력하세요"
-            app:iconSrc="@drawable/ic_user"
+            app:labelText="아이디"
+            app:hintText="아이디를 입력해 주세요"
             app:validationType="id"
             android:inputType="text"
             android:imeOptions="actionNext" />
@@ -55,9 +66,9 @@
             android:id="@+id/input_pw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:hintText="비밀번호를 입력하세요"
-            app:iconSrc="@drawable/ic_lock"
+            android:layout_marginTop="16dp"
+            app:labelText="비밀번호"
+            app:hintText="비밀번호를 입력해 주세요"
             app:isPassword="true"
             android:imeOptions="actionDone" />
     </LinearLayout>
@@ -65,14 +76,14 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_login"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_height="52dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
         android:text="로그인"
-        android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:textSize="17sp"
         android:textStyle="bold"
-        app:backgroundTint="@color/brand_surface"
+        app:backgroundTint="@color/p600"
         app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,7 +93,7 @@
         android:id="@+id/ll_find_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -93,47 +104,51 @@
             android:id="@+id/tv_find_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:padding="8dp"
             android:text="아이디 찾기"
-            android:textColor="#666666" />
+            android:textColor="@color/g500"
+            android:textSize="14sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="8dp"
-            android:text="·"
-            android:textColor="#999999" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center_vertical"
+            android:background="@color/g100" />
 
         <TextView
             android:id="@+id/tv_find_pw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:padding="8dp"
             android:text="비밀번호 찾기"
-            android:textColor="#666666" />
+            android:textColor="@color/g500"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_find_account">
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="계정이 없으신가요? "
-            android:textColor="#999999" />
+            android:text="아직 회원이 아니신가요? "
+            android:textColor="@color/g500"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tv_go_signup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="회원가입"
-            android:textColor="@android:color/black"
+            android:textColor="@color/p600"
+            android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>
 

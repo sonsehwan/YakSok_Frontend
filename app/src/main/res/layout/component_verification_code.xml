@@ -2,48 +2,148 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:orientation="vertical"
     tools:parentTag="android.widget.LinearLayout">
 
-    <com.example.medication.InputView
-        android:id="@+id/input_code"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:imeOptions="actionDone"
-        android:inputType="number"
-        app:hintText="인증코드 6자리"
-        app:iconSrc="@drawable/ic_lock" />
-
     <TextView
-        android:id="@+id/tv_expiry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="이메일"
+        android:textColor="@color/g700"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="top">
+
+        <com.example.medication.InputView
+            android:id="@+id/input_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:imeOptions="actionDone"
+            android:inputType="textEmailAddress"
+            app:hintText="example@email.com"
+            app:validationType="email" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_send_code"
+            android:layout_width="112dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/p100"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="인증코드 발송"
+            android:textColor="@color/p700"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:elevation="0dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_resend"
+            android:layout_width="112dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/p100"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="인증코드 재발송"
+            android:textColor="@color/p700"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:cornerRadius="12dp"
+            app:elevation="0dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_cooldown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/g500"
         android:textSize="13sp"
-        android:textStyle="bold"
-        tools:text="남은 시간 4:32" />
+        android:visibility="gone"
+        tools:text="52초 후 재발송 가능" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_resend"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginHorizontal="8dp"
-        android:text="인증코드 재발송"
-        android:textColor="@color/black"
-        app:cornerRadius="12dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="8dp"
+        android:text="인증코드"
+        android:textColor="@color/g700"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_verify"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="top">
+
+        <com.example.medication.InputView
+            android:id="@+id/input_code"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            app:hintText="인증코드 입력" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_verify"
+            android:layout_width="112dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/p100"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="확인"
+            android:textColor="@color/p700"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:elevation="0dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/row_expiry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginHorizontal="8dp"
-        android:text="확인"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:backgroundTint="@color/brand_surface"
-        app:cornerRadius="12dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            app:tint="@color/g500"
+            app:srcCompat="@drawable/ic_time" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="남은 시간"
+            android:textColor="@color/g500"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_expiry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textColor="@color/p700"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="4:52" />
+    </LinearLayout>
 </merge>

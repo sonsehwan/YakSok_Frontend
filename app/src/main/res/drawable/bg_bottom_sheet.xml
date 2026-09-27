@@ -8,7 +8,7 @@
 
     <!-- 상단 왼쪽과 오른쪽 모서리만 둥글게 설정 (20dp) -->
     <corners
-        android:topLeftRadius="20dp"
-        android:topRightRadius="20dp" />
+        android:topLeftRadius="32dp"
+        android:topRightRadius="32dp" />
 
 </shape>

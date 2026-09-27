@@ -37,17 +37,17 @@ public class FindPassword extends BaseActivity {
         binding = ActivityFindPasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.btnSendCode.setOnClickListener(v -> sendCode(false));
-        binding.verificationCode.setOnResendListener(() -> sendCode(true));
+        binding.verificationCode.setOnSendListener(email -> sendCode(email, false));
+        binding.verificationCode.setOnResendListener(email -> sendCode(email, true));
         binding.verificationCode.setOnVerifyListener(this::verify);
+        binding.ivBack.setOnClickListener(v -> finish());
     }
 
-    private void sendCode(boolean resend) {
-        if (!binding.inputLoginId.isValid() || !binding.inputEmail.isValid()) {
+    private void sendCode(String email, boolean resend) {
+        if (!binding.inputLoginId.isValid()) {
             return;
         }
         String loginId = binding.inputLoginId.getText();
-        String email = binding.inputEmail.getText();
 
         AuthApi api = NetworkClient.getAuthApi();
         api.sendResetPasswordCode(new ResetPwSendCodeRequest(loginId, email)).enqueue(new Callback<ApiResponse<Void>>() {
@@ -56,7 +56,6 @@ public class FindPassword extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().isBusinessSuccess()) {
                     sentLoginId = loginId;
                     sentEmail = email;
-                    if (!resend) binding.btnSendCode.setVisibility(View.GONE);
                     binding.verificationCode.start();
                     showToast("인증코드를 이메일로 발송했습니다.");
                 } else {

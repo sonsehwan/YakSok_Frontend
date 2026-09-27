@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="InputView">
         <attr name="hintText" format="string"/>
+        <attr name="labelText" format="string"/>
         <attr name="iconSrc" format="reference"/>
         <attr name="isPassword" format="boolean" />
         <attr name="helperText" format="string"/>

@@ -49,6 +49,7 @@ public class SignUp_Normal extends BaseActivity {
         String type = intent.getStringExtra("SignUp_Type");
 
         binding.btnFinish.setOnClickListener(v -> {startSignUp(type);});
+        binding.ivBack.setOnClickListener(v -> finish());
     }
 
     @Override

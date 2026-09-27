@@ -64,6 +64,8 @@ public class SignUp_DrugStore extends BaseActivity {
             findDrugStoreLauncher.launch(intent);
         });
 
+        binding.ivBack.setOnClickListener(v -> finish());
+
         Intent getIntent = getIntent();
         String type = getIntent.getStringExtra("SignUp_Type");
 
@@ -231,7 +233,7 @@ public class SignUp_DrugStore extends BaseActivity {
 
     private void hideDrugStoreError(){
         binding.tvDrugstoreError.setVisibility(View.GONE);
-        binding.mcvFindDrugstore.setStrokeColor(ContextCompat.getColor(this, R.color.brand_icon));
+        binding.mcvFindDrugstore.setStrokeColor(ContextCompat.getColor(this, R.color.g100));
     }
 
     private void showToast(String message){
