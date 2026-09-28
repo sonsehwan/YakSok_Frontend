@@ -59,6 +59,7 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
 
         void bind(ChatRoomListDto room) {
             binding.tvRoomName.setText(room.getRoomName());
+            binding.tvAvatar.setText(initialOf(room.getRoomName()));
 
             String last = room.getLastMessage();
             binding.tvLastMessage.setText(last != null ? last : "아직 대화가 없어요.");
@@ -78,6 +79,10 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
                 return "";
             }
             return isoDateTime.substring(11, 16);
+        }
+
+        private String initialOf(String name) {
+            return (name == null || name.isEmpty()) ? "?" : name.substring(0, 1);
         }
     }
 }

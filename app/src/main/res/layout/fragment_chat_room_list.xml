@@ -5,77 +5,61 @@
     android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/g20"
     tools:context=".ui.chattingroom.ChatRoomListFragment"
     tools:ignore="PrivateResource">
 
     <TextView
         android:id="@+id/tv_header_title"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:gravity="center"
+        android:layout_height="56dp"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
         android:text="채팅"
-        android:textColor="#000000"
+        android:textColor="@color/g900"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/view_divider"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_chat_type"
         android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="#F0F0F0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_header_title" />
-
-    <!-- 약국 사장 계정에서만 보인다: [친구 | 상담]. YaksokList의 내 약속/공유 약속 폴더 탭과 동일 디자인 -->
-    <RadioGroup
-        android:id="@+id/rg_chat_type"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
+        android:layout_height="44dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_chat_tab_group"
         android:visibility="gone"
-        android:weightSum="2"
+        app:tabMode="fixed"
+        app:tabGravity="fill"
+        app:tabIndicator="@drawable/bg_chat_tab_indicator"
+        app:tabIndicatorGravity="stretch"
+        app:tabIndicatorAnimationMode="elastic"
+        app:tabRippleColor="@android:color/transparent"
+        app:tabSelectedTextColor="@color/g900"
+        app:tabTextColor="@color/g500"
+        app:tabTextAppearance="@style/TextAppearance.App.ChatTab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_divider">
+        app:layout_constraintTop_toBottomOf="@id/tv_header_title">
 
-        <RadioButton
-            android:id="@+id/rb_chat_friend"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_chat_tab_friend"
-            android:button="@null"
-            android:gravity="center"
-            android:text="친구"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="친구" />
 
-        <RadioButton
-            android:id="@+id/rb_chat_consult"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_chat_tab_consult"
-            android:button="@null"
-            android:gravity="center"
-            android:text="상담"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </RadioGroup>
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="상담" />
+    </com.google.android.material.tabs.TabLayout>
 
     <TextView
         android:id="@+id/tv_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="아직 채팅방이 없어요."
-        android:textColor="@color/neutral_400"
+        android:textColor="@color/g400"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,7 +71,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:background="@color/page_bg"
+        android:paddingTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

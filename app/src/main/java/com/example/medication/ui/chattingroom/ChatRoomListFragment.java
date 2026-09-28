@@ -25,6 +25,7 @@ import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,17 +74,28 @@ public class ChatRoomListFragment extends Fragment {
         isOwner = user != null && "DRUGSTORE".equals(user.getRole());
 
         if (!isOwner) {
-            binding.rgChatType.setVisibility(View.GONE);
+            binding.tabChatType.setVisibility(View.GONE);
             return;
         }
 
-        binding.rgChatType.setVisibility(View.VISIBLE);
-        binding.rgChatType.check(R.id.rb_chat_friend);
+        binding.tabChatType.setVisibility(View.VISIBLE);
+        binding.tabChatType.getTabAt(0).select();
         showConsult = false;
 
-        binding.rgChatType.setOnCheckedChangeListener((group, checkedId) -> {
-            showConsult = checkedId == R.id.rb_chat_consult;
-            loadChatRooms();
+        binding.tabChatType.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                showConsult = tab.getPosition() == 1;
+                loadChatRooms();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
         });
     }
 
