@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 새 디자인 시스템의 이니셜 아바타 배경 (친구/채팅/공유자 목록 공통) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/g50" />
+</shape>
