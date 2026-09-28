@@ -45,4 +45,16 @@
         <item name="android:fontFamily">@font/pretendard</item>
         <item name="fontFamily">@font/pretendard</item>
     </style>
+
+    <!-- yaksok_design.pen 뱃지: 아침/점심/저녁, 식후 30분 등 작은 알약형 라벨 -->
+    <style name="BadgeNeutral">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_badge_neutral</item>
+        <item name="android:paddingHorizontal">8dp</item>
+        <item name="android:paddingVertical">3dp</item>
+        <item name="android:textColor">@color/g700</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

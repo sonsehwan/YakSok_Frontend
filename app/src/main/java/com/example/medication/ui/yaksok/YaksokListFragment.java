@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -50,6 +51,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
     private SharedUserAdapter sharedUserAdapter;
 
     private Long currentSenderId;
+    private boolean sharedFilterSelected = false;
     private boolean isMyYaksokTab = true;
 
     private final ActivityResultLauncher<Intent> detailActivityLauncher = registerForActivityResult(
@@ -119,8 +121,14 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
 
         binding.rvShareUserList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        sharedUserAdapter = new SharedUserAdapter(new ArrayList<>(), (user, position) ->
-                fetchSharedYaksokBySender(user.getUserId()));
+        sharedUserAdapter = new SharedUserAdapter(new ArrayList<>(), (user, position) -> {
+            if (user.getUserId() == null) {
+                binding.tvSharedOwnerLabel.setVisibility(View.GONE);
+            } else {
+                showSharedOwnerLabel(user.getNickName());
+            }
+            fetchSharedYaksokBySender(user.getUserId());
+        });
         binding.rvShareUserList.setAdapter(sharedUserAdapter);
 
         binding.tvMyYaksok.setOnClickListener(v -> selectMyYaksokTab());
@@ -187,8 +195,19 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
             public void onResponse(Call<ApiResponse<List<SharedUser>>> call, Response<ApiResponse<List<SharedUser>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<SharedUser> userList = response.body().getData();
-                    if (userList != null) {
+                    if (userList != null && !userList.isEmpty()) {
+                        List<SharedUser> displayList = new ArrayList<>();
+                        displayList.add(new SharedUser(null, "전체"));
+                        displayList.addAll(userList);
+                        sharedUserAdapter.updateData(displayList);
+
+                        // 탭 진입 시 "전체"를 자동으로 선택해 공유받은 모든 약속을 바로 보여준다.
+                        sharedUserAdapter.setSelectedPosition(0);
+                        binding.tvSharedOwnerLabel.setVisibility(View.GONE);
+                        fetchSharedYaksokBySender(null);
+                    } else if (userList != null) {
                         sharedUserAdapter.updateData(userList);
+                        binding.tvSharedOwnerLabel.setVisibility(View.GONE);
                     }
                 } else {
                     Log.e("YaksokList", "공유자 목록 조회 실패: " + response.code());
@@ -202,12 +221,18 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
         });
     }
 
+    private void showSharedOwnerLabel(String nickname) {
+        binding.tvSharedOwnerLabel.setText(nickname + "님이 공유한 약속");
+        binding.tvSharedOwnerLabel.setVisibility(View.VISIBLE);
+    }
+
     private void selectMyYaksokTab() {
         isMyYaksokTab = true;
-        binding.tvMyYaksok.setBackgroundResource(R.drawable.bg_touch_my_yaksok_list);
-        binding.tvSharedYaksok.setBackgroundResource(R.drawable.bg_black_border);
+        setTabSelected(binding.tvMyYaksok, binding.viewUnderlineMy, true);
+        setTabSelected(binding.tvSharedYaksok, binding.viewUnderlineShared, false);
 
         binding.rvShareUserList.setVisibility(View.GONE);
+        binding.tvSharedOwnerLabel.setVisibility(View.GONE);
         binding.rvYaksokList.setVisibility(View.VISIBLE);
 
         binding.rvYaksokList.setAdapter(adapter);
@@ -216,10 +241,11 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
 
     private void selectSharedYaksokTab() {
         isMyYaksokTab = false;
-        binding.tvSharedYaksok.setBackgroundResource(R.drawable.bg_touch_shared_yaksok_list);
-        binding.tvMyYaksok.setBackgroundResource(R.drawable.bg_black_border);
+        setTabSelected(binding.tvSharedYaksok, binding.viewUnderlineShared, true);
+        setTabSelected(binding.tvMyYaksok, binding.viewUnderlineMy, false);
 
         currentSenderId = null;
+        sharedFilterSelected = false;
 
         shareYaksokListAdapter.updateData(new ArrayList<>());
         binding.rvYaksokList.setAdapter(shareYaksokListAdapter);
@@ -228,10 +254,17 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
         fetchSharedUserList();
     }
 
+    // 선택된 탭은 진하게 + 밑줄, 아닌 탭은 옅게 + 밑줄 없음
+    private void setTabSelected(android.widget.TextView tab, View underline, boolean selected) {
+        tab.setTextColor(ContextCompat.getColor(requireContext(), selected ? R.color.g900 : R.color.g400));
+        underline.setBackgroundColor(ContextCompat.getColor(requireContext(),
+                selected ? R.color.p600 : android.R.color.transparent));
+    }
+
     private void refreshCurrentTab() {
         if (isMyYaksokTab) {
             fetchYaksokList();
-        } else if (currentSenderId != null) {
+        } else if (sharedFilterSelected) {
             fetchSharedYaksokBySender(currentSenderId);
         } else {
             fetchSharedUserList();
@@ -240,6 +273,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
 
     private void fetchSharedYaksokBySender(Long senderId) {
         currentSenderId = senderId;
+        sharedFilterSelected = true;
 
         NetworkClient.getYaksokApi().getSharedYaksokList(senderId)
                 .enqueue(new Callback<ApiResponse<List<Yaksok>>>() {

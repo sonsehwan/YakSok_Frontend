@@ -1,106 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="20dp"
-    android:layout_marginVertical="8dp"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    app:strokeWidth="0dp">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="6dp"
+    android:background="@drawable/bg_card_outlined"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <View
-            android:layout_width="6dp"
-            android:layout_height="match_parent"
-            android:background="@color/brand_surface" />
+        <TextView
+            android:id="@+id/tv_yaksok_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/g900"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:text="감기약 처방" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_lc_chevron_right"
+            app:tint="@color/g300" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/ic_lc_calendar_days"
+            app:tint="@color/g400" />
+
+        <TextView
+            android:id="@+id/tv_yaksok_period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textColor="@color/g500"
+            android:textSize="13sp"
+            tools:text="2026-05-01 부터 3일간" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/ll_badges"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
-            <FrameLayout
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_pill_icon_yellow">
+            <TextView
+                android:id="@+id/tv_badge_morning"
+                style="@style/BadgeNeutral"
+                android:text="아침" />
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_prescription"
-                    app:tint="#FBC02D" />
-            </FrameLayout>
+            <TextView
+                android:id="@+id/tv_badge_lunch"
+                style="@style/BadgeNeutral"
+                android:layout_marginStart="6dp"
+                android:text="점심" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_badge_dinner"
+                style="@style/BadgeNeutral"
+                android:layout_marginStart="6dp"
+                android:text="저녁" />
 
-                <TextView
-                    android:id="@+id/tv_yaksok_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textSize="17sp"
-                    android:textStyle="bold"
-                    tools:text="감기약 처방" />
-
-                <TextView
-                    android:id="@+id/tv_yaksok_period"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="#999999"
-                    android:textSize="13sp"
-                    tools:text="2026-05-01 부터 3일간" />
-            </LinearLayout>
-
-<!--            <TextView-->
-<!--                android:id="@+id/tv_yaksok_status"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:paddingStart="8dp"-->
-<!--                android:textColor="#FBC02D"-->
-<!--                android:textSize="14sp"-->
-<!--                android:textStyle="bold"-->
-<!--                tools:text="복용 중" />-->
-
-            <FrameLayout
-                android:layout_width="60dp"
-                android:layout_height="60dp">
-
-                <ProgressBar
-                    android:id="@+id/status_yaksok"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:max="100"
-                    android:progress="0"
-                    android:progressDrawable="@drawable/circle_progress_bar" />
-
-                <TextView
-                    android:id="@+id/tv_progress_percent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="0%"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
-
+            <TextView
+                android:id="@+id/tv_badge_dosage"
+                style="@style/BadgeNeutral"
+                android:layout_marginStart="6dp"
+                tools:text="식후 30분" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_yaksok_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/p600"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="75%" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
