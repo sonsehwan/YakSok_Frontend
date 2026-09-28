@@ -24,7 +24,6 @@ import com.example.medication.LoadingDialog;
 import com.example.medication.R;
 import com.example.medication.adapter.AddMedicationSettingAdapter;
 import com.example.medication.databinding.ActivityCreatePrescriptionBinding;
-import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.CreateYakSokRequest;
 import com.example.medication.model.request.PillRequest;
@@ -584,9 +583,6 @@ public class CreatePrescription extends BaseActivity {
                         if(yaksokId != null) {
                             yaksok.setId(yaksokId);
                             SprefsManager.addYaksok(CreatePrescription.this, yaksok);
-
-                            List<NotificationYaksok> allNotifications = saveYaksokResponse.getNotifications();
-                            SprefsManager.setNotifications(CreatePrescription.this, allNotifications);
 
                             Toast.makeText(CreatePrescription.this, "약속이 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
 

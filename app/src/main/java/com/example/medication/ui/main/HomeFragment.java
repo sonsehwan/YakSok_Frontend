@@ -33,7 +33,6 @@ import com.example.medication.util.YaksokEventBus;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -69,7 +68,6 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
         selectedCalendar = Calendar.getInstance();
         updateDateHeader();
         setupDateNavigation();
-        setNickName();
 
         allNotifications = new ArrayList<>();
         notificationYaksokList = new ArrayList<>();
@@ -107,17 +105,13 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        adapter = null;
         binding = null;
     }
 
     @Override
     public void onYaksokDataChanged() {
         loadNotificationList();
-    }
-
-    private void setNickName() {
-        String nickName = SprefsManager.getUserNickName(requireContext());
-        binding.tvGreeting.setText(nickName + "님!");
     }
 
     private void setupDateNavigation() {
@@ -145,7 +139,7 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
     }
 
     private void updateDateHeader() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 M월 d일 EEEE", Locale.KOREAN);
+        SimpleDateFormat sdf = new SimpleDateFormat("M월 d일 (E)", Locale.KOREAN);
         binding.tvDate.setText(sdf.format(selectedCalendar.getTime()));
     }
 
@@ -250,6 +244,7 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
 
         binding.progressMain.setProgress(visualPercent);
         binding.tvProgressPercent.setText(percent + "%");
+        binding.tvProgressCount.setText(total == 0 ? "오늘 등록된 약속이 없어요" : (done + "개 중 " + total + "개 완료"));
 
         if (percent == 0) {
             binding.progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_missed)));
@@ -258,11 +253,6 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
         } else {
             binding.progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_pending)));
         }
-
-        int remain = total - done;
-        String todayString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        boolean isToday = todayString.equals(getSelectedDateString());
-        binding.tvSummary.setText((isToday ? "오늘" : "이 날의") + " 약속은 " + remain + "건 남았어요.");
 
         List<NotificationYaksok> allSavedList = SprefsManager.getNotificationList(requireContext());
         if (allSavedList != null) {

@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="8dp"
     android:layout_marginHorizontal="6dp"
-    android:background="@drawable/bg_shared_user_chip"
-    android:paddingHorizontal="18dp"
-    android:paddingVertical="10dp">
+    android:layout_marginVertical="8dp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_avatar"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:background="@drawable/bg_avatar_circle_neutral"
+        android:gravity="center"
+        android:textColor="@color/g500"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="김" />
 
     <TextView
         android:id="@+id/tv_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/brand_on_surface"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:text="손세환"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_marginTop="6dp"
+        android:textColor="@color/g500"
+        android:textSize="12sp"
+        tools:text="손세환" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

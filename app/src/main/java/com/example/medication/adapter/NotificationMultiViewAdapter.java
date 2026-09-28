@@ -95,7 +95,7 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
             h.binding.tvTimeTitle.setText(header.getTitle());
 
             boolean isCollapsed = collapsedCategories.contains(header.getTimeCategory());
-            h.binding.ivArrow.setRotation(isCollapsed ? 0 : 90); // 바인딩 시점엔 애니메이션 없이 현재 상태를 바로 반영
+            h.binding.ivArrow.setRotation(isCollapsed ? 0 : 180); // 바인딩 시점엔 애니메이션 없이 현재 상태를 바로 반영
 
             h.itemView.setOnClickListener(v -> {
                 boolean willCollapse;
@@ -106,7 +106,7 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
                     collapsedCategories.add(header.getTimeCategory());
                     willCollapse = true;
                 }
-                h.binding.ivArrow.animate().rotation(willCollapse ? 0 : 90).setDuration(200).start(); // 클릭했을 때만 회전 애니메이션
+                h.binding.ivArrow.animate().rotation(willCollapse ? 0 : 180).setDuration(200).start(); // 클릭했을 때만 회전 애니메이션
                 updateVisibleItems();
             });
         }else if (holder instanceof ItemViewHolder) {
@@ -115,12 +115,10 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
             NotificationYaksok data = noti.getData();
 
             h.binding.tvNotificationName.setText(data.getTitle());
-            h.binding.tvNotificationTime.setText(data.getTime());
-            h.binding.tvNotificationInfo.setText(data.getInstruction());
+            h.binding.tvNotificationMeta.setText(data.getTime() + " · " + data.getInstruction());
 
             h.binding.cbDone.setOnCheckedChangeListener(null); // 리스너 간섭 방지
             h.binding.cbDone.setChecked(data.isTaken());
-            h.binding.cbDone.setText(data.isTaken() ? "완료" : "미복용");
             holder.itemView.setAlpha(data.isTaken() ? 0.5f : 1.0f);
 
             h.binding.cbDone.setOnClickListener(v -> {
@@ -171,8 +169,6 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
 
                         @Override
                         public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                            // 3-2. 통신 에러 발생 시 원상 복구하며 에러 원인 출력
-                            // 개발 중에만 t.getMessage()를 띄우고, 서비스 중에는 "네트워크 오류" 등으로 묶습니다.
                             String errorMessage = t.getMessage() != null ? t.getMessage() : "원인 불명";
                             Log.e("통신 에러", errorMessage);
                             rollbackStatus(context, position, data, originalState, "오류: " + errorMessage);

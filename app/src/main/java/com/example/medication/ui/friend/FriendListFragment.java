@@ -420,7 +420,7 @@ public class FriendListFragment extends Fragment {
         adapter.updateData(friends);
 
         int count = (friends == null) ? 0 : friends.size();
-        binding.tvFriendCount.setText("내 친구 " + count);
+        binding.tvFriendCount.setText("친구 " + count);
         binding.tvEmptyFriend.setVisibility(count == 0 ? TextView.VISIBLE : TextView.GONE);
     }
 
@@ -482,7 +482,8 @@ public class FriendListFragment extends Fragment {
                                 && response.body().getData() != null) {
                             count = response.body().getData().size();
                         }
-                        binding.tvRequestCount.setText(count + "개 받음");
+                        binding.tvRequestCount.setText(String.valueOf(count));
+                        binding.tvRequestCount.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
                     }
 
                     @Override

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 채팅 [친구|상담] TabLayout 선택 인디케이터: 흰 알약 (탭 전체를 채움) -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
     <solid android:color="@android:color/white" />
+    <corners android:radius="10dp" />
 </shape>

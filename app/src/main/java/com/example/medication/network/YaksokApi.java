@@ -46,11 +46,6 @@ public interface YaksokApi {
     @DELETE("api/yaksok/{id}")
     Call<ApiResponse<Void>> deleteYaksok(@Path("id") Long id);
 
-    // 약속 단일 조회 (채팅에서 공유받은 약속 확인용)
-    @GET("api/yaksok/{yaksokId}")
-    Call<ApiResponse<Yaksok>> getYaksok(@Path("yaksokId") Long yaksokId);
-
-
     /***
      *  공유 약속 API
      */
@@ -62,6 +57,10 @@ public interface YaksokApi {
     // 공유자 목록
     @GET("/api/shared-yaksok/sender")
     Call<ApiResponse<List<SharedUser>>> getSharedUserList();
+
+    // 공유받은 약속 상세 (미리보기 + 저장한 목록 상세 겸용)
+    @GET("/api/shared-yaksok/{yaksokId}")
+    Call<ApiResponse<Yaksok>> getSharedYaksokDetail(@Path("yaksokId") Long yaksokId);
 
     // 저장한 공유 약속 목록
     @GET("/api/shared-yaksok")

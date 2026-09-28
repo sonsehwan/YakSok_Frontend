@@ -1,51 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:paddingStart="20dp"
-    android:paddingTop="16dp"
-    android:paddingEnd="20dp"
-    android:paddingBottom="16dp">
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="14dp">
+
+    <TextView
+        android:id="@+id/tv_avatar"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:background="@drawable/bg_avatar_circle_neutral"
+        android:gravity="center"
+        android:textColor="@color/g700"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:text="김" />
 
     <TextView
         android:id="@+id/tv_room_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="상대방 이름"
-        android:textColor="@color/neutral_800"
+        tools:text="채팅 상대 이름"
+        android:textColor="@color/g900"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@id/tv_time"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/tv_avatar"
+        app:layout_constraintTop_toTopOf="@id/tv_avatar" />
 
     <TextView
         android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="11:05"
-        android:textColor="@color/neutral_400"
+        android:textColor="@color/g400"
         android:textSize="12sp"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_room_name"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="11:05" />
 
     <TextView
         android:id="@+id/tv_last_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="마지막 메시지"
-        android:textColor="@color/neutral_600"
+        android:textColor="@color/g500"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_room_name" />
+        app:layout_constraintStart_toStartOf="@id/tv_room_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_room_name"
+        tools:text="마지막 메시지" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

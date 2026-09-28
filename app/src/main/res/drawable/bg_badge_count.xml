@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 친구 요청 개수 등 작은 원형 카운트 배지 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-    <solid android:color="@color/neutral_300" />
+    <solid android:color="@color/p600" />
 </shape>

@@ -76,7 +76,7 @@ public class ShareYaksokDetail extends BaseActivity {
     }
 
     private void loadYaksok() {
-        NetworkClient.getYaksokApi().getYaksok(yaksokId)
+        NetworkClient.getYaksokApi().getSharedYaksokDetail(yaksokId)
                 .enqueue(new Callback<ApiResponse<Yaksok>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Yaksok>> call, Response<ApiResponse<Yaksok>> response) {

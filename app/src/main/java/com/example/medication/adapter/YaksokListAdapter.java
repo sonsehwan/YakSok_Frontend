@@ -1,15 +1,12 @@
 package com.example.medication.adapter;
 
-import android.content.Context;
-import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.medication.R;
 import com.example.medication.databinding.ItemYaksokBinding;
 import com.example.medication.model.Yaksok;
 
@@ -41,9 +38,10 @@ public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.Vi
         Yaksok item = items.get(position);
 
         holder.binding.tvYaksokTitle.setText(item.getTitle());
-        holder.binding.tvYaksokPeriod.setText(item.getStartDate() + " 부터 " + item.getPrescriptionDays() + "일간");
+        holder.binding.tvYaksokPeriod.setText(item.getStartDate() + " 시작 · " + item.getPrescriptionDays() + "일");
 
-        updateProgress(holder, item.getCurrentClearNotifications(), item.getTotalNotifications());
+        bindBadges(holder, item);
+        bindPercent(holder, item);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
@@ -63,28 +61,25 @@ public class YaksokListAdapter extends RecyclerView.Adapter<YaksokListAdapter.Vi
         notifyDataSetChanged();
     }
 
-    // 복약 진행률을 원형 게이지에 그린다. MainActivity 의 진행률 표시와 같은 규칙을 쓴다.
-    private void updateProgress(ViewHolder holder, int done, int total) {
-        int percent = total > 0 ? (int) (((float) done / total) * 100) : 0;
+    // 전체 복약 알림 중 완료한 비율(총 알림 0건이면 0%)
+    private void bindPercent(ViewHolder holder, Yaksok item) {
+        int total = item.getTotalNotifications();
+        int percent = total > 0 ? (int) (((float) item.getCurrentClearNotifications() / total) * 100) : 0;
+        holder.binding.tvYaksokPercent.setText(percent + "%");
+    }
 
-        // 0%면 게이지가 아무것도 안 그려져 비어 보이므로, 링을 꽉 채운 뒤 빨간색으로 표시한다.
-        int visualPercent = (percent == 0) ? 100 : percent;
+    // 복용 시간대 뱃지(아침/점심/저녁, 식후 안내)를 해당하는 것만 보여준다.
+    private void bindBadges(ViewHolder holder, Yaksok item) {
+        holder.binding.tvBadgeMorning.setVisibility(item.isTakeMorning() ? View.VISIBLE : View.GONE);
+        holder.binding.tvBadgeLunch.setVisibility(item.isTakeLunch() ? View.VISIBLE : View.GONE);
+        holder.binding.tvBadgeDinner.setVisibility(item.isTakeDinner() ? View.VISIBLE : View.GONE);
 
-        holder.binding.statusYaksok.setProgress(visualPercent);
-        holder.binding.tvProgressPercent.setText(percent + "%");
-
-        Context context = holder.itemView.getContext();
-        int tintColor;
-
-        if (percent == 0) {
-            tintColor = ContextCompat.getColor(context, R.color.status_missed);
-        } else if (percent == 100) {
-            tintColor = ContextCompat.getColor(context, R.color.status_done);
-        } else {
-            tintColor = ContextCompat.getColor(context, R.color.status_pending);
+        String dosageTime = item.getDosageTime();
+        boolean hasDosageTime = dosageTime != null && !dosageTime.isEmpty();
+        holder.binding.tvBadgeDosage.setVisibility(hasDosageTime ? View.VISIBLE : View.GONE);
+        if (hasDosageTime) {
+            holder.binding.tvBadgeDosage.setText(dosageTime);
         }
-
-        holder.binding.statusYaksok.setProgressTintList(ColorStateList.valueOf(tintColor));
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

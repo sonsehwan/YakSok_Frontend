@@ -5,78 +5,103 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/g20"
     tools:context=".ui.yaksok.YaksokListFragment">
+
+    <TextView
+        android:id="@+id/tv_header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
+        android:text="약속"
+        android:textColor="@color/g900"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/iv_menu"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
-        android:padding="4dp"
-        android:src="@drawable/ic_menu2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_header_title"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:gravity="center"
-        android:text="약속 목록"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:padding="8dp"
+        android:src="@drawable/ic_lc_menu"
+        app:tint="@color/g900"
+        app:layout_constraintBottom_toBottomOf="@id/tv_header_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/tv_header_title" />
 
     <LinearLayout
         android:id="@+id/ll_choice_yaksok"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="48dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_header_title"
-        tools:ignore="MissingConstraints">
+        app:layout_constraintTop_toBottomOf="@id/tv_header_title">
 
         <TextView
             android:id="@+id/tv_my_yaksok"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="내 약속"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:background="@drawable/bg_touch_my_yaksok_list"/>
+            android:textColor="@color/g900"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_shared_yaksok"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="공유 약속"
-            android:textColor="#000000"
-            android:textSize="20sp"
+            android:textColor="@color/g400"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_tab_underline"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_choice_yaksok">
+
+        <View
+            android:id="@+id/view_underline_my"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/p600" />
+
+        <View
+            android:id="@+id/view_underline_shared"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent" />
+
+    </LinearLayout>
+
     <View
-    android:id="@+id/view_divider"
-    android:layout_width="0dp"
-    android:layout_height="1dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/ll_choice_yaksok" />
+        android:id="@+id/view_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/g100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_tab_underline" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_share_user_list"
@@ -85,12 +110,28 @@
         android:clipToPadding="false"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:background="@color/page_bg"
-        tools:listitem="@layout/item_shared_user_name"
+        android:visibility="gone"
+        tools:listitem="@layout/item_yaksok"
+        tools:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_choice_yaksok"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toBottomOf="@+id/view_divider" />
+
+    <TextView
+        android:id="@+id/tv_shared_owner_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/g500"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="김민지님이 공유한 약속"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_share_user_list" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_yaksok_list"
@@ -99,11 +140,10 @@
         android:clipToPadding="false"
         android:paddingTop="8dp"
         android:paddingBottom="20dp"
-        android:background="@color/page_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rv_share_user_list"
+        app:layout_constraintTop_toBottomOf="@+id/tv_shared_owner_label"
         tools:listitem="@layout/item_yaksok" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -113,9 +153,9 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@color/brand_surface"
+        app:backgroundTint="@color/p600"
         app:elevation="6dp"
-        app:tint="@color/black"
+        app:tint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

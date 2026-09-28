@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 오늘의 복약 진행률 바 (알약 형태) -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/g50" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <solid android:color="@color/p600" />
+                <corners android:radius="4dp" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>

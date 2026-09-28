@@ -26,11 +26,16 @@
 
     <style name="Theme.Medication" parent="Base.Theme.Medication" />
 
-    <!-- 사이드 메뉴 항목 글자를 키워서 아이콘과 균형을 맞춘다. -->
-    <style name="TextAppearance.SideMenu.Item" parent="TextAppearance.Material3.BodyLarge">
-        <item name="android:textSize">18sp</item>
+    <!-- 하단 네비게이션 라벨: 선택 탭은 굵게, 나머지는 보통 굵기 -->
+    <style name="TextAppearance.BottomNav.Active" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
-        <!-- 부모가 Material3.BodyLarge 라 여기서 명시하지 않으면 시스템 폰트로 남는다. -->
+        <item name="android:fontFamily">@font/pretendard</item>
+    </style>
+
+    <style name="TextAppearance.BottomNav.Inactive" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">@font/pretendard</item>
     </style>
 
@@ -39,5 +44,17 @@
     <style name="ThemeOverlay.App.AlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="android:fontFamily">@font/pretendard</item>
         <item name="fontFamily">@font/pretendard</item>
+    </style>
+
+    <!-- yaksok_design.pen 뱃지: 아침/점심/저녁, 식후 30분 등 작은 알약형 라벨 -->
+    <style name="BadgeNeutral">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_badge_neutral</item>
+        <item name="android:paddingHorizontal">8dp</item>
+        <item name="android:paddingVertical">3dp</item>
+        <item name="android:textColor">@color/g700</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>
