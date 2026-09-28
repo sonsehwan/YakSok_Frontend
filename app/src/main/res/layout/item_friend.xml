@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
@@ -12,35 +14,27 @@
         android:id="@+id/tv_avatar"
         android:layout_width="46dp"
         android:layout_height="46dp"
-        android:background="@drawable/bg_avatar_circle"
+        android:background="@drawable/bg_avatar_circle_neutral"
         android:gravity="center"
-        android:text="유"
-        android:textColor="#7A6100"
+        tools:text="유"
+        android:textColor="@color/g700"
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tv_time_friend_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
         android:layout_weight="1"
-        android:orientation="vertical">
+        tools:text="친구 이름"
+        android:textColor="@color/g900"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_time_friend_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="친구 이름"
-            android:textColor="#1A1A1A"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tv_friend_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:textColor="#9A9A9A"
-            android:textSize="13sp" />
-    </LinearLayout>
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_lc_chevron_right"
+        app:tint="@color/g300" />
 </LinearLayout>

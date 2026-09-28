@@ -50,7 +50,6 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         FriendResponseDto item = items.get(position);
 
         holder.binding.tvTimeFriendName.setText(item.getNickname());
-        holder.binding.tvFriendEmail.setText(item.getEmail());
         holder.binding.tvAvatar.setText(initialOf(item.getNickname()));
 
         holder.itemView.setOnClickListener(v -> {
