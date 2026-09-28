@@ -200,11 +200,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
                         displayList.add(new SharedUser(null, "전체"));
                         displayList.addAll(userList);
                         sharedUserAdapter.updateData(displayList);
-
-                        // 탭 진입 시 "전체"를 자동으로 선택해 공유받은 모든 약속을 바로 보여준다.
-                        sharedUserAdapter.setSelectedPosition(0);
-                        binding.tvSharedOwnerLabel.setVisibility(View.GONE);
-                        fetchSharedYaksokBySender(null);
+                        selectSharedUser(displayList, currentSenderId);
                     } else if (userList != null) {
                         sharedUserAdapter.updateData(userList);
                         binding.tvSharedOwnerLabel.setVisibility(View.GONE);
@@ -219,6 +215,24 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
                 Log.e("YaksokList", "공유자 목록 API 통신 실패: " + t.getMessage());
             }
         });
+    }
+
+    private void selectSharedUser(List<SharedUser> displayList, Long targetSenderId) {
+        int index = 0;
+        for (int i = 0; i < displayList.size(); i++) {
+            if (java.util.Objects.equals(displayList.get(i).getUserId(), targetSenderId)) {
+                index = i;
+                break;
+            }
+        }
+        SharedUser selected = displayList.get(index);
+        sharedUserAdapter.setSelectedPosition(index);
+        if (selected.getUserId() == null) {
+            binding.tvSharedOwnerLabel.setVisibility(View.GONE);
+        } else {
+            showSharedOwnerLabel(selected.getNickName());
+        }
+        fetchSharedYaksokBySender(selected.getUserId());
     }
 
     private void showSharedOwnerLabel(String nickname) {
@@ -312,9 +326,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                         if (response.isSuccessful()) {
                             Toast.makeText(requireContext(), "목록에서 삭제.", Toast.LENGTH_SHORT).show();
-                            if (currentSenderId != null) {
-                                fetchSharedYaksokBySender(currentSenderId);
-                            }
+                            fetchSharedUserList();
                         } else {
                             Toast.makeText(requireContext(), "목록에서 삭제 실패.", Toast.LENGTH_SHORT).show();
                         }
