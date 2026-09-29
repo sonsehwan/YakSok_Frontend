@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 약 아이템의 횟수/투약량 입력 박스 (g20 배경) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/g20" />
+    <corners android:radius="12dp" />
+</shape>
