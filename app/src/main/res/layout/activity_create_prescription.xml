@@ -5,21 +5,22 @@
     android:id="@+id/create_prescription"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     android:fitsSystemWindows="true"
-    tools:context=".CreatePrescription">
+    tools:context=".ui.yaksok.CreatePrescription">
 
     <!-- 상단 헤더 영역 -->
     <ImageView
         android:id="@+id/iv_back"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
-        android:padding="4dp"
+        android:padding="8dp"
         android:src="@drawable/ic_arrow_back"
+        app:tint="@color/g900"
         app:layout_constraintBottom_toBottomOf="@+id/tv_header_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_header_title" />
@@ -27,10 +28,10 @@
     <TextView
         android:id="@+id/tv_header_title"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
+        android:layout_height="56dp"
         android:gravity="center"
         android:text="약속 등록"
-        android:textColor="#000000"
+        android:textColor="@color/g900"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,21 +48,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="40dp">
+            android:paddingBottom="32dp">
 
-            <!-- 복용날짜 섹션 -->
+            <!-- 약속 명칭 섹션 -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="24dp">
+                android:layout_marginTop="16dp">
 
                 <TextView
                     android:id="@+id/tv_label_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="약속 명칭 *"
-                    android:textColor="#333333"
+                    android:textColor="@color/g700"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -70,11 +71,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="*는 필수 항목이에요!"
-                    android:textColor="#7C4DFF"
+                    android:textColor="@color/g400"
                     android:textSize="12sp" />
             </RelativeLayout>
-
-            <!-- 카드 별명 섹션 -->
 
             <com.example.medication.InputView
                 android:id="@+id/input_card_title"
@@ -83,44 +82,65 @@
                 android:layout_marginHorizontal="15dp"
                 app:hintText="약속 별명" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:text="투약 시작 날짜 *"
-                android:textColor="#333333"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <com.example.medication.InputView
-                android:id="@+id/input_start_date"
+            <!-- 투약 시작 날짜 / 투약일 수 (가로 배치) -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
-                android:clickable="true"
-                android:focusable="false"
-                app:isReadOnly="true"
-                app:hintText="날짜를 선택하세요."
-                app:iconSrc="@drawable/ic_calendar" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:text="투약일 수 *"
-                android:textColor="#333333"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
 
-            <com.example.medication.InputView
-                android:id="@+id/input_prescriptionDays"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
-                android:inputType="number"
-                app:hintText="숫자만 입력해주세요. (예: 3일 -> 3)" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="투약 시작 날짜 *"
+                        android:textColor="@color/g700"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.example.medication.InputView
+                        android:id="@+id/input_start_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="false"
+                        app:isReadOnly="true"
+                        app:hintText="날짜 선택"
+                        app:iconSrc="@drawable/ic_calendar" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="투약일 수 *"
+                        android:textColor="@color/g700"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.example.medication.InputView
+                        android:id="@+id/input_prescriptionDays"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        app:hintText="예: 3" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -129,59 +149,70 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:text="투약 횟수 *"
-                android:textColor="#333333"
+                android:textColor="@color/g700"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <!-- 노란 테두리 배경 적용 -->
             <LinearLayout
                 android:id="@+id/ll_dasage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginHorizontal="11dp"
                 android:background="@drawable/bg_yellow_border"
-                android:padding="5dp"
+                android:padding="2dp"
                 android:weightSum="3">
 
                 <CheckBox
                     android:id="@+id/cb_morning"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="60dp"
                     android:layout_weight="1"
                     android:text="아침"
                     android:button="@null"
+                    android:drawableTop="@drawable/ic_lc_sunrise"
+                    android:drawablePadding="2dp"
+                    android:paddingVertical="8dp"
+                    android:drawableTint="@color/selector_square_check_box_text"
                     android:gravity="center"
-                    android:layout_marginEnd="5dp"
+                    android:layout_margin="2dp"
                     android:background="@drawable/selector_square_check_box"
-                    android:textColor="@color/black" />
+                    android:textSize="12sp"
+                    android:textColor="@color/selector_square_check_box_text" />
 
-                <!-- 점심 -->
                 <CheckBox
                     android:id="@+id/cb_lunch"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="60dp"
                     android:layout_weight="1"
                     android:text="점심"
                     android:button="@null"
+                    android:drawableTop="@drawable/ic_lc_sun"
+                    android:drawablePadding="2dp"
+                    android:paddingVertical="8dp"
+                    android:drawableTint="@color/selector_square_check_box_text"
                     android:gravity="center"
-                    android:layout_marginHorizontal="2dp"
+                    android:layout_margin="2dp"
                     android:background="@drawable/selector_square_check_box"
-                    android:textColor="@color/black" />
+                    android:textSize="12sp"
+                    android:textColor="@color/selector_square_check_box_text" />
 
-                <!-- 저녁 -->
                 <CheckBox
                     android:id="@+id/cb_dinner"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="60dp"
                     android:layout_weight="1"
                     android:text="저녁"
                     android:button="@null"
+                    android:drawableTop="@drawable/ic_lc_moon"
+                    android:drawablePadding="2dp"
+                    android:paddingVertical="8dp"
+                    android:drawableTint="@color/selector_square_check_box_text"
                     android:gravity="center"
-                    android:layout_marginStart="5dp"
+                    android:layout_margin="2dp"
                     android:background="@drawable/selector_square_check_box"
-                    android:textColor="@color/black" />
+                    android:textSize="12sp"
+                    android:textColor="@color/selector_square_check_box_text" />
 
             </LinearLayout>
 
@@ -196,6 +227,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
+                    android:layout_marginTop="8dp"
                     android:clickable="true"
                     android:focusable="false"
                     android:visibility="gone"
@@ -208,6 +240,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
+                    android:layout_marginTop="8dp"
                     android:clickable="true"
                     android:focusable="false"
                     android:visibility="gone"
@@ -220,6 +253,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
+                    android:layout_marginTop="8dp"
                     android:clickable="true"
                     android:focusable="false"
                     android:visibility="gone"
@@ -229,7 +263,6 @@
 
             </LinearLayout>
 
-            <!-- 노란 테두리 배경 적용 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -237,7 +270,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:text="투약 시간대 *"
-                android:textColor="#333333"
+                android:textColor="@color/g700"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -246,71 +279,68 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginHorizontal="11dp"
                 android:background="@drawable/bg_yellow_border"
-                android:padding="5dp"
+                android:padding="2dp"
                 android:weightSum="3">
 
                 <RadioButton
                     android:id="@+id/rb_before"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="식전 30분"
                     android:button="@null"
                     android:background="@drawable/selector_square_check_box"
                     android:gravity="center"
-                    android:layout_marginEnd="5dp"
-                    android:textColor="@color/black" />
+                    android:layout_margin="2dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/selector_square_check_box_text" />
 
                 <RadioButton
                     android:id="@+id/rb_after"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="식후 30분"
                     android:button="@null"
                     android:background="@drawable/selector_square_check_box"
                     android:gravity="center"
-                    android:layout_marginHorizontal="2dp"
-                    android:textColor="@color/black" />
+                    android:layout_margin="2dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/selector_square_check_box_text" />
 
                 <RadioButton
                     android:id="@+id/rb_anytime"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="직후"
                     android:button="@null"
                     android:background="@drawable/selector_square_check_box"
                     android:gravity="center"
-                    android:layout_marginStart="5dp"
-                    android:textColor="@color/black" />
+                    android:layout_margin="2dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/selector_square_check_box_text" />
 
             </RadioGroup>
 
-
-
-            <!-- 구분선 -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="32dp"
-                android:background="@color/black" />
+                android:layout_marginTop="28dp"
+                android:background="@color/g100" />
 
-            <!-- 약 선택 섹션 타이틀 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="24dp"
                 android:text="약 선택 *"
-                android:textColor="#333333"
+                android:textColor="@color/g900"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- 추가된 약 목록 (RecyclerView) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_selected_pills"
                 android:layout_width="match_parent"
@@ -320,13 +350,12 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_add_medication_setting"/>
 
-            <!-- 약 추가 버튼 (점선 테두리) -->
             <FrameLayout
                 android:id="@+id/btn_add_pill"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="52dp"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/bg_dashed_border"
                 android:clickable="true"
                 android:focusable="true">
@@ -335,8 +364,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="+ 약 추가"
-                    android:textColor="#7C4DFF"
+                    android:drawableStart="@drawable/ic_lc_plus"
+                    android:drawablePadding="6dp"
+                    android:drawableTint="@color/p600"
+                    android:text="약 추가"
+                    android:textColor="@color/p600"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </FrameLayout>
@@ -344,18 +376,17 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- 하단 등록 버튼 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_register"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="56dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="20dp"
         android:text="등록"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
         android:textStyle="bold"
-        app:backgroundTint="#E0E0E0"
+        app:backgroundTint="@color/g100"
         app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent" />
 

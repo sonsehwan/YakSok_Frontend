@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.medication.R;
 import com.example.medication.databinding.ItemSimpleMedicineInfoBinding;
 import com.example.medication.model.response.MedicineSearchResponse;
 
@@ -52,17 +53,14 @@ public class MedicineAdapter extends RecyclerView.Adapter<MedicineAdapter.Medici
     public void onBindViewHolder(@NonNull MedicineViewHolder holder, int position) {
         MedicineSearchResponse medicine = medicineList.get(position);
 
-        // 약 이름 설정
         holder.binding.tvMedicineName.setText(medicine.getName());
 
-        // Glide를 사용하여 공공데이터 이미지 URL 로드
         Glide.with(holder.itemView.getContext())
                 .load(medicine.getImage())
-                .placeholder(android.R.drawable.ic_menu_report_image)
-                .error(android.R.drawable.ic_menu_close_clear_cancel)
+                .placeholder(R.drawable.ic_pill_placeholder_vec)
+                .error(R.drawable.ic_pill_placeholder_vec)
                 .into(holder.binding.ivMedicine);
 
-        // 아이템 클릭 이벤트 바인딩
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(medicine);

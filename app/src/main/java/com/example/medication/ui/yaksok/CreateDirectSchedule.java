@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import com.example.medication.ui.base.BaseActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -294,11 +295,11 @@ public class CreateDirectSchedule extends BaseActivity {
 
     private void updateRegisterButtonState() {
         if (!selectedPills.isEmpty()) {
-            binding.btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFFEB3B));
-            binding.btnRegister.setTextColor(0xFF000000);
+            binding.btnRegister.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.p600));
+            binding.btnRegister.setTextColor(ContextCompat.getColor(this, android.R.color.white));
         } else {
-            binding.btnRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE0E0E0));
-            binding.btnRegister.setTextColor(0xFFFFFFFF);
+            binding.btnRegister.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.g100));
+            binding.btnRegister.setTextColor(ContextCompat.getColor(this, R.color.g400));
         }
     }
 
