@@ -2,14 +2,12 @@ package com.example.medication.ui.chattingroom;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.medication.ui.base.BaseActivity;
-import androidx.core.content.ContextCompat;
+import androidx.activity.EdgeToEdge;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.medication.R;
@@ -56,17 +54,9 @@ public class ChattingRoom extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         binding = ActivityChattingRoomBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        // 상태바 / 하단 네비게이션 바 색상 설정
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.brand_surface));
-        getWindow().setNavigationBarColor(Color.WHITE);
-
-        // Android 10 이상에서 네비게이션 바 대비 효과 제거
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            getWindow().setNavigationBarContrastEnforced(false);
-        }
 
         Intent intent = getIntent();
         roomId = intent.getLongExtra("roomId", -1);

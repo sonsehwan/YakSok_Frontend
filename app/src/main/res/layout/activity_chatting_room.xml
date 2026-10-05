@@ -6,24 +6,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="@color/white">
 
-    <!-- 상단 툴바 영역 -->
     <TextView
         android:id="@+id/tv_room_name"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="56dp"
         android:gravity="center_vertical"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:text="상담방"
-        android:textSize="21sp"
+        android:textSize="18sp"
         android:textStyle="bold"
-        android:background="@color/brand_surface"
-        android:textColor="#222222"
-        android:elevation="6dp" />
+        android:background="@android:color/white"
+        android:textColor="@color/g900"
+        android:elevation="2dp" />
 
-    <!-- 채팅 메시지 목록 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_chat_messages"
         android:layout_width="match_parent"
@@ -34,10 +32,9 @@
         android:paddingTop="18dp"
         android:paddingBottom="18dp"
         android:clipToPadding="false"
-        android:background="#FFFDE7"
+        android:background="@color/g20"
         tools:listitem="@layout/item_my_yaksok_share_message"/>
 
-    <!-- 하단 메시지 입력 영역 -->
     <LinearLayout
         android:id="@+id/layout_message_input"
         android:layout_width="match_parent"
@@ -49,9 +46,8 @@
         android:paddingEnd="12dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:background="#FFFFFF"
-        android:elevation="8dp">
-
+        android:background="@android:color/white"
+        android:elevation="4dp">
 
         <EditText
             android:id="@+id/et_message"
@@ -67,26 +63,30 @@
             android:maxLines="5"
             android:minLines="1"
             android:textSize="16sp"
-            android:textColor="#222222"
-            android:textColorHint="#999999" />
+            android:textColor="@color/g900"
+            android:textColorHint="@color/g400" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_send"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="50dp"
-            android:text="전송"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:textColor="#222222"
             android:layout_gravity="bottom"
             android:layout_marginStart="8dp"
-            android:minWidth="0dp"
             android:insetLeft="0dp"
             android:insetTop="0dp"
+            android:insetRight="0dp"
             android:insetBottom="0dp"
-            app:cornerRadius="12dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="2dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="0dp"
+            app:icon="@drawable/ic_lc_send"
+            app:iconTint="@android:color/white"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:cornerRadius="25dp"
             app:elevation="0dp"
-            app:backgroundTint="@color/brand_surface" />
+            app:backgroundTint="@color/p600" />
 
     </LinearLayout>
 

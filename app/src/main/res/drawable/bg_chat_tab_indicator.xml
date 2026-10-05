@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 채팅 [친구|상담] TabLayout 선택 인디케이터: 흰 알약. 탭 영역을 꽉 채우므로(stretch) 캡슐 안쪽 여백 4dp를 inset으로 준다 -->
+<!-- 채팅 [친구|상담] TabLayout 선택 인디케이터: 주황 알약. 탭 영역을 꽉 채우므로(stretch) 캡슐 안쪽 여백 4dp를 inset으로 준다 -->
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
     android:inset="4dp">
     <shape android:shape="rectangle">
-        <solid android:color="@android:color/white" />
+        <solid android:color="@color/p600" />
         <corners android:radius="10dp" />
     </shape>
 </inset>
