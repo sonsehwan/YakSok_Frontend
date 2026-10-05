@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 약국 목록 거리 칩 (.pen DrugStoreList > Distance) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/g50" />
+    <corners android:radius="99dp" />
+</shape>
