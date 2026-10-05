@@ -1,5 +1,6 @@
 package com.example.medication.adapter;
 
+import com.example.medication.R;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,20 +36,21 @@ public class DetailYaksokMedicationAdapter extends RecyclerView.Adapter<DetailYa
 
         Glide.with(holder.itemView.getContext())
                 .load(item.getImage())
-                .placeholder(android.R.drawable.ic_menu_report_image)
-                .error(android.R.drawable.ic_menu_close_clear_cancel)
+                .placeholder(R.drawable.ic_pill_placeholder)
+                .error(R.drawable.ic_pill_placeholder).fallback(R.drawable.ic_pill_placeholder)
                 .into(holder.binding.ivPillImg);
 
         holder.binding.tvPillName.setText(item.getName());
-        holder.binding.tvFreqValue.setText(item.getDailyFrequency() + " 번");
+        holder.binding.tvFreqValue.setText(item.getDailyFrequency() + "번");
         holder.binding.etDosageValue.setText(item.getDosage());
 
+        holder.binding.tvDosageUnit.setText("정");
         holder.binding.etDosageValue.setEnabled(false);
         holder.binding.etDosageValue.setFocusable(false);
         holder.binding.etDosageValue.setClickable(false);
 
-        holder.binding.btnFreqPlus.setVisibility(View.INVISIBLE);
-        holder.binding.btnFreqMinus.setVisibility(View.INVISIBLE);
+        holder.binding.btnFreqPlus.setVisibility(View.GONE);
+        holder.binding.btnFreqMinus.setVisibility(View.GONE);
         holder.binding.btnRemove.setVisibility(View.INVISIBLE);
     }
 
