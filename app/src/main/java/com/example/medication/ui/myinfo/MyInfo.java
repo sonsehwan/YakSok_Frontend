@@ -48,11 +48,9 @@ public class MyInfo extends BaseActivity {
 
         binding.btnWithdraw.setOnClickListener(v -> showWithdrawConfirmDialog());
 
-        // 기존에 저장된 닉네임을 불러와서 미리 채워둡니다.
         String currentNickname = SprefsManager.getUserNickName(this);
         binding.inputNickname.setText(currentNickname);
 
-        // 약국 회원일 때만 약국 등록 영역을 노출합니다.
         UserResponse currentUser = SprefsManager.getUser(this);
         if (currentUser != null && Objects.equals(currentUser.getRole(), "DRUGSTORE")) {
             binding.tvLabelDrugstore.setVisibility(View.VISIBLE);
@@ -63,10 +61,8 @@ public class MyInfo extends BaseActivity {
             }
         }
 
-        // 뒤로가기 버튼 클릭 이벤트
         binding.ivBack.setOnClickListener(v -> finish());
 
-        // 수정하기 버튼 클릭 이벤트
         binding.btnSaveInfo.setOnClickListener(v -> {
             startModify();
         });
@@ -154,7 +150,6 @@ public class MyInfo extends BaseActivity {
         api.modifyNickname(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
-                // 응답을 성공적으로 받고 내용이 있을 때
                 if(response.isSuccessful() && response.body() != null){
 
                     ApiResponse<UserResponse> result = response.body();
@@ -196,7 +191,7 @@ public class MyInfo extends BaseActivity {
                 String errorJson = response.errorBody().string();
 
                 Log.e("ModifyInfoError", "서버 원본 응답: " + errorJson);
-                // 1. 서버가 빈 값을 보냈을 때 방어
+
                 if (errorJson == null || errorJson.trim().isEmpty()) {
 
                     showToast("수정에 실패했습니다. (응답 없음)");
@@ -205,22 +200,18 @@ public class MyInfo extends BaseActivity {
 
                 ApiResponse errorResponse = new Gson().fromJson(errorJson, ApiResponse.class);
 
-                // 2. 파싱은 성공했지만 안에 Message가 없을 때 방어
                 if (errorResponse != null && errorResponse.getMessage() != null) {
                     String message = errorResponse.getMessage();
                     showToast(message);
                 } else {
-                    // JSON 형태가 아니거나 메세지가 없는 경우
                     showToast("수정 정보를 다시 확인해주세요.");
                 }
             }
         } catch (Exception e) {
-            // IOException 및 Gson 파싱 에러(JsonSyntaxException)를 모두 잡아서 앱 강제종료 방지
             showToast("서버 응답을 분석할 수 없습니다.");
         }
     }
 
-    // 빈 공간 터치 시 키보드 내리기
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if(ev.getAction() == MotionEvent.ACTION_DOWN){
