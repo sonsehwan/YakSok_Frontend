@@ -50,24 +50,15 @@
         android:paddingBottom="24dp">
 
         <!-- 입력 폼 영역 -->
-        <TextView
-            android:id="@+id/tv_label_nickname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="닉네임"
-            android:textColor="@color/g700"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
         <com.example.medication.InputView
             android:id="@+id/input_nickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="-5dp"
             android:imeOptions="actionDone"
             android:inputType="text"
             app:helperText="2~10자의 한글, 영문, 숫자만 사용 가능합니다."
             app:hintText="닉네임을 입력하세요."
+            app:labelText="닉네임"
             app:validationType="nickname" />
 
         <TextView
