@@ -83,18 +83,13 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_go_login"
         app:layout_constraintVertical_bias="0.5">
 
-        <FrameLayout
+        <ImageView
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:background="@drawable/bg_icon_circle_primary">
-
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_gravity="center"
-                app:tint="@color/p600"
-                app:srcCompat="@drawable/ic_check" />
-        </FrameLayout>
+            android:background="@drawable/bg_icon_circle_primary"
+            android:padding="18dp"
+            app:tint="@color/p600"
+            app:srcCompat="@drawable/ic_check" />
 
         <TextView
             android:layout_width="match_parent"

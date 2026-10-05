@@ -18,18 +18,13 @@
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
-        <FrameLayout
+        <ImageView
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:background="@drawable/bg_logo_mark">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                app:tint="@color/white"
-                app:srcCompat="@drawable/ic_pill" />
-        </FrameLayout>
+            android:background="@drawable/bg_logo_mark"
+            android:padding="13dp"
+            app:tint="@color/white"
+            app:srcCompat="@drawable/ic_pill" />
 
         <TextView
             android:id="@+id/tv_welcome"
