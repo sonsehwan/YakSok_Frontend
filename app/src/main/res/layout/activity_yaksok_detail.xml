@@ -84,45 +84,66 @@
                 app:isReadOnly="true"
                 app:hintText="약속 별명" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:text="투약 시작 날짜"
-                android:textColor="@color/g700"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <com.example.medication.InputView
-                android:id="@+id/input_start_date"
+            <!-- 투약 시작 날짜 / 투약일 수 (가로 배치) -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
-                android:clickable="true"
-                android:focusable="false"
-                app:isReadOnly="true"
-                app:hintText="날짜를 선택하세요."
-                app:iconSrc="@drawable/ic_calendar" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:text="투약일 수"
-                android:textColor="@color/g700"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
 
-            <com.example.medication.InputView
-                android:id="@+id/input_prescriptionDays"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
-                android:inputType="number"
-                app:isReadOnly="true"
-                app:hintText="숫자만 입력해주세요. (예: 3일 -> 3)" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="투약 시작 날짜"
+                        android:textColor="@color/g700"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.example.medication.InputView
+                        android:id="@+id/input_start_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="false"
+                        app:hintText="날짜 선택"
+                        app:iconSrc="@drawable/ic_calendar"
+                        app:isReadOnly="true" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="투약일 수"
+                        android:textColor="@color/g700"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.example.medication.InputView
+                        android:id="@+id/input_prescriptionDays"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        app:hintText="예: 3"
+                        app:isReadOnly="true" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
