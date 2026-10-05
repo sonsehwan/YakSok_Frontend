@@ -64,4 +64,13 @@
         <item name="fontFamily">@font/pretendard</item>
         <item name="android:fontFamily">@font/pretendard</item>
     </style>
+
+    <style name="TextAppearance.App.ChatTab" parent="TextAppearance.Design.Tab">
+        <item name="fontFamily">@font/pretendard</item>
+        <item name="android:fontFamily">@font/pretendard</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
 </resources>

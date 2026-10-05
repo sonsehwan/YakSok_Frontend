@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 옵션 카드의 브랜드 톤 아이콘 배경 (yaksok_design.pen Icon Box, p100) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/p100" />
+    <corners android:radius="12dp" />
+</shape>
