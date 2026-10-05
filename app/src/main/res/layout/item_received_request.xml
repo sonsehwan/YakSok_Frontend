@@ -16,9 +16,9 @@
             android:id="@+id/tv_avatar"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:background="@drawable/bg_avatar_circle"
+            android:background="@drawable/bg_avatar_circle_neutral"
             android:gravity="center"
-            android:textColor="#7A6100"
+            android:textColor="@color/g700"
             android:textSize="17sp"
             android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="친구요청 유저 이름"
-                android:textColor="#1A1A1A"
+                android:textColor="@color/g900"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:textColor="#9A9A9A"
+                android:textColor="@color/g500"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
@@ -60,10 +60,10 @@
             android:layout_height="44dp"
             android:layout_weight="1"
             android:text="수락"
-            android:textColor="#1A1A1A"
+            android:textColor="@android:color/white"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:backgroundTint="@color/brand_surface"
+            app:backgroundTint="@color/p600"
             app:cornerRadius="12dp"
             app:elevation="0dp" />
 
@@ -75,9 +75,9 @@
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="거절"
-            android:textColor="#8A8A8A"
+            android:textColor="@color/g500"
             android:textSize="14sp"
             app:cornerRadius="12dp"
-            app:strokeColor="#E2E2E2" />
+            app:strokeColor="@color/g100" />
     </LinearLayout>
 </LinearLayout>

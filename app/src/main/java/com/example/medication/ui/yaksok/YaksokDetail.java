@@ -8,13 +8,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AlertDialog;
 import com.example.medication.ui.base.BaseActivity;
+import com.example.medication.ui.common.AppDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.medication.ui.chattingroom.ChattingRoom;
@@ -23,6 +23,7 @@ import com.example.medication.adapter.DetailYaksokMedicationAdapter;
 import com.example.medication.adapter.FriendListAdapter;
 import com.example.medication.databinding.ActivityYaksokDetailBinding;
 import com.example.medication.databinding.DialogSelectFriendBinding;
+import com.example.medication.databinding.PopupYaksokMenuBinding;
 import com.example.medication.model.Yaksok;
 import com.example.medication.model.request.FriendChatRoomRequest;
 import com.example.medication.model.request.PillRequest;
@@ -157,14 +158,9 @@ public class YaksokDetail extends BaseActivity {
 
     private void showDeleteConfirmDialog(Yaksok yaksok) {
         Long id = yaksok.getId();
-        new AlertDialog.Builder(this)
-                .setTitle("약속 삭제")
-                .setMessage("'" + yaksok.getTitle() + "' 약속을 삭제하시겠습니까?\n관련된 모든 정보(복약, 알림)가 함께 삭제됩니다.")
-                .setPositiveButton("삭제", (dialog, which) -> {
-                    deleteYaksokFromServer(id);
-                })
-                .setNegativeButton("취소", null)
-                .show();
+        AppDialog.confirm(this, "약속 삭제",
+                "'" + yaksok.getTitle() + "' 약속을 삭제하시겠습니까?\n관련된 모든 정보(복약, 알림)가 함께 삭제됩니다.",
+                "삭제", true, () -> deleteYaksokFromServer(id));
     }
 
     private void deleteYaksokFromServer(Long yaksokId) {
@@ -283,8 +279,7 @@ public class YaksokDetail extends BaseActivity {
     }
 
     private String buildShareMessage(Yaksok yaksok) {
-        String nickname = SprefsManager.getUserNickName(this);
-        return nickname + "님이 약속을 공유했습니다.\n" + yaksok.getTitle();
+        return yaksok.getTitle();
     }
 
     // 응답 원문은 로그에만 남기고, 사용자에게는 message만 보여준다.
@@ -305,31 +300,27 @@ public class YaksokDetail extends BaseActivity {
         return defaultMessage;
     }
 
-    private void showMenu(View view, Yaksok yaksok){
-        PopupMenu menu = new PopupMenu(this, view);
+    // .pen의 Popup Menu(아이콘 + 라벨, 삭제는 빨간색)를 그대로 그리려고 PopupMenu 대신 PopupWindow를 쓴다.
+    private void showMenu(View anchor, Yaksok yaksok){
+        PopupYaksokMenuBinding menu = PopupYaksokMenuBinding.inflate(getLayoutInflater());
+        PopupWindow popup = AppDialog.popup(menu.getRoot(), 160);
 
-        menu.getMenuInflater().inflate(R.menu.yaksok_menu, menu.getMenu());
-
-        menu.setOnMenuItemClickListener(item ->{
-            int id = item.getItemId();
-
-            if(id == R.id.yaksok_share){
-                showFriendPickerDialog(yaksok);
-                return true;
-            }
-            else if(id == R.id.yaksok_modify) {
-                Intent intent = new Intent(YaksokDetail.this, ModifyYaksok.class);
-                intent.putExtra("YAKSOK_DATA", yaksok);
-                modifyLauncher.launch(intent);
-                return true;
-            }
-            else if(id == R.id.yaksok_delete){
-                showDeleteConfirmDialog(yaksok);
-                return true;
-            }
-            return false;
+        menu.llShare.setOnClickListener(v -> {
+            popup.dismiss();
+            showFriendPickerDialog(yaksok);
         });
-        menu.show();
+        menu.llModify.setOnClickListener(v -> {
+            popup.dismiss();
+            Intent intent = new Intent(YaksokDetail.this, ModifyYaksok.class);
+            intent.putExtra("YAKSOK_DATA", yaksok);
+            modifyLauncher.launch(intent);
+        });
+        menu.llDelete.setOnClickListener(v -> {
+            popup.dismiss();
+            showDeleteConfirmDialog(yaksok);
+        });
+
+        AppDialog.showBelow(popup, anchor);
     }
 
     private void showToast(String message) {

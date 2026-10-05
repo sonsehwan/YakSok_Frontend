@@ -1,56 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_pill"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="5dp"
-    android:layout_marginVertical="8dp"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    app:strokeWidth="0dp">
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingVertical="16dp">
 
-        <!-- 왼쪽 컬러 강조선 -->
-        <View
-            android:id="@+id/view_status_bar"
-            android:layout_width="6dp"
-            android:layout_height="match_parent"
-            android:background="@color/brand_surface" />
-
-        <!-- 약 정보 텍스트 영역 -->
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tv_drugstore_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="60dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:orientation="vertical">
+            android:textColor="@color/g900"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="약국 이름" />
 
-            <TextView
-                android:id="@+id/tv_drugstore_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                tools:text="약국 이름" />
-
-            <TextView
-                android:id="@+id/tv_drugstore_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#999999"
-                android:textSize="13sp"
-                tools:text="주소" />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_drugstore_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/g500"
+            android:textSize="13sp"
+            tools:text="주소" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/g100" />
+</LinearLayout>

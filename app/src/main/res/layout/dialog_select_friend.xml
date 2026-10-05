@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="약속 공유"
-        android:textColor="#1A1A1A"
+        android:textColor="@color/g900"
         android:textSize="19sp"
         android:textStyle="bold" />
 
@@ -23,7 +23,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="6dp"
         android:text="공유할 친구를 선택하세요."
-        android:textColor="#8A8A8E"
+        android:textColor="@color/g500"
         android:textSize="13sp" />
 
     <TextView
@@ -33,7 +33,7 @@
         android:gravity="center"
         android:paddingVertical="34dp"
         android:text="아직 친구가 없어요."
-        android:textColor="#B0B0B0"
+        android:textColor="@color/g400"
         android:textSize="14sp"
         android:visibility="gone" />
 

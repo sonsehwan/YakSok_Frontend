@@ -1,145 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 최상단 부모를 세로형 LinearLayout으로 설정하여 내부 요소를 수직 배치합니다. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     android:fitsSystemWindows="true">
 
-    <ImageView
-        android:id="@+id/iv_detail_back"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_arrow_back"
-        android:contentDescription="뒤로가기"
-        android:layout_margin="10dp"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
 
-    <!-- 1. 스크롤 뷰: 높이를 0dp로 두고 weight를 1로 설정하여 하단 버튼 영역을 제외한 모든 공간을 가득 채우게 합니다. -->
-    <ScrollView
+        <ImageView
+            android:id="@+id/iv_detail_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="뒤로가기"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_lc_chevron_left"
+            app:tint="@color/g900" />
+
+        <TextView
+            android:id="@+id/tv_detail_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:maxWidth="240dp"
+            android:textColor="@color/g900"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="약국 이름" />
+    </FrameLayout>
+
+    <com.example.medication.view.MapTouchContainer
+        android:layout_width="match_parent"
+        android:layout_height="240dp">
+
+        <com.kakao.vectormap.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.example.medication.view.MapTouchContainer>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="true">
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp">
 
-        <!-- 기존 본문 레이아웃 (패딩 값 유지) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_filled"
             android:orientation="vertical"
             android:padding="20dp">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#F0F0F0" />
-
-            <TextView
-                android:id="@+id/tv_detail_name"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:text="약국 이름"/>
+                android:orientation="horizontal">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#F0F0F0" />
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_lc_map_pin"
+                    app:tint="@color/g400"
+                    tools:ignore="ContentDescription" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="주소"
-                android:textColor="#000000"
-                android:layout_marginTop="10dp"
-                android:textSize="20sp"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_detail_addr"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:padding="10dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_yellow_border"
-                android:textColor="#000000"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="주소"
+                        android:textColor="@color/g500"
+                        android:textSize="13sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="전화번호"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
+                    <TextView
+                        android:id="@+id/tv_detail_addr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/g900"
+                        android:textSize="15sp"
+                        tools:text="서울 강남구 테헤란로 123" />
+                </LinearLayout>
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_detail_tel"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:padding="10dp"
-                android:layout_marginBottom="16dp"
-                android:textColor="#000000"
-                android:background="@drawable/bg_yellow_border"
-                android:autoLink="phone"
-                android:textColorLink="#000000"
-                android:linksClickable="true"/>
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="영업시간"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_lc_phone"
+                    app:tint="@color/g400"
+                    tools:ignore="ContentDescription" />
 
-            <TextView
-                android:id="@+id/tv_detail_hours"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="전화"
+                        android:textColor="@color/g500"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_tel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:autoLink="phone"
+                        android:linksClickable="true"
+                        android:textColor="@color/g900"
+                        android:textColorLink="@color/g900"
+                        android:textSize="15sp"
+                        tools:text="02-123-4567" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:padding="10dp"
-                android:background="@drawable/bg_yellow_border"
-                android:layout_marginBottom="16dp"
-                android:textColor="#000000"/>
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="위치"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_lc_clock"
+                    app:tint="@color/g400"
+                    tools:ignore="ContentDescription" />
 
-            <com.example.medication.view.MapTouchContainer
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/bg_yellow_border"
-                android:padding="3dp">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <com.kakao.vectormap.MapView
-                    android:id="@+id/map_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp" />
-            </com.example.medication.view.MapTouchContainer>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="영업시간"
+                        android:textColor="@color/g500"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_hours"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/g900"
+                        android:textSize="15sp"
+                        tools:text="오늘 09:00 – 22:00" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
 
-    <!-- 2. 하단 고정 버튼: 스크롤 뷰 바깥에 존재하므로 스크롤 여부와 무관하게 항상 화면 최하단에 노출됩니다. -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_start_chatting"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="16dp"
-        android:text="채팅하기"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:backgroundTint="@color/brand_surface"
-        app:cornerRadius="12dp" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_start_chatting"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="약국과 채팅 시작"
+            android:textColor="@android:color/white"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/p600"
+            app:cornerRadius="12dp"
+            app:elevation="0dp" />
+    </LinearLayout>
 </LinearLayout>

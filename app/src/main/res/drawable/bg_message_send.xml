@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- yaksok_design.pen 보낸 말풍선: 주황 배경, 오른쪽 아래만 덜 둥글게 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-<solid android:color="@android:color/white"/>
-<corners
-    android:radius="14dp"
-    android:topLeftRadius="4dp"/> <!-- 말풍선 꼬리 느낌을 위해 왼쪽 위만 덜 둥글게 -->
-<stroke android:width="1dp" android:color="@color/g100"/>
+    <solid android:color="@color/p600" />
+    <corners
+        android:radius="16dp"
+        android:bottomRightRadius="4dp" />
 </shape>

@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -23,6 +22,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.ChatRoomListDto;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.ui.common.AppDialog;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.tabs.TabLayout;
@@ -120,24 +120,13 @@ public class ChatRoomListFragment extends Fragment {
     }
 
     private void showRoomActionsDialog(ChatRoomListDto room) {
-        String[] actions = {"삭제"};
-        new AlertDialog.Builder(requireContext())
-                .setTitle(room.getRoomName())
-                .setItems(actions, (dialog, which) -> {
-                    if (which == 0) {
-                        showDeleteConfirmDialog(room);
-                    }
-                })
-                .show();
+        AppDialog.deleteAction(requireContext(), room.getRoomName(), () -> showDeleteConfirmDialog(room));
     }
 
     private void showDeleteConfirmDialog(ChatRoomListDto room) {
-        new AlertDialog.Builder(requireContext())
-                .setTitle("채팅방 나가기")
-                .setMessage("'" + room.getRoomName() + "' 채팅방을 목록에서 지울까요?")
-                .setPositiveButton("나가기", (dialog, which) -> deleteChatRoom(room))
-                .setNegativeButton("취소", null)
-                .show();
+        AppDialog.confirm(requireContext(), "채팅방 나가기",
+                "'" + room.getRoomName() + "' 채팅방을 목록에서 지울까요?",
+                "나가기", true, () -> deleteChatRoom(room));
     }
 
     private void deleteChatRoom(ChatRoomListDto room) {

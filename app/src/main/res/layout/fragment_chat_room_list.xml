@@ -5,7 +5,7 @@
     android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/g20"
+    android:background="@color/white"
     tools:context=".ui.chattingroom.ChatRoomListFragment"
     tools:ignore="PrivateResource">
 
@@ -33,10 +33,12 @@
         app:tabMode="fixed"
         app:tabGravity="fill"
         app:tabIndicator="@drawable/bg_chat_tab_indicator"
+        app:tabIndicatorColor="@color/p600"
+        app:tabIndicatorFullWidth="true"
         app:tabIndicatorGravity="stretch"
         app:tabIndicatorAnimationMode="elastic"
         app:tabRippleColor="@android:color/transparent"
-        app:tabSelectedTextColor="@color/g900"
+        app:tabSelectedTextColor="@android:color/white"
         app:tabTextColor="@color/g500"
         app:tabTextAppearance="@style/TextAppearance.App.ChatTab"
         app:layout_constraintEnd_toEndOf="parent"
@@ -75,7 +77,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rg_chat_type"
+        app:layout_constraintTop_toBottomOf="@id/tab_chat_type"
         tools:listitem="@layout/item_chat_room" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

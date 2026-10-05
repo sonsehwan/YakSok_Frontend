@@ -65,6 +65,8 @@ public class DrugStoreAdapter extends RecyclerView.Adapter<DrugStoreAdapter.View
 
 
         holder.binding.tvDrugstoreHours.setText(formatTime(item.getStartTime(), item.getEndTime()));
+        holder.binding.tvDrugstoreAddress.setText(item.getDutyAddr());
+        holder.binding.tvDrugstorePhone.setText(item.getDutyTel1());
 
         String distance = calculateDistance(myLat, myLng, item);
         holder.binding.tvDrugstoreDistance.setText(distance);
@@ -111,6 +113,6 @@ public class DrugStoreAdapter extends RecyclerView.Adapter<DrugStoreAdapter.View
         String lendTime = endTime.substring(2);
         String finalEndTime = fendTime + ":" + lendTime;
 
-        return "영업시간: " + finalStartTime + " ~ " + finalEndTime;
+        return "오늘 " + finalStartTime + " – " + finalEndTime;
     }
 }

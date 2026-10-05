@@ -10,7 +10,6 @@ import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.medication.databinding.FragmentSettingsBinding;
@@ -20,6 +19,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
+import com.example.medication.ui.common.AppDialog;
 import com.example.medication.ui.login.Login;
 import com.example.medication.ui.myinfo.MyInfo;
 import com.example.medication.util.InsetsUtil;
@@ -96,18 +96,13 @@ public class SettingsFragment extends Fragment {
     }
 
     private void showLogOutDialog() {
-        new AlertDialog.Builder(requireContext())
-                .setTitle("로그아웃")
-                .setMessage("로그아웃 하시겠습니까?")
-                .setPositiveButton("로그아웃", (dialog, which) -> {
-                    deleteToken();
-                    SprefsManager.clearUserInfo(requireContext());
-                    requireActivity().finishAffinity();
-                    Intent intent = new Intent(requireContext(), Login.class);
-                    startActivity(intent);
-                })
-                .setNegativeButton("취소", null)
-                .show();
+        AppDialog.confirm(requireContext(), "로그아웃", "로그아웃 하시겠습니까?", "로그아웃", false, () -> {
+            deleteToken();
+            SprefsManager.clearUserInfo(requireContext());
+            requireActivity().finishAffinity();
+            Intent intent = new Intent(requireContext(), Login.class);
+            startActivity(intent);
+        });
     }
 
     private void deleteToken() {

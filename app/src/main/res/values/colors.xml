@@ -45,6 +45,8 @@
     <color name="g300">#A9AEB1</color>
     <color name="g400">#8D9297</color>
     <color name="g500">#71767A</color>
+    <color name="g600">#565C65</color>
     <color name="g700">#3D4551</color>
     <color name="g900">#1C1D1F</color>
+    <color name="red500">#FA5252</color>
 </resources>

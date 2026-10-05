@@ -63,15 +63,16 @@ public class DrugStoreDetail extends BaseActivity {
         binding.tvDetailTel.setText(drugStore.getDutyTel1());
         binding.tvDetailHours.setText(formatTime(drugStore.getStartTime(), drugStore.getEndTime()));
 
+        binding.ivDetailBack.setOnClickListener(v -> finish());
+
         binding.btnStartChatting.setOnClickListener(v -> {
             UserResponse currentUser = getUser(this);
             String userRole = currentUser.getRole();
             String userDrugStoreHpid = null;
 
-            // 로그인 회원이 약사일 경우
             if(Objects.equals(userRole, "DRUGSTORE")){
                 DrugStore myStore = currentUser.getMyDrugStore();
-                // 약국 회원이어도 아직 약국을 등록하지 않았으면 null이다.
+
                 if (myStore != null) {
                     userDrugStoreHpid = myStore.getHpid();
                     Log.d("userDrugStoreHpid", userDrugStoreHpid);
@@ -85,7 +86,6 @@ public class DrugStoreDetail extends BaseActivity {
                 return;
             }
 
-            //Objects에서 equals로 비교하면 userEmail도 null확인을 해준다.
             if(Objects.equals(userDrugStoreHpid, hpid)){
                 Toast.makeText(DrugStoreDetail.this, "자신의 약국에 채팅을 시작할 수 없습니다.", Toast.LENGTH_SHORT).show();
                 return;
@@ -93,7 +93,6 @@ public class DrugStoreDetail extends BaseActivity {
 
             ChatRoomRequest request = new ChatRoomRequest(hpid);
 
-            // Retrofit 통신 시작
             NetworkClient.getChatApi().enterChatRoom(request).enqueue(new Callback<ApiResponse<ChatRoomResponse>>() {
                 @Override
                 public void onResponse(Call<ApiResponse<ChatRoomResponse>> call, Response<ApiResponse<ChatRoomResponse>> response) {
@@ -108,7 +107,6 @@ public class DrugStoreDetail extends BaseActivity {
                         startActivity(chatIntent);
 
                     } else {
-                        // 응답 원문은 로그에만 남기고, 사용자에게는 message만 보여준다.
                         String errorMessage = "채팅방 연결에 실패했습니다.";
                         try {
                             String errorBody = response.errorBody() != null ? response.errorBody().string() : null;
@@ -190,18 +188,18 @@ public class DrugStoreDetail extends BaseActivity {
         String lendTime = endTime.substring(2);
         String finalEndTime = fendTime + ":" + lendTime;
 
-        return finalStartTime + " ~ " + finalEndTime;
+        return finalStartTime + " – " + finalEndTime;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        binding.mapView.resume(); // 지도 렌더링 재개
+        binding.mapView.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        binding.mapView.pause(); // 지도 렌더링 일시정지
+        binding.mapView.pause();
     }
 }

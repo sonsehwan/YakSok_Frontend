@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/page_bg"
+    android:background="@color/white"
     android:fitsSystemWindows="true"
     tools:context=".DrugStoreList">
 
@@ -13,13 +13,14 @@
         android:id="@+id/iv_back"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="뒤로가기"
         android:focusable="true"
-        android:padding="4dp"
-        android:src="@drawable/ic_arrow_back"
+        android:padding="8dp"
+        android:src="@drawable/ic_lc_chevron_left"
+        app:tint="@color/g900"
         app:layout_constraintBottom_toBottomOf="@id/tv_header_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_header_title" />
@@ -27,36 +28,57 @@
     <TextView
         android:id="@+id/tv_header_title"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
+        android:layout_height="56dp"
         android:gravity="center"
-        android:text="인근 약국 목록"
-        android:textColor="#000000"
-        android:textSize="20sp"
+        android:text="근처 약국"
+        android:textColor="@color/g900"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/view_divider"
+    <LinearLayout
+        android:id="@+id/ll_location_info"
         android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="#F0F0F0"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_header_title" />
+        app:layout_constraintTop_toBottomOf="@id/tv_header_title">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_lc_map_pin"
+            app:tint="@color/p600"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="지금 영업 중인 약국 · 가까운 순"
+            android:textColor="@color/g500"
+            android:textSize="13sp" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_drugstore_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingTop="8dp"
+        android:paddingHorizontal="16dp"
         android:paddingBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_divider"
+        app:layout_constraintTop_toBottomOf="@id/ll_location_info"
         tools:listitem="@layout/item_drugstore" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
