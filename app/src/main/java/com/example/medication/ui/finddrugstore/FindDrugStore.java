@@ -157,9 +157,11 @@ public class FindDrugStore extends BaseActivity {
 
                     if (drugStores != null && !drugStores.isEmpty()) {
                         adapter.updateData(drugStores); // 어댑터에 데이터 전달하여 리스트 갱신
+                        showResultCount(drugStores.size());
                     } else {
                         showToast("조건에 맞는 약국을 찾을 수 없습니다.");
                         adapter.updateData(new ArrayList<>()); // 목록 비우기
+                        showResultCount(0);
                     }
                 } else {
                     showToast("서버로부터 결과를 가져오지 못했습니다.");
@@ -172,6 +174,11 @@ public class FindDrugStore extends BaseActivity {
                 showToast("네트워크 통신 오류: " + t.getMessage());
             }
         });
+    }
+
+    private void showResultCount(int count) {
+        binding.tvResultCount.setText("검색 결과 " + count);
+        binding.tvResultCount.setVisibility(View.VISIBLE);
     }
 
     private void showDialog(SearchDrugStore drugStore) {
