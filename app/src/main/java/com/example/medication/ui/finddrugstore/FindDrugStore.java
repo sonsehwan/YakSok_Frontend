@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
+import com.example.medication.ui.common.AppDialog;
 import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -182,10 +182,8 @@ public class FindDrugStore extends BaseActivity {
     }
 
     private void showDialog(SearchDrugStore drugStore) {
-        new AlertDialog.Builder(this)
-                .setTitle(drugStore.getDutyName() + " 선택")
-                .setMessage(drugStore.getDutyName() +"을 선택하시겠습니까?")
-                .setPositiveButton("선택", (dialog, which) -> {
+        AppDialog.confirm(this, drugStore.getDutyName() + " 선택",
+                drugStore.getDutyName() + "을 선택하시겠습니까?", "선택", false, () -> {
                     if ("sign_up".equals(type)) {
                         // 회원가입 중에는 계정이 아직 없으므로 API 호출 없이 선택 결과만 돌려준다.
                         Intent resultIntent = new Intent();
@@ -195,9 +193,7 @@ public class FindDrugStore extends BaseActivity {
                     } else {
                         choiceDrugStoreAndCallApi(drugStore);
                     }
-                })
-                .setNegativeButton("취소", null)
-                .show();
+                });
     }
 
     private void choiceDrugStoreAndCallApi(SearchDrugStore drugStore){

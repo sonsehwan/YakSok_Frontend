@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:paddingHorizontal="24dp"
     android:paddingTop="26dp"
-    android:paddingBottom="24dp">
+    android:paddingBottom="16dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -120,4 +120,12 @@
             app:cornerRadius="12dp"
             app:elevation="0dp" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/btn_close"
+        style="@style/Widget.App.DialogCloseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp" />
 </LinearLayout>

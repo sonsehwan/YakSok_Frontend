@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- .pen Button/Text: 다이얼로그 하단의 "닫기" 텍스트 버튼. 크기와 위치는 쓰는 곳에서 정한다. -->
+    <style name="Widget.App.DialogCloseButton" parent="">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:paddingVertical">12dp</item>
+        <item name="android:text">닫기</item>
+        <item name="android:textColor">@color/g500</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>

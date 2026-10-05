@@ -13,7 +13,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -30,6 +29,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.SharedUser;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
+import com.example.medication.ui.common.AppDialog;
 import com.example.medication.ui.sharedyaksok.ShareYaksokDetail;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.YaksokEventBus;
@@ -309,12 +309,9 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
     }
 
     private void showRemoveSharedConfirmDialog(Yaksok yaksok) {
-        new AlertDialog.Builder(requireContext())
-                .setTitle("공유 목록에서 빼기")
-                .setMessage("'" + yaksok.getTitle() + "'을(를) 목록에서 뺄까요?\n원본 약속은 삭제되지 않습니다.")
-                .setPositiveButton("빼기", (dialog, which) -> removeSharedYaksok(yaksok.getId()))
-                .setNegativeButton("취소", null)
-                .show();
+        AppDialog.confirm(requireContext(), "공유 목록에서 빼기",
+                "'" + yaksok.getTitle() + "'을(를) 목록에서 뺄까요?\n원본 약속은 삭제되지 않습니다.",
+                "빼기", true, () -> removeSharedYaksok(yaksok.getId()));
     }
 
     private void removeSharedYaksok(Long yaksokId) {

@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.medication.adapter.ShareYaksokListAdapter;
@@ -17,6 +16,7 @@ import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.base.BaseActivity;
+import com.example.medication.ui.common.AppDialog;
 import com.example.medication.util.SprefsManager;
 import com.example.medication.util.YaksokEventBus;
 
@@ -132,12 +132,9 @@ public class ShareYaksokList extends BaseActivity implements YaksokEventBus.List
     }
 
     private void showRemoveConfirmDialog(Yaksok yaksok) {
-        new AlertDialog.Builder(this)
-                .setTitle("공유 목록에서 빼기")
-                .setMessage("'" + yaksok.getTitle() + "'을(를) 목록에서 뺄까요?\n원본 약속은 삭제되지 않습니다.")
-                .setPositiveButton("빼기", (dialog, which) -> removeSharedYaksok(yaksok.getId()))
-                .setNegativeButton("취소", null)
-                .show();
+        AppDialog.confirm(this, "공유 목록에서 빼기",
+                "'" + yaksok.getTitle() + "'을(를) 목록에서 뺄까요?\n원본 약속은 삭제되지 않습니다.",
+                "빼기", true, () -> removeSharedYaksok(yaksok.getId()));
     }
 
     private void removeSharedYaksok(Long yaksokId) {

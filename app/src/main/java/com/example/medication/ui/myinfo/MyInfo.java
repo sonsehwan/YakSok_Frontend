@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.appcompat.app.AlertDialog;
 
 import com.example.medication.R;
 import com.example.medication.databinding.ActivityMyInfoBinding;
@@ -22,6 +21,7 @@ import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.example.medication.ui.base.BaseActivity;
+import com.example.medication.ui.common.AppDialog;
 import com.example.medication.ui.finddrugstore.FindDrugStore;
 import com.example.medication.ui.login.Login;
 import com.example.medication.ui.main.MainActivity;
@@ -80,14 +80,9 @@ public class MyInfo extends BaseActivity {
     }
 
     private void showWithdrawConfirmDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("회원 탈퇴")
-                .setMessage("정말로 탈퇴하시겠습니까?\n모든 데이터가 삭제되며 복구할 수 없습니다.")
-                .setPositiveButton("탈퇴", (dialog, which) -> {
-                    deleteUserFromServer();
-                })
-                .setNegativeButton("취소", null)
-                .show();
+        AppDialog.confirm(this, "회원 탈퇴",
+                "정말로 탈퇴하시겠습니까?\n모든 데이터가 삭제되며 복구할 수 없습니다.",
+                "탈퇴", true, this::deleteUserFromServer);
     }
 
     private void deleteUserFromServer() {

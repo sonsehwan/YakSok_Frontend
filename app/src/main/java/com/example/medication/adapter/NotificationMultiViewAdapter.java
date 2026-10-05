@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import com.example.medication.ui.common.AppDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.databinding.ItemNotificationBinding;
@@ -138,16 +138,13 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     private void showConfirmDialog(Context context, int position, NotificationListItem.NotificationItem notiItem, ItemViewHolder holder) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         NotificationYaksok data = notiItem.getData();
         boolean originalState = data.isTaken();
         boolean newState = !originalState;
 
         String title = !originalState ? "복용 완료 처리하시겠습니까?" : "복용 취소 처리하시겠습니까?";
-        builder.setTitle(title);
-        builder.setMessage(data.getTitle() + " 약속을 확인합니다.");
 
-        builder.setPositiveButton("확인", (dialog, which) -> {
+        AppDialog.confirm(context, title, data.getTitle() + " 약속을 확인합니다.", "확인", false, () -> {
             data.setTaken(newState); // 상태 반전
             notifyItemChanged(position);
 
@@ -177,9 +174,6 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
                     });
 
         });
-
-        builder.setNegativeButton("취소", null);
-        builder.show();
     }
 
     private void rollbackStatus(Context context, int position, NotificationYaksok data, boolean originalState, String errorMessage) {

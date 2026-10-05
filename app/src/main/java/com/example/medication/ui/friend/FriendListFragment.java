@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +24,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import com.example.medication.ui.common.AppDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,6 +38,7 @@ import com.example.medication.databinding.DialogMyQrBinding;
 import com.example.medication.databinding.DialogProfileBinding;
 import com.example.medication.databinding.DialogReceivedRequestBinding;
 import com.example.medication.databinding.FragmentFriendListBinding;
+import com.example.medication.databinding.PopupFriendQrMenuBinding;
 import com.example.medication.model.request.FriendChatRoomRequest;
 import com.example.medication.model.request.FriendRequestAnswerDto;
 import com.example.medication.model.request.FriendRequestCreateDto;
@@ -136,18 +137,18 @@ public class FriendListFragment extends Fragment {
 
     // QR 아이콘 클릭 시 "내 프로필"/"코드 스캔" 팝업 메뉴를 띄운다.
     private void showQrMenu(View anchor) {
-        PopupMenu menu = new PopupMenu(requireContext(), anchor);
-        menu.getMenu().add("내 프로필");
-        menu.getMenu().add("코드 스캔");
-        menu.setOnMenuItemClickListener(item -> {
-            if ("내 프로필".equals(item.getTitle())) {
-                showMyQrDialog();
-            } else {
-                startQrScan();
-            }
-            return true;
+        PopupFriendQrMenuBinding menu = PopupFriendQrMenuBinding.inflate(getLayoutInflater());
+        PopupWindow popup = AppDialog.popup(menu.getRoot(), 168);
+
+        menu.llMyProfile.setOnClickListener(v -> {
+            popup.dismiss();
+            showMyQrDialog();
         });
-        menu.show();
+        menu.llScan.setOnClickListener(v -> {
+            popup.dismiss();
+            startQrScan();
+        });
+        AppDialog.showBelow(popup, anchor);
     }
 
     private void startQrScan() {
@@ -206,6 +207,7 @@ public class FriendListFragment extends Fragment {
         String qrImageUrl = NetworkClient.getQrCodeApiUrl() + "?size=220x220&data=" + Uri.encode(code);
         Glide.with(this).load(qrImageUrl).into(dialogBinding.ivQrCode);
 
+        dialogBinding.btnClose.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
 
@@ -260,7 +262,8 @@ public class FriendListFragment extends Fragment {
 
         switch (profile.getRelation()) {
             case SELF:
-                dialogBinding.btnAction.setVisibility(View.GONE);
+                // .pen의 Spacer처럼 버튼 자리는 남겨 다이얼로그 높이가 다른 상태와 같게 둔다.
+                dialogBinding.btnAction.setVisibility(View.INVISIBLE);
                 break;
             case FRIEND:
                 setProfileActionButton(dialogBinding, "채팅하기", true, v -> openChatWithFriend(profile));
@@ -426,25 +429,14 @@ public class FriendListFragment extends Fragment {
 
     // 친구 항목을 길게 누르면 액션 메뉴를 띄운다.
     private void showFriendActionsDialog(FriendResponseDto friend) {
-        String[] actions = {"삭제"};
-        new AlertDialog.Builder(requireContext())
-                .setTitle(friend.getNickname())
-                .setItems(actions, (dialog, which) -> {
-                    if (which == 0) {
-                        showDeleteConfirmDialog(friend);
-                    }
-                })
-                .show();
+        AppDialog.deleteAction(requireContext(), friend.getNickname(), () -> showDeleteConfirmDialog(friend));
     }
 
     private void showDeleteConfirmDialog(FriendResponseDto friend) {
-        new AlertDialog.Builder(requireContext())
-                .setTitle("친구 삭제")
-                .setMessage("'" + friend.getNickname() + "' 님을 내 친구 목록에서 삭제할까요?\n"
-                        + "상대방 목록에는 내가 그대로 남습니다.")
-                .setPositiveButton("삭제", (dialog, which) -> deleteFriend(friend))
-                .setNegativeButton("취소", null)
-                .show();
+        AppDialog.confirm(requireContext(), "친구 삭제",
+                "'" + friend.getNickname() + "' 님을 내 친구 목록에서 삭제할까요?\n"
+                        + "상대방 목록에는 내가 그대로 남습니다.",
+                "삭제", true, () -> deleteFriend(friend));
     }
 
     private void deleteFriend(FriendResponseDto friend) {
@@ -552,6 +544,7 @@ public class FriendListFragment extends Fragment {
                     });
         });
 
+        dialogBinding.btnClose.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
 
@@ -625,6 +618,7 @@ public class FriendListFragment extends Fragment {
                     }
                 });
 
+        dialogBinding.btnClose.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
 
