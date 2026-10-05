@@ -283,8 +283,7 @@ public class YaksokDetail extends BaseActivity {
     }
 
     private String buildShareMessage(Yaksok yaksok) {
-        String nickname = SprefsManager.getUserNickName(this);
-        return nickname + "님이 약속을 공유했습니다.\n" + yaksok.getTitle();
+        return yaksok.getTitle();
     }
 
     // 응답 원문은 로그에만 남기고, 사용자에게는 message만 보여준다.

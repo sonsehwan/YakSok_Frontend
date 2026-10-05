@@ -106,7 +106,7 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             MyShareViewHolder h = (MyShareViewHolder) holder;
             bindDateDivider(h.binding.dateDivider, position);
             h.binding.tvMyName.setText(msg.getSenderNickname());
-            h.binding.tvYaksokName.setText(shareTitle(msg.getMessage()));
+            h.binding.tvYaksokName.setText(msg.getMessage());
             h.binding.tvMyTime.setText(formatTime(msg.getCreatedAt()));
             bindYaksokButton(h.binding.btnOtherYaksok, msg);
 
@@ -114,7 +114,7 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             OtherShareViewHolder h = (OtherShareViewHolder) holder;
             bindDateDivider(h.binding.dateDivider, position);
             h.binding.tvOtherName.setText(msg.getSenderNickname());
-            h.binding.tvYaksokName.setText(shareTitle(msg.getMessage()));
+            h.binding.tvYaksokName.setText(msg.getMessage());
             h.binding.tvOtherTime.setText(formatTime(msg.getCreatedAt()));
             bindYaksokButton(h.binding.btnOtherYaksok, msg);
         }
@@ -139,13 +139,6 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } catch (Exception e) {
             return null;
         }
-    }
-
-    // 공유 메시지는 "OO님이 약속을 공유했습니다.(줄바꿈)약속 제목" 형식이라 마지막 줄을 카드 제목으로 쓴다.
-    private String shareTitle(String message) {
-        if (message == null) return "";
-        int idx = message.lastIndexOf('\n');
-        return idx >= 0 ? message.substring(idx + 1) : message;
     }
 
     private String formatTime(String createdAt) {
