@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="받은 친구 요청"
-        android:textColor="#1A1A1A"
+        android:textColor="@color/g900"
         android:textSize="19sp"
         android:textStyle="bold" />
 
@@ -24,7 +24,7 @@
         android:gravity="center"
         android:paddingVertical="34dp"
         android:text="받은 친구 요청이 없어요."
-        android:textColor="#B0B0B0"
+        android:textColor="@color/g400"
         android:textSize="14sp"
         android:visibility="gone" />
 

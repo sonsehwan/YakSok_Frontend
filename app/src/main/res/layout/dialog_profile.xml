@@ -26,16 +26,17 @@
             android:contentDescription="닫기"
             android:focusable="true"
             android:padding="4dp"
-            android:src="@drawable/ic_lc_x" />
+            android:src="@drawable/ic_lc_x"
+            app:tint="@color/g500" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_avatar"
         android:layout_width="88dp"
         android:layout_height="88dp"
-        android:background="@drawable/bg_avatar_circle"
+        android:background="@drawable/bg_avatar_circle_neutral"
         android:gravity="center"
-        android:textColor="#7A6100"
+        android:textColor="@color/g700"
         android:textSize="32sp"
         android:textStyle="bold"
         tools:text="유" />
@@ -45,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:textColor="#1A1A1A"
+        android:textColor="@color/g900"
         android:textSize="20sp"
         android:textStyle="bold"
         tools:text="닉네임" />
@@ -55,7 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:textColor="#9A9A9A"
+        android:textColor="@color/g500"
         android:textSize="14sp"
         tools:text="user@example.com" />
 
@@ -65,10 +66,10 @@
         android:layout_height="52dp"
         android:layout_marginTop="22dp"
         android:text="친구 요청 보내기"
-        android:textColor="#1A1A1A"
+        android:textColor="@android:color/white"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:backgroundTint="@color/brand_surface"
+        app:backgroundTint="@color/p600"
         app:cornerRadius="12dp"
         app:elevation="0dp" />
 

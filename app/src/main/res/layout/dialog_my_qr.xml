@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="내 QR 코드"
-        android:textColor="#1A1A1A"
+        android:textColor="@color/g900"
         android:textSize="19sp"
         android:textStyle="bold" />
 
@@ -24,7 +24,7 @@
         android:layout_marginBottom="20dp"
         android:gravity="center"
         android:text="상대방이 이 화면을 카메라로 찍으면 친구 추가가 시작돼요"
-        android:textColor="#9A9A9A"
+        android:textColor="@color/g500"
         android:textSize="13sp" />
 
     <ImageView
@@ -38,6 +38,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:text="5분 후 자동으로 만료돼요"
-        android:textColor="#B0B0B0"
+        android:textColor="@color/g400"
         android:textSize="12sp" />
 </LinearLayout>

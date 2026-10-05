@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="친구 추가"
-        android:textColor="#1A1A1A"
+        android:textColor="@color/g900"
         android:textSize="19sp"
         android:textStyle="bold" />
 
@@ -25,7 +25,7 @@
         android:layout_marginTop="6dp"
         android:layout_marginBottom="20dp"
         android:text="닉네임으로 친구를 찾아보세요"
-        android:textColor="#9A9A9A"
+        android:textColor="@color/g500"
         android:textSize="13sp" />
 
     <EditText
@@ -38,8 +38,8 @@
         android:inputType="text"
         android:maxLines="1"
         android:paddingHorizontal="18dp"
-        android:textColor="#1A1A1A"
-        android:textColorHint="#C0C0C0"
+        android:textColor="@color/g900"
+        android:textColorHint="@color/g400"
         android:textSize="15sp" />
 
     <com.google.android.material.button.MaterialButton
@@ -48,10 +48,10 @@
         android:layout_height="50dp"
         android:layout_marginTop="12dp"
         android:text="검색"
-        android:textColor="#1A1A1A"
+        android:textColor="@android:color/white"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:backgroundTint="@color/brand_surface"
+        app:backgroundTint="@color/p600"
         app:cornerRadius="12dp"
         app:elevation="0dp" />
 
@@ -76,9 +76,9 @@
                 android:id="@+id/tv_result_avatar"
                 android:layout_width="46dp"
                 android:layout_height="46dp"
-                android:background="@drawable/bg_avatar_circle"
+                android:background="@drawable/bg_avatar_circle_neutral"
                 android:gravity="center"
-                android:textColor="#7A6100"
+                android:textColor="@color/g700"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -93,7 +93,7 @@
                     android:id="@+id/tv_result_nickname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#1A1A1A"
+                    android:textColor="@color/g900"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -102,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:textColor="#9A9A9A"
+                    android:textColor="@color/g500"
                     android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
@@ -113,10 +113,10 @@
             android:layout_height="48dp"
             android:layout_marginTop="16dp"
             android:text="친구 요청 보내기"
-            android:textColor="#1A1A1A"
+            android:textColor="@android:color/white"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:backgroundTint="@color/brand_surface"
+            app:backgroundTint="@color/p600"
             app:cornerRadius="12dp"
             app:elevation="0dp" />
     </LinearLayout>
