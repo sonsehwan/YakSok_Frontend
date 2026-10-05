@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 공유받은 약속 상단 공유자 카드 (.pen Sender: g20, r16) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/g20" />
+    <corners android:radius="16dp" />
+</shape>
