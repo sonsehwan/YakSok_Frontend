@@ -1,93 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="32dp"
     android:background="@drawable/bg_bottom_sheet">
 
     <View
         android:layout_width="40dp"
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="20dp"
-        android:background="#DDDDDD" />
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="어떻게 약속을 등록할까요?"
+        android:textColor="@color/g900"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/ll_create_prescription"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:paddingLeft="30dp"
-        android:background="?android:attr/selectableItemBackground"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_card_outlined"
         android:clickable="true"
         android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="16dp">
 
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_prescription"/>
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_icon_box_brand"
+            android:padding="11dp"
+            android:src="@drawable/ic_lc_file_text"
+            app:tint="@color/p600" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingLeft="30dp"
-            android:text="처방전 등록"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="처방전으로 등록"
+                android:textColor="@color/g900"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="처방전 사진을 분석해 약 정보를 채워요"
+                android:textColor="@color/g500"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_lc_chevron_right"
+            app:tint="@color/g300" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_create_medicine_envelope"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:paddingLeft="30dp"
-        android:background="?android:attr/selectableItemBackground"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_card_outlined"
         android:clickable="true"
         android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="16dp">
 
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_medicine_envelope"/>
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_icon_box_brand"
+            android:padding="11dp"
+            android:src="@drawable/ic_lc_package"
+            app:tint="@color/p600" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingLeft="30dp"
-            android:text="약봉투 등록"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="약봉투로 등록"
+                android:textColor="@color/g900"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="약봉투 사진으로 약과 복용 시간까지 채워요"
+                android:textColor="@color/g500"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_lc_chevron_right"
+            app:tint="@color/g300" />
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/ll_create_direct"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:paddingLeft="30dp"
-        android:background="?android:attr/selectableItemBackground"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_card_outlined"
         android:clickable="true"
         android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="16dp">
 
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_pill"/>
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_icon_box_neutral"
+            android:padding="11dp"
+            android:src="@drawable/ic_lc_pencil_line"
+            app:tint="@color/g700" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingLeft="30dp"
-            android:text="직접 입력"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="직접 입력"
+                android:textColor="@color/g900"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="모든 항목을 직접 입력해요"
+                android:textColor="@color/g500"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_lc_chevron_right"
+            app:tint="@color/g300" />
     </LinearLayout>
+
 </LinearLayout>

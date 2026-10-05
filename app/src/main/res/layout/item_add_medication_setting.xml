@@ -6,10 +6,10 @@
     android:layout_marginHorizontal="20dp"
     android:layout_marginVertical="8dp"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="12dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:strokeWidth="1dp"
-    app:strokeColor="#F0F0F0">
+    app:strokeColor="@color/g100">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,132 +17,167 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- 약 이름 및 삭제 버튼 -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/iv_pill_img"
-                android:layout_width="100dp"
-                android:layout_height="60dp"
-                android:layout_alignParentStart="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_pill"
-                android:background="#F8F9FA" />
-
-            <!-- [해결] 270dp 마진 제거 -> layout_alignParentEnd="true"로 우측 끝 고정 -->
-            <ImageView
-                android:id="@+id/btn_remove"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:padding="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                app:tint="@color/neutral_400" />
-        </RelativeLayout>
-
-
-        <TextView
-            android:id="@+id/tv_pill_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/iv_pill_img"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center_vertical"
-            android:text="약 이름"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <!-- 처방 일수 설정 -->
-
-        <!-- 1일 투여 횟수 설정 -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="1일 투여 횟수"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
+        <!-- 약 이름 + 삭제 버튼 (이름이 길어 이미지 위에 한 줄 전체 사용) -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/btn_freq_minus"
-                android:layout_width="48dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="-"
-                android:textColor="#7C4DFF"
-                android:textSize="24sp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true" />
-
-            <TextView
-                android:id="@+id/tv_freq_value"
+                android:id="@+id/tv_pill_name"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/bg_setting_item"
-                android:gravity="center"
-                android:text="3 번"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:layout_marginEnd="12dp"
+                android:text="약 이름"
+                android:textColor="@color/g900"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/btn_freq_plus"
-                android:layout_width="48dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="+"
-                android:textColor="#7C4DFF"
-                android:textSize="24sp"
-                android:background="?attr/selectableItemBackground"
+            <ImageView
+                android:id="@+id/btn_remove"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="6dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
-                android:focusable="true" />
+                android:focusable="true"
+                android:src="@drawable/ic_lc_x"
+                app:tint="@color/g300" />
         </LinearLayout>
 
-        <!-- 1회 투약량 설정 (EditText로 변경됨) -->
-        <TextView
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/iv_pill_img"
+            android:layout_width="96dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_pill_field"
+            android:clipToOutline="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_pill_placeholder" />
+
+        <!-- 횟수 / 투약량 나란히 -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="1회 투약량"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/et_dosage_value"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginLeft="50dp"
-            android:background="@drawable/bg_setting_item"
-            android:gravity="center"
-            android:hint="예: 1정(입력은 숫자만.)"
-            android:textColorHint="#808080"
-            android:inputType="numberDecimal"
-            android:paddingHorizontal="12dp"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textCursorDrawable="@null" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1일 투여 횟수"
+                    android:textColor="@color/g700"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/btn_freq_minus"
+                        android:layout_width="36dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_pill_stepper_btn"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="－"
+                        android:textColor="@color/p600"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_freq_value"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_pill_field"
+                        android:gravity="center"
+                        android:text="3번"
+                        android:textColor="@color/g900"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btn_freq_plus"
+                        android:layout_width="36dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_pill_stepper_btn"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="＋"
+                        android:textColor="@color/p600"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1회 투약량"
+                    android:textColor="@color/g700"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_pill_field"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <EditText
+                        android:id="@+id/et_dosage_value"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="center"
+                        android:hint="숫자만 입력"
+                        android:inputType="numberDecimal"
+                        android:padding="0dp"
+                        android:textColor="@color/g900"
+                        android:textColorHint="@color/g300"
+                        android:textCursorDrawable="@null"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_dosage_unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="정"
+                        android:textColor="@color/g500"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

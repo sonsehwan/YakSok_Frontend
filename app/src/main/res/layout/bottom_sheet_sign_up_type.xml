@@ -39,18 +39,13 @@
         android:focusable="true"
         android:padding="20dp">
 
-        <FrameLayout
+        <ImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/bg_icon_box_primary">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                app:tint="@color/p600"
-                app:srcCompat="@drawable/ic_user" />
-        </FrameLayout>
+            android:background="@drawable/bg_icon_box_primary"
+            android:padding="12dp"
+            app:tint="@color/p600"
+            app:srcCompat="@drawable/ic_user" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -94,18 +89,13 @@
         android:focusable="true"
         android:padding="20dp">
 
-        <FrameLayout
+        <ImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/bg_icon_box_primary">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                app:tint="@color/p600"
-                app:srcCompat="@drawable/ic_store" />
-        </FrameLayout>
+            android:background="@drawable/bg_icon_box_primary"
+            android:padding="12dp"
+            app:tint="@color/p600"
+            app:srcCompat="@drawable/ic_store" />
 
         <LinearLayout
             android:layout_width="0dp"

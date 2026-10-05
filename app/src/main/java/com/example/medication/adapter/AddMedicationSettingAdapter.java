@@ -1,5 +1,6 @@
 package com.example.medication.adapter;
 
+import com.example.medication.R;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -36,8 +37,8 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
 
         Glide.with(holder.itemView.getContext())
                 .load(item.getImage())
-                .placeholder(android.R.drawable.ic_menu_report_image)
-                .error(android.R.drawable.ic_menu_close_clear_cancel)
+                .placeholder(R.drawable.ic_pill_placeholder)
+                .error(R.drawable.ic_pill_placeholder).fallback(R.drawable.ic_pill_placeholder)
                 .into(holder.binding.ivPillImg);
 
         if (holder.dosageWatcher != null) {
@@ -45,7 +46,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
         }
 
         holder.binding.tvPillName.setText(item.getName());
-        holder.binding.tvFreqValue.setText(item.getDailyFrequency() + " 번");
+        holder.binding.tvFreqValue.setText(item.getDailyFrequency() + "번");
         holder.binding.etDosageValue.setText(item.getDosage());
 
         holder.dosageWatcher = new TextWatcher() {
@@ -66,7 +67,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
             int currentPos = holder.getBindingAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION) {
                 item.setDailyFrequency(item.getDailyFrequency() + 1);
-                notifyItemChanged(currentPos);
+                holder.binding.tvFreqValue.setText(item.getDailyFrequency() + "번");
             }
         });
 
@@ -74,7 +75,7 @@ public class AddMedicationSettingAdapter extends RecyclerView.Adapter<AddMedicat
             int currentPos = holder.getBindingAdapterPosition();
             if (currentPos != RecyclerView.NO_POSITION && item.getDailyFrequency() > 1) {
                 item.setDailyFrequency(item.getDailyFrequency() - 1);
-                notifyItemChanged(currentPos);
+                holder.binding.tvFreqValue.setText(item.getDailyFrequency() + "번");
             }
         });
 

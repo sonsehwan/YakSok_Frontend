@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import com.example.medication.databinding.BottomSheetAddYaksokBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class ShowAddMedicationList extends BottomSheetDialogFragment {
+public class BottomSheetAddYaksok extends BottomSheetDialogFragment {
 
     private BottomSheetAddYaksokBinding binding;
 

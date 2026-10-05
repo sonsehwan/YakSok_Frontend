@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 투약 시간/방법 선택 그룹의 평상시(유효) 배경: 칩들이 각자 테두리를 가지므로 여기는 투명 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-
-    <solid android:color="#FFFFFF"/>
-
-    <stroke
-        android:width="2dp"
-        android:color="@color/brand_icon"
-        />
-
-    <corners android:radius="12dp" />
+    <solid android:color="@android:color/transparent"/>
 </shape>

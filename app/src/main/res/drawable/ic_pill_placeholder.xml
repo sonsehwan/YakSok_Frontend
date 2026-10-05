@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 약 이미지 없을 때 쓰는 회색 알약 아이콘 (이미지 박스 안에서 24dp 크기로 가운데) -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_pill_placeholder_vec"
+    android:insetLeft="36dp"
+    android:insetRight="36dp"
+    android:insetTop="16dp"
+    android:insetBottom="16dp" />
