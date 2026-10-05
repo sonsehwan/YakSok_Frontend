@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -33,7 +32,6 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
 import com.example.medication.ui.sharedyaksok.ShareYaksokDetail;
 import com.example.medication.util.InsetsUtil;
-import com.example.medication.util.SprefsManager;
 import com.example.medication.util.YaksokEventBus;
 
 import java.util.ArrayList;
@@ -82,7 +80,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
         selectMyYaksokTab();
 
         binding.fabScan.setOnClickListener(v -> {
-            ShowAddMedicationList bottomSheet = new ShowAddMedicationList();
+            BottomSheetAddYaksok bottomSheet = new BottomSheetAddYaksok();
             bottomSheet.show(getParentFragmentManager(), "show_create_list");
         });
     }

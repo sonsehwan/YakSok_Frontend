@@ -328,28 +328,28 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_add_medication_setting"/>
 
-            <FrameLayout
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_add_pill"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="12dp"
-                android:background="@drawable/bg_add_pill_button"
-                android:clickable="true"
-                android:focusable="true">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:drawableStart="@drawable/ic_lc_plus"
-                    android:drawablePadding="6dp"
-                    android:drawableTint="@color/p600"
-                    android:text="약 추가"
-                    android:textColor="@color/p600"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </FrameLayout>
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="약 추가"
+                android:textAllCaps="false"
+                android:textColor="@color/p600"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="12dp"
+                app:elevation="0dp"
+                app:icon="@drawable/ic_lc_plus"
+                app:iconGravity="textStart"
+                app:iconPadding="6dp"
+                app:iconTint="@color/p600"
+                app:strokeColor="@color/p600"
+                app:strokeWidth="1.5dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
