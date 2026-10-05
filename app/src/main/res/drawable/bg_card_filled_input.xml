@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- yaksok_design.pen 읽기 전용 입력 박스: g20 배경, 반경 12 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/g20" />
+    <corners android:radius="12dp" />
+</shape>
