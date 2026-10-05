@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_other_text_message"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="start"
-    android:orientation="vertical"
-    android:paddingHorizontal="5dp"
-    android:paddingVertical="6dp">
+    android:orientation="vertical">
 
-    <!-- 보낸 사람 이름 -->
+    <include
+        android:id="@+id/date_divider"
+        layout="@layout/layout_date_divider" />
+
     <TextView
         android:id="@+id/tv_other_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="상대방 이름"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/g500"
         android:textSize="13sp"
-        android:textColor="#555555"
-        android:layout_marginBottom="4dp"/>
+        tools:text="상대방 이름" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="start|bottom"
+        android:baselineAligned="false"
         android:orientation="horizontal"
-        >
+        android:paddingBottom="6dp">
 
         <TextView
             android:id="@+id/tv_other_message"
@@ -33,9 +36,9 @@
             android:maxWidth="240dp"
             android:paddingHorizontal="14dp"
             android:paddingVertical="10dp"
-            android:text="상대방 메시지 내용"
-            android:textColor="#000000"
-            android:textSize="15sp" />
+            android:textColor="@color/g900"
+            android:textSize="15sp"
+            tools:text="오늘 저녁 약 먹었어?" />
 
         <TextView
             android:id="@+id/tv_other_time"
@@ -43,8 +46,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginStart="6dp"
-            android:text="07:10"
-            android:textSize="11sp"
-            android:textColor="#888888"/>
+            android:textColor="@color/g400"
+            android:textSize="12sp"
+            tools:text="오후 7:02" />
     </LinearLayout>
 </LinearLayout>

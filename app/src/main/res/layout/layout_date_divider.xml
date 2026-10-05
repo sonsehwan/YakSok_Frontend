@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 날짜가 바뀌는 첫 메시지 위에 붙는 날짜 칩. 기본은 숨김, 어댑터가 필요할 때만 보인다 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:paddingTop="6dp"
+    android:paddingBottom="18dp"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_chip_distance"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:textColor="@color/g500"
+        android:textSize="12sp"
+        tools:text="2026년 9월 15일" />
+</LinearLayout>

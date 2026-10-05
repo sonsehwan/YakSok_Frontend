@@ -75,6 +75,7 @@ public class ChattingRoom extends BaseActivity {
             return;
         }
 
+        binding.ivBack.setOnClickListener(v -> finish());
         binding.tvRoomName.setText(roomName != null ? roomName : "상담방");
 
         chattingRoomAdapter = new ChattingRoomAdapter(myParticipantId, sharedYaksokId -> {

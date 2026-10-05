@@ -8,32 +8,59 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <TextView
-        android:id="@+id/tv_room_name"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:gravity="center_vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:text="상담방"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:background="@android:color/white"
-        android:textColor="@color/g900"
-        android:elevation="2dp" />
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="뒤로가기"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_lc_chevron_left"
+            app:tint="@color/g900" />
+
+        <TextView
+            android:id="@+id/tv_room_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:maxWidth="240dp"
+            android:text="상담방"
+            android:textColor="@color/g900"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/g100" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_chat_messages"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="18dp"
-        android:paddingBottom="18dp"
+        android:padding="16dp"
         android:clipToPadding="false"
-        android:background="@color/g20"
-        tools:listitem="@layout/item_my_yaksok_share_message"/>
+        android:background="@color/white"
+        tools:listitem="@layout/item_my_text_message"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/g100" />
 
     <LinearLayout
         android:id="@+id/layout_message_input"
@@ -42,34 +69,33 @@
         android:orientation="horizontal"
         android:baselineAligned="false"
         android:gravity="bottom"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:background="@android:color/white"
-        android:elevation="4dp">
+        android:paddingBottom="16dp"
+        android:background="@android:color/white">
 
         <EditText
             android:id="@+id/et_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minHeight="50dp"
+            android:minHeight="44dp"
             android:layout_weight="1"
             android:hint="메시지를 입력하세요"
-            android:paddingStart="18dp"
-            android:paddingEnd="18dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:background="@drawable/bg_message_edittext"
             android:inputType="textMultiLine|textCapSentences"
             android:maxLines="5"
             android:minLines="1"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textColor="@color/g900"
-            android:textColorHint="@color/g400" />
+            android:textColorHint="@color/g300" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_send"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_gravity="bottom"
             android:layout_marginStart="8dp"
             android:insetLeft="0dp"
@@ -81,10 +107,11 @@
             android:paddingTop="2dp"
             android:paddingBottom="0dp"
             app:icon="@drawable/ic_lc_send"
+            app:iconSize="20dp"
             app:iconTint="@android:color/white"
             app:iconGravity="textStart"
             app:iconPadding="0dp"
-            app:cornerRadius="25dp"
+            app:cornerRadius="22dp"
             app:elevation="0dp"
             app:backgroundTint="@color/p600" />
 

@@ -1,18 +1,21 @@
 package com.example.medication.adapter;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medication.databinding.ItemMyTextMessageBinding;
+import com.example.medication.databinding.LayoutDateDividerBinding;
 import com.example.medication.databinding.ItemMyYaksokShareMessageBinding;
 import com.example.medication.databinding.ItemOtherTextMessageBinding;
 import com.example.medication.databinding.ItemOtherYaksokShareMessageBinding;
 import com.example.medication.model.ChatMessage;
 import com.google.android.material.button.MaterialButton;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -87,33 +90,64 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (holder instanceof MyTextViewHolder) {
             MyTextViewHolder h = (MyTextViewHolder) holder;
+            bindDateDivider(h.binding.dateDivider, position);
             h.binding.tvMyName.setText(msg.getSenderNickname());
             h.binding.tvMyMessage.setText(msg.getMessage());
             h.binding.tvMyTime.setText(formatTime(msg.getCreatedAt()));
 
         } else if (holder instanceof OtherTextViewHolder) {
             OtherTextViewHolder h = (OtherTextViewHolder) holder;
+            bindDateDivider(h.binding.dateDivider, position);
             h.binding.tvOtherName.setText(msg.getSenderNickname());
             h.binding.tvOtherMessage.setText(msg.getMessage());
             h.binding.tvOtherTime.setText(formatTime(msg.getCreatedAt()));
 
         } else if (holder instanceof MyShareViewHolder) {
             MyShareViewHolder h = (MyShareViewHolder) holder;
+            bindDateDivider(h.binding.dateDivider, position);
             h.binding.tvMyName.setText(msg.getSenderNickname());
-            h.binding.tvYaksokName.setText(msg.getMessage());
+            h.binding.tvYaksokName.setText(shareTitle(msg.getMessage()));
             h.binding.tvMyTime.setText(formatTime(msg.getCreatedAt()));
             bindYaksokButton(h.binding.btnOtherYaksok, msg);
 
         } else if (holder instanceof OtherShareViewHolder) {
             OtherShareViewHolder h = (OtherShareViewHolder) holder;
+            bindDateDivider(h.binding.dateDivider, position);
             h.binding.tvOtherName.setText(msg.getSenderNickname());
-            h.binding.tvYaksokName.setText(msg.getMessage());
+            h.binding.tvYaksokName.setText(shareTitle(msg.getMessage()));
             h.binding.tvOtherTime.setText(formatTime(msg.getCreatedAt()));
             bindYaksokButton(h.binding.btnOtherYaksok, msg);
         }
     }
 
-    // 서버가 준 ISO-8601 문자열을 "오후 7:10" 형태로 바꾼다
+    private void bindDateDivider(LayoutDateDividerBinding divider, int position) {
+        LocalDate date = dateOf(messageList.get(position).getCreatedAt());
+        LocalDate prev = position > 0 ? dateOf(messageList.get(position - 1).getCreatedAt()) : null;
+
+        if (date == null || date.equals(prev)) {
+            divider.getRoot().setVisibility(View.GONE);
+            return;
+        }
+        divider.tvDate.setText(date.format(DateTimeFormatter.ofPattern("yyyy년 M월 d일", Locale.KOREAN)));
+        divider.getRoot().setVisibility(View.VISIBLE);
+    }
+
+    private LocalDate dateOf(String createdAt) {
+        if (createdAt == null || createdAt.isEmpty()) return null;
+        try {
+            return LocalDateTime.parse(createdAt).toLocalDate();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // 공유 메시지는 "OO님이 약속을 공유했습니다.(줄바꿈)약속 제목" 형식이라 마지막 줄을 카드 제목으로 쓴다.
+    private String shareTitle(String message) {
+        if (message == null) return "";
+        int idx = message.lastIndexOf('\n');
+        return idx >= 0 ? message.substring(idx + 1) : message;
+    }
+
     private String formatTime(String createdAt) {
         if (createdAt == null || createdAt.isEmpty()) return "";
         try {

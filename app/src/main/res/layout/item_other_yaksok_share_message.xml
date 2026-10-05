@@ -1,60 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_other_yaksok_share_message"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="start"
-    android:orientation="vertical"
-    android:paddingHorizontal="5dp"
-    android:paddingVertical="6dp">
+    android:orientation="vertical">
 
-    <!-- 보낸 사람 이름 -->
+    <include
+        android:id="@+id/date_divider"
+        layout="@layout/layout_date_divider" />
+
     <TextView
         android:id="@+id/tv_other_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="상대방 이름"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/g500"
         android:textSize="13sp"
-        android:textColor="#555555"
-        android:layout_marginBottom="4dp"/>
+        tools:text="상대방 이름" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="start|bottom"
+        android:baselineAligned="false"
         android:orientation="horizontal"
-        >
+        android:paddingBottom="6dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:background="@drawable/bg_message_receive"
-            android:visibility="visible">
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip_tag"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="약속 공유"
+                android:textColor="@color/p700"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_yaksok_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxWidth="240dp"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="10dp"
-                android:text="OOO이 약속을 공유하였습니다. \n약속을 확인해 보세요."
-                android:textColor="#000000"
-                android:textSize="15sp" />
+                android:layout_marginTop="10dp"
+                android:textColor="@color/g900"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                tools:text="감기약" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_other_yaksok"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:backgroundTint="@color/white"
-                android:textColor="@color/black"
-                android:text="확인하기"
-                android:textSize="17dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                app:cornerRadius="12dp"
+                android:text="자세히 보기"
+                android:textColor="@color/g700"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/g50"
+                app:cornerRadius="8dp"
                 app:elevation="0dp" />
         </LinearLayout>
 
@@ -64,8 +79,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginStart="6dp"
-            android:text="07:10"
-            android:textSize="11sp"
-            android:textColor="#888888"/>
+            android:textColor="@color/g400"
+            android:textSize="12sp"
+            tools:text="오후 7:06" />
     </LinearLayout>
 </LinearLayout>
