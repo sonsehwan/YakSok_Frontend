@@ -132,14 +132,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 PendingIntent completePendingIntent = PendingIntent.getBroadcast(
                         this, notificationId, completeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-                Intent snoozeIntent = new Intent(this, NotificationActionReceiver.class);
-                snoozeIntent.setAction("ACTION_SNOOZE");
-                snoozeIntent.putExtra("notificationId", notificationId);
-                PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(
-                        this, notificationId + 1000, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                // [약속 미루기] 버튼은 실제 재알림 예약이 구현되기 전까지 숨긴다 (docs/todo.md 6.3 참고).
+                // 구현할 때 아래 주석을 풀고 addAction 체인에 다시 연결할 것.
+                // Intent snoozeIntent = new Intent(this, NotificationActionReceiver.class);
+                // snoozeIntent.setAction("ACTION_SNOOZE");
+                // snoozeIntent.putExtra("notificationId", notificationId);
+                // PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(
+                //         this, notificationId + 1000, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-                builder.addAction(0, "약속 완료", completePendingIntent)
-                        .addAction(0, "약속 미루기", snoozePendingIntent);
+                builder.addAction(0, "약속 완료", completePendingIntent);
+                //        .addAction(0, "약속 미루기", snoozePendingIntent);
                 break;
         }
         notificationManager.notify(notificationId, builder.build());
