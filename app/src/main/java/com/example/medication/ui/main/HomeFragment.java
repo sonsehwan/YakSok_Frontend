@@ -244,7 +244,7 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
 
         binding.progressMain.setProgress(visualPercent);
         binding.tvProgressPercent.setText(percent + "%");
-        binding.tvProgressCount.setText(total == 0 ? "오늘 등록된 약속이 없어요" : (done + "개 중 " + total + "개 완료"));
+        binding.tvProgressCount.setText(total == 0 ? "오늘 등록된 약속이 없어요" : (total + "개 중 " + done + "개 완료"));
 
         if (percent == 0) {
             binding.progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_missed)));

@@ -123,7 +123,7 @@
                     android:textColor="@color/g900"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    tools:text="3개 중 4개 완료" />
+                    tools:text="4개 중 3개 완료" />
             </LinearLayout>
 
             <TextView
