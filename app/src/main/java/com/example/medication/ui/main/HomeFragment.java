@@ -154,6 +154,7 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
                 .enqueue(new Callback<ApiResponse<List<NotificationYaksok>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<NotificationYaksok>>> call, Response<ApiResponse<List<NotificationYaksok>>> response) {
+                        if (binding == null) return; // 응답이 늦게 와서 View가 이미 파괴된 경우
                         if (response.isSuccessful() && response.body() != null) {
                             List<NotificationYaksok> notifications = response.body().getData();
                             SprefsManager.setNotifications(requireContext(), notifications);
@@ -168,6 +169,7 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
 
                     @Override
                     public void onFailure(Call<ApiResponse<List<NotificationYaksok>>> call, Throwable t) {
+                        if (binding == null) return;
                         Log.e("메인화면 에러", "통신 실패: " + t.getMessage());
                         loadFromLocalFallback();
                     }

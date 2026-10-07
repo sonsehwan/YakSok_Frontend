@@ -24,7 +24,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.example.medication.ui.common.AppDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -53,6 +52,7 @@ import com.example.medication.model.response.UserResponse;
 import com.example.medication.model.response.UserSearchResultDto;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.chattingroom.ChattingRoom;
+import com.example.medication.ui.common.AppDialog;
 import com.example.medication.ui.common.WipActivity;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
@@ -402,6 +402,7 @@ public class FriendListFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ApiResponse<FriendListDto>> call,
                                            Response<ApiResponse<FriendListDto>> response) {
+                        if (binding == null) return;
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().getData() != null) {
                             bindFriendList(response.body().getData().getFriends());
@@ -412,6 +413,7 @@ public class FriendListFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<ApiResponse<FriendListDto>> call, Throwable t) {
+                        if (binding == null) return;
                         Log.e("FriendList", "친구 목록 통신 실패: " + t.getMessage());
                         Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
@@ -445,6 +447,7 @@ public class FriendListFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ApiResponse<FriendListDto>> call,
                                            Response<ApiResponse<FriendListDto>> response) {
+                        if (binding == null) return;
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().getData() != null) {
                             Toast.makeText(requireContext(), "친구를 삭제했습니다.", Toast.LENGTH_SHORT).show();
@@ -457,6 +460,7 @@ public class FriendListFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<ApiResponse<FriendListDto>> call, Throwable t) {
+                        if (binding == null) return;
                         Log.e("FriendList", "친구 삭제 실패: " + t.getMessage());
                         Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
@@ -469,6 +473,9 @@ public class FriendListFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ApiResponse<List<ReceivedFriendRequestDto>>> call,
                                            Response<ApiResponse<List<ReceivedFriendRequestDto>>> response) {
+
+                        if (binding == null) return;
+
                         int count = 0;
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().getData() != null) {
@@ -480,6 +487,7 @@ public class FriendListFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<ApiResponse<List<ReceivedFriendRequestDto>>> call, Throwable t) {
+                        if (binding == null) return;
                         Log.e("FriendList", "요청 개수 조회 실패: " + t.getMessage());
                     }
                 });

@@ -76,7 +76,8 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    SprefsManager.setUserInfo(requireContext(), response.body().getData());
+                    // 탭을 옮긴 뒤 응답이 와도 서버 설정과 로컬 캐시는 맞춰야 하므로 가드 대신 View의 context를 쓴다
+                    SprefsManager.setUserInfo(button.getContext(), response.body().getData());
                 } else {
                     Log.e("NotificationSetting", "알림 설정 변경 실패");
                     button.setOnCheckedChangeListener(null);

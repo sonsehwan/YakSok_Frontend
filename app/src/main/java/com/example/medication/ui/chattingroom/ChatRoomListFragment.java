@@ -135,6 +135,7 @@ public class ChatRoomListFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ApiResponse<List<ChatRoomListDto>>> call,
                                            Response<ApiResponse<List<ChatRoomListDto>>> response) {
+                        if (binding == null) return;
                         if (response.isSuccessful() && response.body() != null) {
                             List<ChatRoomListDto> data = response.body().getData();
 
@@ -152,6 +153,7 @@ public class ChatRoomListFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<ApiResponse<List<ChatRoomListDto>>> call, Throwable t) {
+                        if (binding == null) return;
                         Toast.makeText(requireContext(), "서버와 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -166,6 +168,7 @@ public class ChatRoomListFragment extends Fragment {
             @Override
             public void onResponse(Call<ApiResponse<List<ChatRoomListDto>>> call,
                                    Response<ApiResponse<List<ChatRoomListDto>>> response) {
+                if (binding == null) return;
                 if (response.isSuccessful() && response.body() != null) {
                     List<ChatRoomListDto> data = response.body().getData();
 
@@ -184,6 +187,7 @@ public class ChatRoomListFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ApiResponse<List<ChatRoomListDto>>> call, Throwable t) {
+                if (binding == null) return;
                 Log.e("채팅목록", "통신 실패: " + t.getMessage());
                 Toast.makeText(requireContext(), "서버와 연결하지 못했습니다.", Toast.LENGTH_SHORT).show();
             }

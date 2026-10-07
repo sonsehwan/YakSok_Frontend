@@ -169,6 +169,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
         api.getYaksokList().enqueue(new Callback<ApiResponse<List<Yaksok>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<Yaksok>>> call, Response<ApiResponse<List<Yaksok>>> response) {
+                if (binding == null) return; // 응답이 늦게 와서 View가 이미 파괴된 경우
                 if (response.isSuccessful() && response.body() != null) {
                     List<Yaksok> yaksokList = response.body().getData();
                     if (yaksokList != null) {
@@ -181,6 +182,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
 
             @Override
             public void onFailure(Call<ApiResponse<List<Yaksok>>> call, Throwable t) {
+                if (binding == null) return;
                 Log.e("YaksokList", "API 통신 실패: " + t.getMessage());
                 Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
@@ -191,6 +193,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
         NetworkClient.getYaksokApi().getSharedUserList().enqueue(new Callback<ApiResponse<List<SharedUser>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<SharedUser>>> call, Response<ApiResponse<List<SharedUser>>> response) {
+                if (binding == null) return;
                 if (response.isSuccessful() && response.body() != null) {
                     List<SharedUser> userList = response.body().getData();
                     if (userList != null && !userList.isEmpty()) {
@@ -291,6 +294,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
                 .enqueue(new Callback<ApiResponse<List<Yaksok>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<Yaksok>>> call, Response<ApiResponse<List<Yaksok>>> response) {
+                        if (binding == null) return;
                         if (response.isSuccessful() && response.body() != null) {
                             List<Yaksok> data = response.body().getData();
                             shareYaksokListAdapter.updateData(data != null ? data : new ArrayList<>());
@@ -302,6 +306,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
 
                     @Override
                     public void onFailure(Call<ApiResponse<List<Yaksok>>> call, Throwable t) {
+                        if (binding == null) return;
                         Log.e("YaksokList", "공유 약속 목록 통신 실패: " + t.getMessage());
                         Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
@@ -319,6 +324,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
                 .enqueue(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                        if (binding == null) return;
                         if (response.isSuccessful()) {
                             Toast.makeText(requireContext(), "목록에서 삭제.", Toast.LENGTH_SHORT).show();
                             fetchSharedUserList();
@@ -329,6 +335,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
 
                     @Override
                     public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                        if (binding == null) return;
                         Log.e("YaksokList", "공유 약속 삭제 통신 실패: " + t.getMessage());
                         Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
