@@ -53,7 +53,6 @@ import com.example.medication.model.response.UserSearchResultDto;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.chattingroom.ChattingRoom;
 import com.example.medication.ui.common.AppDialog;
-import com.example.medication.ui.common.WipActivity;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
@@ -388,11 +387,10 @@ public class FriendListFragment extends Fragment {
     private void setRecyclerView() {
         binding.rvYaksokList.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        adapter = new FriendListAdapter(new ArrayList<>(), (friend, position) -> {
-            // 약속 공유 기능 완성 후 연결 예정
-            Intent intent = new Intent(requireContext(), WipActivity.class);
-            startActivity(intent);
-        }, this::showFriendActionsDialog);
+        adapter = new FriendListAdapter(new ArrayList<>(),
+                (friend, position) -> renderProfileDialog(null, UserProfileDto.fromFriend(friend)),
+                this::showFriendActionsDialog);
+
         binding.rvYaksokList.setAdapter(adapter);
     }
 
