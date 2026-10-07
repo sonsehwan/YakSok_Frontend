@@ -7,10 +7,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.medication.ui.login.Login;
 import com.example.medication.util.AuthEventBus;
@@ -28,16 +27,9 @@ public class BaseActivity extends AppCompatActivity implements AuthEventBus.List
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         lockPortrait();
-        applyLightSystemBarIcons();
-    }
-
-    // 테마 XML의 windowLightStatusBar만으로는 기기/OS 버전에 따라 상태바 아이콘 색이
-    // 밝은 값으로 되돌아가는 경우가 있어(edge-to-edge 강제 적용 등), 모든 화면에서 코드로 재확인한다.
-    private void applyLightSystemBarIcons() {
-        WindowInsetsControllerCompat controller =
-                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        controller.setAppearanceLightStatusBars(true);
-        controller.setAppearanceLightNavigationBars(true);
+        // 상태바/내비바 아이콘 색은 EdgeToEdge(auto)가 uiMode로 정한다. 앱이 라이트 전용이므로
+        // MedicationApp의 MODE_NIGHT_NO와 짝이 맞아야 어두운 아이콘이 된다(그 줄을 빼면 다크 폰에서 흰 아이콘).
+        EdgeToEdge.enable(this);
     }
 
     private void lockPortrait() {

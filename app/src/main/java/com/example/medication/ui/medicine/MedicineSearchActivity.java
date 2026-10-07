@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,7 +34,6 @@ public class MedicineSearchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
 
         binding = ActivityMedicineSearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import com.example.medication.ui.base.BaseActivity;
 
@@ -45,7 +44,6 @@ public class DrugStoreDetail extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
 
         binding = ActivityDrugStoreDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

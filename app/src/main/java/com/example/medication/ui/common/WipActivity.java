@@ -2,7 +2,6 @@ package com.example.medication.ui.common;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import com.example.medication.ui.base.BaseActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -17,7 +16,6 @@ public class WipActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         binding = WipBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {

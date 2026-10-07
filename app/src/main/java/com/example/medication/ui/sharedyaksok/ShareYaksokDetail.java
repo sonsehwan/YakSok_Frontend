@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -43,7 +42,6 @@ public class ShareYaksokDetail extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         binding = ActivityShareYaksokDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

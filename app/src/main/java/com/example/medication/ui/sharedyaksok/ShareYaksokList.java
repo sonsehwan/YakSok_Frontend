@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -40,7 +39,6 @@ public class ShareYaksokList extends BaseActivity implements YaksokEventBus.List
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         binding = ActivityShareYaksokListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

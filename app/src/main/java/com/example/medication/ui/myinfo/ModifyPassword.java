@@ -11,7 +11,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import com.example.medication.ui.base.BaseActivity;
 
 import com.example.medication.databinding.ActivityModifyPasswordBinding;
@@ -36,7 +35,6 @@ public class ModifyPassword extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         binding = ActivityModifyPasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

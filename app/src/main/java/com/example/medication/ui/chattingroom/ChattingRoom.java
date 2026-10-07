@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.medication.ui.base.BaseActivity;
-import androidx.activity.EdgeToEdge;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.medication.R;
@@ -54,7 +53,6 @@ public class ChattingRoom extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         binding = ActivityChattingRoomBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
