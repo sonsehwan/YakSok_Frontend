@@ -78,15 +78,15 @@ public class MainActivity extends BaseActivity {
 
     private void setupDrawer() {
         binding.sideNavView.getHeaderView(0).findViewById(R.id.side_drugstore).setOnClickListener(v -> {
-            binding.drawerLayout.closeDrawer(GravityCompat.START);
+            binding.drawerLayout.closeDrawer(GravityCompat.END);
             startActivity(new Intent(MainActivity.this, DrugStoreList.class));
         });
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    binding.drawerLayout.closeDrawer(GravityCompat.START);
+                if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                    binding.drawerLayout.closeDrawer(GravityCompat.END);
                 } else {
                     setEnabled(false);
                     getOnBackPressedDispatcher().onBackPressed();

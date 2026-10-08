@@ -79,7 +79,7 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
         }
 
         binding.ivMenu.setOnClickListener(v ->
-                ((DrawerLayout) requireActivity().findViewById(R.id.drawer_layout)).openDrawer(GravityCompat.START));
+                ((DrawerLayout) requireActivity().findViewById(R.id.drawer_layout)).openDrawer(GravityCompat.END));
     }
 
     @Override

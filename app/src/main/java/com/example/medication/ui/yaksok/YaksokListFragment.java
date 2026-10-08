@@ -160,7 +160,7 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
 
     private void setupDrawerButton() {
         binding.ivMenu.setOnClickListener(v ->
-                ((DrawerLayout) requireActivity().findViewById(R.id.drawer_layout)).openDrawer(GravityCompat.START));
+                ((DrawerLayout) requireActivity().findViewById(R.id.drawer_layout)).openDrawer(GravityCompat.END));
     }
 
     private void fetchYaksokList() {
