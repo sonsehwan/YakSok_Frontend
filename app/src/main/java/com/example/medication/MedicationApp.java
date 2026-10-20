@@ -6,6 +6,10 @@ import android.content.Context;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.medication.util.PretendardInterceptor;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.appcheck.FirebaseAppCheck;
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 
 import io.github.inflationx.viewpump.ViewPump;
 import lombok.Getter;
@@ -18,6 +22,12 @@ public class MedicationApp extends Application {
     @Override
     public void onCreate(){
         super.onCreate();
+
+        FirebaseApp.initializeApp(this);
+        FirebaseAppCheck.getInstance().installAppCheckProviderFactory(
+                BuildConfig.DEBUG
+                        ? DebugAppCheckProviderFactory.getInstance()
+                        : PlayIntegrityAppCheckProviderFactory.getInstance());
 
         context = getApplicationContext();
 

@@ -77,6 +77,10 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.firebase:firebase-ai")
+
+    // Firebase 앱 체크
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
+    implementation("com.google.firebase:firebase-appcheck-debug")
     implementation("com.kakao.sdk:v2-all:2.23.4")
     implementation("com.kakao.maps.open:android:2.12.8")
     implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
