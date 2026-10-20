@@ -504,22 +504,22 @@ public class FriendListFragment extends Fragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
-        EditText etNickname = dialogBinding.etNickname;
+        EditText etEmail = dialogBinding.etEmail;
         LinearLayout layoutResult = dialogBinding.layoutResult;
         TextView tvResultAvatar = dialogBinding.tvResultAvatar;
         TextView tvResultNickname = dialogBinding.tvResultNickname;
         TextView tvResultEmail = dialogBinding.tvResultEmail;
 
         dialogBinding.btnSearch.setOnClickListener(v -> {
-            String nickname = etNickname.getText().toString().trim();
-            if (TextUtils.isEmpty(nickname)) {
-                Toast.makeText(requireContext(), "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
+            String email = etEmail.getText().toString().trim();
+            if (TextUtils.isEmpty(email)) {
+                Toast.makeText(requireContext(), "email을 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             layoutResult.setVisibility(LinearLayout.GONE);
 
-            NetworkClient.getFriendApi().searchUser(nickname)
+            NetworkClient.getFriendApi().searchUser(email)
                     .enqueue(new Callback<ApiResponse<UserSearchResultDto>>() {
                         @Override
                         public void onResponse(Call<ApiResponse<UserSearchResultDto>> call,

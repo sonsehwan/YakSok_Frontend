@@ -24,16 +24,16 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="20dp"
-        android:text="닉네임으로 친구를 찾아보세요"
+        android:text="이메일로 친구를 찾아보세요"
         android:textColor="@color/g500"
         android:textSize="13sp" />
 
     <EditText
-        android:id="@+id/et_nickname"
+        android:id="@+id/et_email"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:background="@drawable/bg_message_edittext"
-        android:hint="닉네임 입력"
+        android:hint="이메일 입력"
         android:imeOptions="actionSearch"
         android:inputType="text"
         android:maxLines="1"

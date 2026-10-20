@@ -27,7 +27,7 @@ public interface FriendApi {
      */
     // 닉네임으로 사용자 검색
     @GET("/api/friend/search")
-    Call<ApiResponse<UserSearchResultDto>> searchUser(@Query("nickname") String nickname);
+    Call<ApiResponse<UserSearchResultDto>> searchUser(@Query("email") String email);
 
     // 친구 요청 보내기
     @POST("/api/friend/request")
