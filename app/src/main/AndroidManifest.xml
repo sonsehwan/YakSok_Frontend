@@ -13,6 +13,10 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <queries>
+        <package android:name="com.kakao.talk"/>
+    </queries>
+
     <application
         android:name=".MedicationApp"
         android:allowBackup="true"
@@ -38,10 +42,10 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.finddrugstore.DrugStoreDetail"
+            android:name=".ui.drugstore.DrugStoreDetail"
             android:exported="false" />
         <activity
-            android:name=".ui.finddrugstore.DrugStoreList"
+            android:name=".ui.drugstore.DrugStoreList"
             android:exported="false" />
         <activity
             android:name=".ui.yaksok.CreatePaperEnvelope"
@@ -88,7 +92,7 @@
             android:name=".ui.yaksok.CreateDirectSchedule"
             android:exported="false" />
         <activity
-            android:name=".ui.finddrugstore.FindDrugStore"
+            android:name=".ui.drugstore.FindDrugStore"
             android:exported="false" /> <!-- 로그인 -->
         <activity
             android:name=".ui.login.Login"
@@ -99,6 +103,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.actionVIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="oauth" android:scheme="${kakaoScheme}" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".ui.login.FindId"
             android:exported="false" />

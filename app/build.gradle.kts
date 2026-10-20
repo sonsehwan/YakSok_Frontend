@@ -6,6 +6,12 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) FileInputStream(f).use { load(it) }
+}
+val kakaoKey = localProps.getProperty("KAKAO_NATIVE_APP_KEY", "")
+
 android {
     namespace = "com.example.medication"
     compileSdk {
@@ -23,6 +29,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoKey\"")
+        manifestPlaceholders["kakaoScheme"] = "kakao$kakaoKey"
     }
 
     buildFeatures {

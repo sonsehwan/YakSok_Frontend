@@ -79,7 +79,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_input_box">
 
-                    <com.example.medication.ui.finddrugstore.BelowSpinner
+                    <com.example.medication.ui.drugstore.BelowSpinner
                         android:id="@+id/sp_first_address"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -121,7 +121,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_input_box">
 
-                    <com.example.medication.ui.finddrugstore.BelowSpinner
+                    <com.example.medication.ui.drugstore.BelowSpinner
                         android:id="@+id/sp_second_address"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
