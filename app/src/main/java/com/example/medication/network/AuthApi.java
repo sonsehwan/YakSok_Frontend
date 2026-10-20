@@ -2,12 +2,16 @@ package com.example.medication.network;
 
 import com.example.medication.model.request.FindIdSendCodeRequest;
 import com.example.medication.model.request.FindIdVerifyRequest;
+import com.example.medication.model.request.KakaoLoginRequest;
+import com.example.medication.model.request.KakaoSignUpRequest;
 import com.example.medication.model.request.RefreshTokenRequest;
 import com.example.medication.model.request.ResetPwConfirmRequest;
 import com.example.medication.model.request.ResetPwSendCodeRequest;
 import com.example.medication.model.request.ResetPwVerifyRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.FindIdResponse;
+import com.example.medication.model.response.KakaoLoginResponse;
+import com.example.medication.model.response.LoginResponse;
 import com.example.medication.model.response.ResetPwVerifyResponse;
 import com.example.medication.model.response.TokenResponse;
 
@@ -22,6 +26,12 @@ public interface AuthApi {
 
     @POST("/api/auth/logout")
     Call<ApiResponse<Void>> logout(@Body RefreshTokenRequest request);
+
+    @POST("/api/auth/kakao")
+    Call<ApiResponse<KakaoLoginResponse>> KakaoLogin(@Body KakaoLoginRequest request);
+
+    @POST("/api/auth/kakao/signup")
+    Call<ApiResponse<LoginResponse>> KakaoSignUp(@Body KakaoSignUpRequest request);
 
     @POST("/api/auth/find-id/send-code")
     Call<ApiResponse<Void>> sendFindIdCode(@Body FindIdSendCodeRequest request);
