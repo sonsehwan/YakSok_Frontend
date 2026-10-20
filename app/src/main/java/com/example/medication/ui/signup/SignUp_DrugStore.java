@@ -24,7 +24,7 @@ import com.example.medication.model.request.UserRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
-import com.example.medication.ui.finddrugstore.FindDrugStore;
+import com.example.medication.ui.drugstore.FindDrugStore;
 import com.example.medication.ui.login.Login;
 import com.google.gson.Gson;
 

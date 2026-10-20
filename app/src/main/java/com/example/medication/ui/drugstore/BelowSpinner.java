@@ -1,4 +1,4 @@
-package com.example.medication.ui.finddrugstore;
+package com.example.medication.ui.drugstore;
 
 import android.content.Context;
 import android.util.AttributeSet;

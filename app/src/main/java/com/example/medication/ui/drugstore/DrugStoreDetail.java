@@ -1,4 +1,4 @@
-package com.example.medication.ui.finddrugstore;
+package com.example.medication.ui.drugstore;
 
 import static com.example.medication.util.SprefsManager.getUser;
 
@@ -8,8 +8,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import com.example.medication.ui.base.BaseActivity;
 
+import com.example.medication.BuildConfig;
 import com.example.medication.R;
 import com.example.medication.databinding.ActivityDrugStoreDetailBinding;
 import com.example.medication.model.DrugStore;
@@ -18,6 +18,7 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.ChatRoomResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.ui.chattingroom.ChattingRoom;
 import com.google.gson.Gson;
 import com.kakao.vectormap.KakaoMap;
@@ -48,7 +49,7 @@ public class DrugStoreDetail extends BaseActivity {
         binding = ActivityDrugStoreDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        KakaoMapSdk.init(this, "0a910c6f0a6d191f86e46da9c0449d84");
+        KakaoMapSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY);
 
         setupMapView();
 

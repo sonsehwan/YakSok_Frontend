@@ -22,7 +22,7 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.ui.common.AppDialog;
-import com.example.medication.ui.finddrugstore.FindDrugStore;
+import com.example.medication.ui.drugstore.FindDrugStore;
 import com.example.medication.ui.login.Login;
 import com.example.medication.ui.main.MainActivity;
 import com.example.medication.util.SprefsManager;

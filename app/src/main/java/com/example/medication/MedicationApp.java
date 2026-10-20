@@ -10,6 +10,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
+import com.kakao.sdk.common.KakaoSdk;
 
 import io.github.inflationx.viewpump.ViewPump;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class MedicationApp extends Application {
         super.onCreate();
 
         FirebaseApp.initializeApp(this);
+        KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY);
         FirebaseAppCheck.getInstance().installAppCheckProviderFactory(
                 BuildConfig.DEBUG
                         ? DebugAppCheckProviderFactory.getInstance()

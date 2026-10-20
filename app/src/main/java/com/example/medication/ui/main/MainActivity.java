@@ -21,7 +21,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.medication.R;
 import com.example.medication.databinding.ActivityMainBinding;
 import com.example.medication.ui.base.BaseActivity;
-import com.example.medication.ui.finddrugstore.DrugStoreList;
+import com.example.medication.ui.drugstore.DrugStoreList;
 
 public class MainActivity extends BaseActivity {
 
