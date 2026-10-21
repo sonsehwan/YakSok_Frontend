@@ -128,7 +128,10 @@
             android:exported="true" />
         <activity
             android:name=".ui.signup.SignUp_DrugStore"
-            android:exported="true" /> <!-- 메인화면 -->
+            android:exported="true" />
+        <activity
+            android:name=".ui.signup.SignUp_Kakao"
+            android:exported="false" /> <!-- 메인화면 -->
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true" />
