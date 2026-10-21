@@ -28,10 +28,10 @@ public interface AuthApi {
     Call<ApiResponse<Void>> logout(@Body RefreshTokenRequest request);
 
     @POST("/api/auth/kakao")
-    Call<ApiResponse<KakaoLoginResponse>> KakaoLogin(@Body KakaoLoginRequest request);
+    Call<ApiResponse<KakaoLoginResponse>> kakaoLogin(@Body KakaoLoginRequest request);
 
     @POST("/api/auth/kakao/signup")
-    Call<ApiResponse<LoginResponse>> KakaoSignUp(@Body KakaoSignUpRequest request);
+    Call<ApiResponse<LoginResponse>> kakaoSignUp(@Body KakaoSignUpRequest request);
 
     @POST("/api/auth/find-id/send-code")
     Call<ApiResponse<Void>> sendFindIdCode(@Body FindIdSendCodeRequest request);

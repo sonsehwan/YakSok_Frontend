@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class KakaoSignUpRequest {
-    private final String acessToken;
+    private final String accessToken;
     private final String role;
     private final String nickname;
     private final SearchDrugStore drugStore;

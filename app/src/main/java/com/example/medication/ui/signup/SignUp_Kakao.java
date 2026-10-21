@@ -1,8 +1,11 @@
 package com.example.medication.ui.signup;
 
+import static com.example.medication.util.LoginMethod.onLoginSuccess;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,8 +16,17 @@ import androidx.core.content.ContextCompat;
 import com.example.medication.R;
 import com.example.medication.databinding.ActivitySignUpKakaoBinding;
 import com.example.medication.model.SearchDrugStore;
+import com.example.medication.model.request.KakaoSignUpRequest;
+import com.example.medication.model.response.ApiResponse;
+import com.example.medication.model.response.LoginResponse;
+import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.ui.drugstore.FindDrugStore;
+import com.google.gson.Gson;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SignUp_Kakao extends BaseActivity {
 
@@ -33,8 +45,13 @@ public class SignUp_Kakao extends BaseActivity {
         binding = ActivitySignUpKakaoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.inputNickname.setText(getIntent().getStringExtra(EXTRA_NICKNAME));
-        binding.inputEmail.setText(getIntent().getStringExtra(EXTRA_EMAIL));
+        String kakaoToken = getIntent().getStringExtra(EXTRA_KAKAO_TOKEN);
+        String nickname = getIntent().getStringExtra(EXTRA_NICKNAME);
+        String email = getIntent().getStringExtra(EXTRA_EMAIL);
+
+
+        binding.inputNickname.setText(nickname);
+        binding.inputEmail.setText(email);
 
         findDrugStoreLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -63,11 +80,49 @@ public class SignUp_Kakao extends BaseActivity {
         binding.ivBack.setOnClickListener(v -> finish());
 
         binding.btnSignUp.setOnClickListener(v -> {
+            // TODO: POST /api/auth/kakao/signup (토큰·role·nickname·drugStore) 후 로그인 후처리
+            if(kakaoToken == null){
+                showToast("잘못된 접근 입니다. 다시 로그인 해주세요.");
+                finish();
+                return;
+            }
+
             if (!checkValid()) {
                 return;
             }
-            // TODO: POST /api/auth/kakao/signup (토큰·role·nickname·drugStore) 후 로그인 후처리
+
+            String role = isDrugStore ? "DRUGSTORE" : "NORMAL";
+            String nickName = binding.inputNickname.getText();
+            SearchDrugStore selected = isDrugStore ? drugStore : null;
+
+            startKakaoSignUp(new KakaoSignUpRequest(kakaoToken, role, nickName, selected));
         });
+    }
+
+    private void startKakaoSignUp(KakaoSignUpRequest request) {
+        binding.btnSignUp.setEnabled(false);
+
+        NetworkClient.getAuthApi().kakaoSignUp(request)
+                .enqueue(new Callback<ApiResponse<LoginResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<LoginResponse>> call,
+                                           Response<ApiResponse<LoginResponse>> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().isBusinessSuccess()) {
+                            onLoginSuccess(SignUp_Kakao.this, response.body().getData());
+                            return;
+                        }
+                        binding.btnSignUp.setEnabled(true);
+                        showSignUpError(response);
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
+                        binding.btnSignUp.setEnabled(true);
+                        showToast("네트워크 연결에 실패했습니다. 잠시 후 다시 시도해주세요.");
+                        Log.e("KakaoSignUp", "Failure: " + t.getMessage());
+                    }
+                });
     }
 
     private void selectRole(boolean drugStoreRole) {
@@ -75,6 +130,12 @@ public class SignUp_Kakao extends BaseActivity {
         binding.tvRoleNormal.setSelected(!drugStoreRole);
         binding.tvRoleDrugstore.setSelected(drugStoreRole);
         binding.llDrugstore.setVisibility(drugStoreRole ? View.VISIBLE : View.GONE);
+
+        if (!drugStoreRole) {
+            drugStore = null;
+            binding.tvDrugstore.setText("");
+            hideDrugStoreError();
+        }
     }
 
     private boolean checkValid() {
@@ -95,6 +156,27 @@ public class SignUp_Kakao extends BaseActivity {
             return false;
         }
         return true;
+    }
+
+    private void showSignUpError(Response<?> response) {
+        String message = "회원가입에 실패했습니다.";
+        try {
+            if (response.errorBody() != null) {
+                ApiResponse<?> err = new Gson().fromJson(response.errorBody().string(), ApiResponse.class);
+                if (err != null && err.getMessage() != null) {
+                    message = err.getMessage();
+                }
+            }
+        } catch (Exception e) {
+            Log.e("KakaoSignUp", "에러 응답 파싱 실패", e);
+        }
+
+        // 약국 관련 실패는 약국 선택 영역에, 나머지는 토스트로
+        if (message.contains("약국")) {
+            showDrugStoreError(message);
+        } else {
+            showToast(message);
+        }
     }
 
     private void showDrugStoreError(String message) {

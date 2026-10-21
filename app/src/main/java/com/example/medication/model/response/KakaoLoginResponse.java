@@ -14,4 +14,6 @@ public class KakaoLoginResponse {
 
     @SerializedName("nickname")
     private String nickname;
+
+    @SerializedName("email") private String email;
 }

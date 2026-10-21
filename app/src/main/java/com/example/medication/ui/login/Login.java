@@ -1,5 +1,7 @@
 package com.example.medication.ui.login;
 
+import static com.example.medication.util.LoginMethod.onLoginSuccess;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -12,20 +14,26 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.medication.databinding.ActivityLoginBinding;
-import com.example.medication.model.request.FirebaseTokenRequest;
-import com.example.medication.ui.signup.SignUpTypeBottomSheet;
+import com.example.medication.model.request.KakaoLoginRequest;
 import com.example.medication.model.request.LoginRequest;
 import com.example.medication.model.response.ApiResponse;
+import com.example.medication.model.response.KakaoLoginResponse;
 import com.example.medication.model.response.LoginResponse;
-import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.ui.main.MainActivity;
+import com.example.medication.ui.signup.SignUpTypeBottomSheet;
+import com.example.medication.ui.signup.SignUp_Kakao;
 import com.example.medication.util.SprefsManager;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
+import com.kakao.sdk.auth.model.OAuthToken;
+import com.kakao.sdk.common.model.ClientError;
+import com.kakao.sdk.common.model.ClientErrorCause;
+import com.kakao.sdk.user.UserApiClient;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,7 +45,6 @@ public class Login extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 로그인 유지 여부를 확인
         if(SprefsManager.isLoggedIn(this)){
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -51,6 +58,8 @@ public class Login extends BaseActivity {
         setContentView(binding.getRoot());
 
         binding.btnLogin.setOnClickListener(v -> startLogin());
+
+        binding.btnKakaoLogin.setOnClickListener(v -> startKakaoLogin());
 
         binding.tvGoSignup.setOnClickListener(v -> {
             SignUpTypeBottomSheet sheet = new SignUpTypeBottomSheet();
@@ -81,23 +90,7 @@ public class Login extends BaseActivity {
                     ApiResponse<LoginResponse> result = response.body();
 
                     if(result.isBusinessSuccess()){
-
-                        LoginResponse loginResponse = result.getData();
-
-                        UserResponse user = loginResponse.getUser();
-
-                        SprefsManager.saveTokens(Login.this, loginResponse.getAccessToken(), loginResponse.getRefreshToken());
-
-                        SprefsManager.setUserInfo(Login.this, user);
-
-                        getAndSendFcmToken(user.getId());
-
-                        Log.d("Login", result.getMessage());
-
-                        Intent intent = new Intent(Login.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
+                        onLoginSuccess(Login.this, result.getData());
                     }else{// 서버와 연결은 성공했지만 요청을 승인할 수 없을 때
                         showToast(result.getMessage());
                         Log.e("Login", result.getMessage());
@@ -115,38 +108,77 @@ public class Login extends BaseActivity {
         });
     }
 
-    private void getAndSendFcmToken(Long userId){
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w("FcmToken", "FCM 토큰 획득 실패", task.getException());
-                        return;
+    private void startKakaoLogin() {
+        Function2<OAuthToken, Throwable, Unit> callback = (token, error) -> {
+            if (error != null) {
+                Log.e("KakaoLogin", "카카오 로그인 실패", error);
+                showToast("카카오 로그인에 실패했습니다.");
+            } else if (token != null) {
+                requestKakaoLogin(token.getAccessToken());
+            }
+            return Unit.INSTANCE;
+        };
+
+        UserApiClient client = UserApiClient.getInstance();
+
+        if (client.isKakaoTalkLoginAvailable(this)) {
+            client.loginWithKakaoTalk(this, (token, error) -> {
+                if (error instanceof ClientError
+                        && ((ClientError) error).getReason() == ClientErrorCause.Cancelled) {
+                    return Unit.INSTANCE;
+                }
+                if (error != null) {
+                    client.loginWithKakaoAccount(this, callback);
+                    return Unit.INSTANCE;
+                }
+                return callback.invoke(token, null);
+            });
+        } else {
+            client.loginWithKakaoAccount(this, callback);
+        }
+    }
+
+    private void requestKakaoLogin(String kakaoToken) {
+        NetworkClient.getAuthApi().kakaoLogin(new KakaoLoginRequest(kakaoToken))
+                .enqueue(new Callback<ApiResponse<KakaoLoginResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<KakaoLoginResponse>> call,
+                                           Response<ApiResponse<KakaoLoginResponse>> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().isBusinessSuccess()) {
+                            KakaoLoginResponse data = response.body().getData();
+
+                            if(data.isNewUser()){
+                                Intent intent = new Intent(Login.this, SignUp_Kakao.class);
+                                intent.putExtra(SignUp_Kakao.EXTRA_KAKAO_TOKEN, kakaoToken);
+                                intent.putExtra(SignUp_Kakao.EXTRA_NICKNAME, data.getNickname());
+                                intent.putExtra(SignUp_Kakao.EXTRA_EMAIL, data.getEmail());
+                                startActivity(intent);
+                            }else {
+                                onLoginSuccess(Login.this, data.getLogin());
+                            }
+
+                        } else {
+                            showKakaoError(response);
+                        }
                     }
-                    String token = task.getResult();
-                    Log.d("FcmToken", "획득한 토큰: " + token);
-                    sendTokenToServer(userId, token);
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<KakaoLoginResponse>> call, Throwable t) {
+                        showToast("네트워크 연결 실패: " + t.getMessage());
+                    }
                 });
     }
 
-    private void sendTokenToServer(Long userId, String token){
-        FirebaseTokenRequest request = new FirebaseTokenRequest(token);
-        UserApi api = NetworkClient.getApi();
-
-        api.updateFcmToken(request).enqueue(new Callback<ApiResponse<Void>>(){
-            @Override
-            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response){
-                if(response.isSuccessful()) {
-                    Log.d("FcmToken", "토큰을 저장적으로 저장하였습니다.");
-                }else{
-                    Log.e("FcmToken", "토큰 저장에 실패했습니다.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                Log.e("FcmToken", "네트워크 통신 실패: " + t.getMessage());
-            }
-        });
+    private void showKakaoError(Response<?> response) {
+        try {
+            String errorJson = response.errorBody() != null ? response.errorBody().string() : "";
+            ApiResponse<?> err = new Gson().fromJson(errorJson, ApiResponse.class);
+            showToast(err != null && err.getMessage() != null
+                    ? err.getMessage() : "카카오 로그인에 실패했습니다.");
+        } catch (Exception e) {
+            showToast("서버 응답을 분석할 수 없습니다.");
+        }
     }
 
     private void handleErrorResponse(Response<?> response) {

@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class KakaoLoginRequest {
-    private final String acessToken;
+    private final String accessToken;
 }

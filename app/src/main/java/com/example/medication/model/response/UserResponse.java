@@ -9,15 +9,23 @@ public class UserResponse implements Serializable {
 
     @SerializedName("id")
     private Long id;
+
     @SerializedName("email")
     private String email;
+
     @SerializedName("nickname")
     private String nickname;
+
     private String role;
+
     @SerializedName("myDrugStore")
     private DrugStore myDrugStore;
+
     @SerializedName("notificationEnabled")
     private boolean notificationEnabled;
+
+    @SerializedName("socialType")
+    private String socialType;
 
     public Long getId(){ return id;}
     public void setId(Long id){ this.id = id; }
@@ -39,5 +47,9 @@ public class UserResponse implements Serializable {
 
     public boolean isNotificationEnabled() {
         return notificationEnabled;
+    }
+
+    public String getSocialType() {
+        return socialType;
     }
 }

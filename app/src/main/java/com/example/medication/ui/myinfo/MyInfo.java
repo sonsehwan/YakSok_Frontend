@@ -52,6 +52,12 @@ public class MyInfo extends BaseActivity {
         binding.inputNickname.setText(currentNickname);
 
         UserResponse currentUser = SprefsManager.getUser(this);
+
+        if (currentUser != null && currentUser.getSocialType() != null) {
+            binding.tvLabelAccount.setVisibility(View.GONE);
+            binding.llAccount.setVisibility(View.GONE);
+        }
+
         if (currentUser != null && Objects.equals(currentUser.getRole(), "DRUGSTORE")) {
             binding.tvLabelDrugstore.setVisibility(View.VISIBLE);
             binding.llFindDrugstore.setVisibility(View.VISIBLE);

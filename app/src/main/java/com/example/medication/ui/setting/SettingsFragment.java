@@ -25,7 +25,9 @@ import com.example.medication.ui.myinfo.MyInfo;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.kakao.sdk.user.UserApiClient;
 
+import kotlin.Unit;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -98,11 +100,28 @@ public class SettingsFragment extends Fragment {
 
     private void showLogOutDialog() {
         AppDialog.confirm(requireContext(), "로그아웃", "로그아웃 하시겠습니까?", "로그아웃", false, () -> {
+            // clearUserInfo 가 사용자 정보를 지우므로 그 전에 카카오 회원인지 확인해 둔다
+            UserResponse user = SprefsManager.getUser(requireContext());
+            boolean isKakaoUser = user != null && user.getSocialType() != null;
+
             deleteToken();
             SprefsManager.clearUserInfo(requireContext());
+            if (isKakaoUser) {
+                kakaoLogout();
+            }
             requireActivity().finishAffinity();
             Intent intent = new Intent(requireContext(), Login.class);
             startActivity(intent);
+        });
+    }
+
+    // 카카오 SDK가 앱 안에 들고 있는 카카오 토큰을 지운다. 실패해도 우리 앱 로그아웃에는 영향이 없다
+    private void kakaoLogout() {
+        UserApiClient.getInstance().logout(error -> {
+            if (error != null) {
+                Log.w("KakaoLogin", "카카오 로그아웃 실패", error);
+            }
+            return Unit.INSTANCE;
         });
     }
 
