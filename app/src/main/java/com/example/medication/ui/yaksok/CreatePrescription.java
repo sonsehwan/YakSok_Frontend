@@ -368,6 +368,7 @@ public class CreatePrescription extends BaseActivity {
                 // 기존에 수동으로 등록된 약이 있다면 초기화 (처방전 스캔 기준 덮어쓰기)
                 selectedPills.clear();
                 failedPillNames.clear();
+                binding.tvFailedPills.setVisibility(View.GONE);
                 pendingPillSearchCount = medicineArray.length();
 
                 // 모든 약 데이터를 돌며 가장 큰 days(투약일 수)와 frequency 추출 & 리스트에 등록
@@ -470,18 +471,15 @@ public class CreatePrescription extends BaseActivity {
         }
     }
 
-    // 약 정보 조회가 하나 끝날 때마다 호출한다.
-    // 전부 끝났을 때 실패한 약이 있으면 사용자에게 한 번에 알린다.
-    // Retrofit 의 enqueue 콜백은 메인 스레드에서 실행되므로 별도 동기화가 필요 없다.
     private void onPillSearchFinished() {
         pendingPillSearchCount--;
-        if (pendingPillSearchCount > 0) return;
 
         if (!failedPillNames.isEmpty()) {
-            Toast.makeText(this,
-                    String.join(", ", failedPillNames) + " 의 약 정보를 찾지 못했습니다.",
-                    Toast.LENGTH_LONG).show();
+            binding.tvFailedPills.setText(
+                    "추가하지 못한 약: " + String.join(", ", failedPillNames));
+            binding.tvFailedPills.setVisibility(View.VISIBLE);
         }
+        if (pendingPillSearchCount > 0) return;
         updateRegisterButtonState();
     }
 
