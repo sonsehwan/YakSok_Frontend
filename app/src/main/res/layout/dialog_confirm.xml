@@ -50,7 +50,7 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:backgroundTint="@color/white"
-            app:cornerRadius="12dp"
+            app:cornerRadius="8dp"
             app:elevation="0dp"
             app:strokeColor="@color/g100"
             app:strokeWidth="1dp" />
@@ -67,7 +67,7 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:backgroundTint="@color/p600"
-            app:cornerRadius="12dp"
+            app:cornerRadius="8dp"
             app:elevation="0dp"
             tools:text="확인" />
     </LinearLayout>

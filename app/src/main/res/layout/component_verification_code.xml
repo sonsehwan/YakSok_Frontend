@@ -42,7 +42,7 @@
             android:textColor="@color/p700"
             android:textSize="13sp"
             android:textStyle="bold"
-            app:cornerRadius="12dp"
+            app:cornerRadius="8dp"
             app:elevation="0dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -58,7 +58,7 @@
             android:textSize="13sp"
             android:textStyle="bold"
             android:visibility="gone"
-            app:cornerRadius="12dp"
+            app:cornerRadius="8dp"
             app:elevation="0dp" />
     </LinearLayout>
 
@@ -109,7 +109,7 @@
             android:textColor="@color/p700"
             android:textSize="13sp"
             android:textStyle="bold"
-            app:cornerRadius="12dp"
+            app:cornerRadius="8dp"
             app:elevation="0dp" />
     </LinearLayout>
 

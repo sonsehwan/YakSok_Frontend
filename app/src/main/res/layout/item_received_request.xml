@@ -64,7 +64,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:backgroundTint="@color/p600"
-            app:cornerRadius="12dp"
+            app:cornerRadius="8dp"
             app:elevation="0dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -77,7 +77,7 @@
             android:text="거절"
             android:textColor="@color/g500"
             android:textSize="14sp"
-            app:cornerRadius="12dp"
+            app:cornerRadius="8dp"
             app:strokeColor="@color/g100" />
     </LinearLayout>
 </LinearLayout>

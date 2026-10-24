@@ -51,7 +51,7 @@
         android:textSize="15sp"
         android:textStyle="bold"
         app:backgroundTint="@color/p600"
-        app:cornerRadius="12dp"
+        app:cornerRadius="8dp"
         app:elevation="0dp" />
 
     <TextView

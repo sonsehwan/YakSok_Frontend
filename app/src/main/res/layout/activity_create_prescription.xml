@@ -374,7 +374,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:backgroundTint="@color/white"
-                app:cornerRadius="12dp"
+                app:cornerRadius="8dp"
                 app:elevation="0dp"
                 app:icon="@drawable/ic_lc_plus"
                 app:iconGravity="textStart"
@@ -397,7 +397,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:backgroundTint="@color/g100"
-        app:cornerRadius="12dp"
+        app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

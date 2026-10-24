@@ -2,5 +2,5 @@
 <!-- 확인/액션 다이얼로그 배경 (.pen Dialog/Confirm: 흰색, r-16) -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/white" />
-    <corners android:radius="16dp" />
+    <corners android:radius="8dp" />
 </shape>

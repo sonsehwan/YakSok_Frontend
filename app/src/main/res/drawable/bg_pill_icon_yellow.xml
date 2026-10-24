@@ -7,6 +7,6 @@
     <solid android:color="#FFFDE7" />
 
     <!-- 모서리 라운딩: 아이템 카드보다 조금 더 둥글게 -->
-    <corners android:radius="14dp" />
+    <corners android:radius="8dp" />
 
 </shape>
