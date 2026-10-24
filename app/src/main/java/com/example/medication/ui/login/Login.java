@@ -108,9 +108,22 @@ public class Login extends BaseActivity {
         });
     }
 
+    private void setKakaoLoading(boolean loading) {
+        binding.overlayLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (binding != null) setKakaoLoading(false);
+    }
+
     private void startKakaoLogin() {
+        setKakaoLoading(true);
+
         Function2<OAuthToken, Throwable, Unit> callback = (token, error) -> {
             if (error != null) {
+                setKakaoLoading(false);
                 Log.e("KakaoLogin", "카카오 로그인 실패", error);
                 showToast("카카오 로그인에 실패했습니다.");
             } else if (token != null) {
@@ -125,6 +138,7 @@ public class Login extends BaseActivity {
             client.loginWithKakaoTalk(this, (token, error) -> {
                 if (error instanceof ClientError
                         && ((ClientError) error).getReason() == ClientErrorCause.Cancelled) {
+                    setKakaoLoading(false);
                     return Unit.INSTANCE;
                 }
                 if (error != null) {
@@ -159,12 +173,14 @@ public class Login extends BaseActivity {
                             }
 
                         } else {
+                            setKakaoLoading(false);
                             showKakaoError(response);
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<KakaoLoginResponse>> call, Throwable t) {
+                        setKakaoLoading(false);
                         showToast("네트워크 연결 실패: " + t.getMessage());
                     }
                 });
