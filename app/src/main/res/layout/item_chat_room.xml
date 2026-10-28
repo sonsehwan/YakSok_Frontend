@@ -58,9 +58,28 @@
         android:maxLines="1"
         android:textColor="@color/g500"
         android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_unread_badge"
         app:layout_constraintStart_toStartOf="@id/tv_room_name"
         app:layout_constraintTop_toBottomOf="@id/tv_room_name"
         tools:text="마지막 메시지" />
+
+    <!-- 안 읽은 메시지 수. 0이면 숨김 -->
+    <TextView
+        android:id="@+id/tv_unread_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_unread_badge"
+        android:gravity="center"
+        android:minWidth="20dp"
+        android:paddingHorizontal="6dp"
+        android:textColor="@android:color/white"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_last_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="3"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

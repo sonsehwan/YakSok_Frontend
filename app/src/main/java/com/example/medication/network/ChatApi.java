@@ -25,6 +25,9 @@ public interface ChatApi {
     @POST("/api/chat/room/friend")
     Call<ApiResponse<ChatRoomResponse>> enterFriendChatRoom(@Body FriendChatRoomRequest request);
 
+    @POST("/api/chat/room/{roomId}/read")
+    Call<ApiResponse<Long>> markRead(@Path("roomId") Long roomId);
+
     @GET("/api/chat/room/{roomId}/messages")
     Call<ApiResponse<List<ChatMessage>>> getPreviousMessages(@Path("roomId") Long roomId);
 

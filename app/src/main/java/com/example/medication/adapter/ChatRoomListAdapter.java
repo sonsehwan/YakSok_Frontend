@@ -1,6 +1,7 @@
 package com.example.medication.adapter;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -65,6 +66,10 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
             binding.tvLastMessage.setText(last != null ? last : "아직 대화가 없어요.");
 
             binding.tvTime.setText(formatTime(room.getLastMessageAt()));
+
+            long unread = room.getUnreadCount() != null ? room.getUnreadCount() : 0;
+            binding.tvUnreadBadge.setVisibility(unread > 0 ? View.VISIBLE : View.GONE);
+            binding.tvUnreadBadge.setText(unread > 99 ? "99+" : String.valueOf(unread));
 
             itemView.setOnClickListener(v -> listener.onRoomClick(room));
             itemView.setOnLongClickListener(v -> {

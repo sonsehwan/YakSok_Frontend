@@ -1,11 +1,17 @@
 package com.example.medication.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class ChatMessage {
 
     public enum MessageType{
         TEXT,
         SHARE_YAKSOK
     }
+    private Long id;
     private String roomId;
     private Long senderParticipantId;
     private MessageType type;
@@ -24,33 +30,5 @@ public class ChatMessage {
         this.type = type;
         this.message = message;
         this.yaksokId = yaksokId;
-    }
-
-    public String getRoomId() {
-        return roomId;
-    }
-
-    public Long getSenderParticipantId() {
-        return senderParticipantId;
-    }
-
-    public MessageType getType() {
-        return type != null ? type : MessageType.TEXT;
-    }
-
-    public Long getYaksokId() {
-        return yaksokId;
-    }
-
-    public String getSenderNickname() {
-        return (senderNickname != null) ? senderNickname : "";
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }

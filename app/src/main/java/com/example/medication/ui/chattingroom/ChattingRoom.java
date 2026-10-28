@@ -6,18 +6,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.medication.ui.base.BaseActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.medication.R;
 import com.example.medication.adapter.ChattingRoomAdapter;
 import com.example.medication.databinding.ActivityChattingRoomBinding;
 import com.example.medication.model.ChatMessage;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.ui.sharedyaksok.ShareYaksokDetail;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
@@ -37,6 +37,11 @@ public class ChattingRoom extends BaseActivity {
     private Long roomId;
     private String roomName;
     private Long myParticipantId;
+    private List<ChatMessage> loadedMessages;
+    private boolean readDone = false;
+    private Long lastReadId;
+    private boolean rendered= false;
+    private final List<ChatMessage> pendingMessages = new ArrayList<>();
 
     private Long pendingShareYaksokId = null;
     private String pendingShareMessage = null;
@@ -85,6 +90,7 @@ public class ChattingRoom extends BaseActivity {
         binding.rvChatMessages.setLayoutManager(new LinearLayoutManager(this));
         binding.rvChatMessages.setAdapter(chattingRoomAdapter);
 
+        markRead();
         loadPreviousMessages();
 
         connectStomp();
@@ -103,6 +109,26 @@ public class ChattingRoom extends BaseActivity {
         });
     }
 
+    private void markRead(){
+        NetworkClient.getChatApi().markRead(roomId)
+                .enqueue(new Callback<ApiResponse<Long>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<Long>> call, Response<ApiResponse<Long>> response) {
+                        if(response.isSuccessful() && response.body() != null){
+                            lastReadId = response.body().getData();
+                        }
+                        readDone = true;
+                        tryRender();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<Long>> call, Throwable throwable) {
+                        readDone = true;
+                        tryRender();
+                    }
+                });
+    }
+
     private void loadPreviousMessages() {
         NetworkClient.getChatApi().getPreviousMessages(roomId)
                 .enqueue(new Callback<ApiResponse<List<ChatMessage>>>() {
@@ -111,28 +137,36 @@ public class ChattingRoom extends BaseActivity {
                             Call<ApiResponse<List<ChatMessage>>> call,
                             Response<ApiResponse<List<ChatMessage>>> response
                     ) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            List<ChatMessage> pastMessages = response.body().getData();
-
-                            if (pastMessages != null && !pastMessages.isEmpty()) {
-                                for (ChatMessage msg : pastMessages) {
-                                    chattingRoomAdapter.addMessage(msg);
-                                }
-
-                                binding.rvChatMessages.scrollToPosition(chattingRoomAdapter.getItemCount() - 1);
-
-                                Log.d(TAG, "과거 메시지 " + pastMessages.size() + "개 로드 완료");
-                            }
+                        if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                            loadedMessages = response.body().getData();
                         } else {
                             Log.e(TAG, "과거 메시지 조회 실패: " + response.code());
+                            loadedMessages = new ArrayList<>();
                         }
+                        tryRender();
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<List<ChatMessage>>> call, Throwable t) {
                         Log.e(TAG, "네트워크 통신 오류 (과거 메시지): ", t);
+                        loadedMessages = new ArrayList<>();
+                        tryRender();
                     }
                 });
+    }
+
+    private void tryRender(){
+        if(rendered || loadedMessages == null || !readDone) return;
+        rendered = true;
+
+        for(ChatMessage m : loadedMessages) chattingRoomAdapter.addMessage(m);
+        for(ChatMessage m : pendingMessages) chattingRoomAdapter.addMessage(m);
+        pendingMessages.clear();
+
+        int firstUnread = chattingRoomAdapter.setLastReadId(lastReadId);
+        binding.rvChatMessages.scrollToPosition(
+                firstUnread >= 0 ? firstUnread : chattingRoomAdapter.getItemCount() - 1
+        );
     }
 
     @SuppressLint("CheckResult")
@@ -173,6 +207,10 @@ public class ChattingRoom extends BaseActivity {
                             gson.fromJson(topicMessage.getPayload(), ChatMessage.class);
 
                     runOnUiThread(() -> {
+                        if (!rendered) {
+                            pendingMessages.add(receivedMessage);
+                            return;
+                        }
                         chattingRoomAdapter.addMessage(receivedMessage);
                         binding.rvChatMessages.scrollToPosition(chattingRoomAdapter.getItemCount() - 1);
                     });
@@ -219,6 +257,22 @@ public class ChattingRoom extends BaseActivity {
                         binding.etMessage.setText(text);   // 입력 내용 복구
                     });
                 });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        NetworkClient.getChatApi().markRead(roomId).enqueue(new Callback<ApiResponse<Long>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Long>> call, Response<ApiResponse<Long>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Long>> call, Throwable throwable) {
+                Log.e(TAG, "퇴장 읽음 처리 실패", throwable);
+            }
+        });
     }
 
     @Override

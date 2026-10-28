@@ -10,6 +10,10 @@
         android:id="@+id/date_divider"
         layout="@layout/layout_date_divider" />
 
+    <include
+        android:id="@+id/unread_divider"
+        layout="@layout/layout_unread_divider" />
+
     <TextView
         android:id="@+id/tv_other_name"
         android:layout_width="wrap_content"

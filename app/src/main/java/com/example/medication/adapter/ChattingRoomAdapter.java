@@ -39,6 +39,9 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final Long myParticipantId;
     private final OnYaksokClickListener listener;
 
+    // "여기까지 읽었습니다" 구분선을 붙일 위치. 없으면 -1.
+    private int firstUnreadPosition = -1;
+
     // 이 방에서 나를 대표하는 참여자 id를 전달받아 내가 보낸 메시지인지 판별합니다.
     public ChattingRoomAdapter(Long myParticipantId, OnYaksokClickListener listener) {
         this.myParticipantId = myParticipantId;
@@ -48,6 +51,25 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void addMessage(ChatMessage msg) {
         messageList.add(msg);
         notifyItemInserted(messageList.size() - 1);
+    }
+
+    // 책갈피(lastReadId)보다 뒤인 첫 상대 메시지에 구분선을 붙이고 그 위치를 돌려준다. 없으면 -1.
+    public int setLastReadId(Long lastReadId) {
+        int prev = firstUnreadPosition;
+        firstUnreadPosition = -1;
+        if (lastReadId != null) {
+            for (int i = 0; i < messageList.size(); i++) {
+                ChatMessage msg = messageList.get(i);
+                if (msg.getId() != null && msg.getId() > lastReadId
+                        && !Objects.equals(msg.getSenderParticipantId(), myParticipantId)) {
+                    firstUnreadPosition = i;
+                    break;
+                }
+            }
+        }
+        if (prev >= 0) notifyItemChanged(prev);
+        if (firstUnreadPosition >= 0) notifyItemChanged(firstUnreadPosition);
+        return firstUnreadPosition;
     }
 
     @Override
@@ -98,6 +120,7 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (holder instanceof OtherTextViewHolder) {
             OtherTextViewHolder h = (OtherTextViewHolder) holder;
             bindDateDivider(h.binding.dateDivider, position);
+            bindUnreadDivider(h.binding.unreadDivider.getRoot(), position);
             h.binding.tvOtherName.setText(msg.getSenderNickname());
             h.binding.tvOtherMessage.setText(msg.getMessage());
             h.binding.tvOtherTime.setText(formatTime(msg.getCreatedAt()));
@@ -113,6 +136,7 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (holder instanceof OtherShareViewHolder) {
             OtherShareViewHolder h = (OtherShareViewHolder) holder;
             bindDateDivider(h.binding.dateDivider, position);
+            bindUnreadDivider(h.binding.unreadDivider.getRoot(), position);
             h.binding.tvOtherName.setText(msg.getSenderNickname());
             h.binding.tvYaksokName.setText(msg.getMessage());
             h.binding.tvOtherTime.setText(formatTime(msg.getCreatedAt()));
@@ -130,6 +154,10 @@ public class ChattingRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         divider.tvDate.setText(date.format(DateTimeFormatter.ofPattern("yyyy년 M월 d일", Locale.KOREAN)));
         divider.getRoot().setVisibility(View.VISIBLE);
+    }
+
+    private void bindUnreadDivider(View divider, int position) {
+        divider.setVisibility(position == firstUnreadPosition ? View.VISIBLE : View.GONE);
     }
 
     private LocalDate dateOf(String createdAt) {
