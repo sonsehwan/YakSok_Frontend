@@ -53,6 +53,14 @@ public class MyInfo extends BaseActivity {
 
         UserResponse currentUser = SprefsManager.getUser(this);
 
+        String email = currentUser != null ? currentUser.getEmail() : null;
+        if (email == null || email.isEmpty()) {
+            binding.tvLabelEmail.setVisibility(View.GONE);
+            binding.tvEmail.setVisibility(View.GONE);
+        } else {
+            binding.tvEmail.setText(email);
+        }
+
         if (currentUser != null && currentUser.getSocialType() != null) {
             binding.tvLabelAccount.setVisibility(View.GONE);
             binding.llAccount.setVisibility(View.GONE);

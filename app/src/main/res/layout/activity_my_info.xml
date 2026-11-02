@@ -62,6 +62,29 @@
             app:validationType="nickname" />
 
         <TextView
+            android:id="@+id/tv_label_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="이메일"
+            android:textColor="@color/g700"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_email"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_card_filled_input"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/g700"
+            android:textSize="16sp" />
+
+        <TextView
             android:id="@+id/tv_label_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
