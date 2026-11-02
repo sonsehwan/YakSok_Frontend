@@ -74,19 +74,17 @@ public class CreatePrescription extends BaseActivity {
 
     private ActivityCreatePrescriptionBinding binding;
 
-    private ActivityResultLauncher<String> galleryLauncher;
     private ActivityResultLauncher<Intent> searchLauncher;
 
     private LoadingDialog loadingDialog;
-    // 선택된 약 목록 리사이클러뷰 관련
+
     private AddMedicationSettingAdapter settingAdapter;
     private final List<PillRequest> selectedPills = new ArrayList<>();
 
-    // 처방전 스캔으로 인식한 약 이름을 서버에 조회하는 중인 건수.
-    // 조회가 비동기라, 전부 끝난 시점을 알아야 실패한 약을 한 번에 알려줄 수 있다.
     private int pendingPillSearchCount = 0;
     private final List<String> failedPillNames = new ArrayList<>();
-
+    // 조회 성공한 약을 응답 순서가 아니라 처방전 순서(인덱스)대로 모아두는 버퍼. 전부 끝나면 한 번에 화면에 반영한다.
+    private PillRequest[] searchedPills = new PillRequest[0];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,10 +113,9 @@ public class CreatePrescription extends BaseActivity {
             startCreateYaksok();
         });
 
-        // 3. 갤러리 런처 세팅 및 즉시 실행 (처방전 스캔 시작)
-        galleryLauncher = registerForActivityResult(
-                new ActivityResultContracts.GetContent(),
-                uri -> {
+        getSupportFragmentManager().setFragmentResultListener(
+                ImageSourceBottomSheet.REQUEST_KEY, this, (key, result) -> {
+                    Uri uri = result.getParcelable(ImageSourceBottomSheet.KEY_URI);
                     if (uri != null) {
                         Log.d("MLKit", "사진 주소 가져오기 성공: " + uri);
                         recognizeTextFromImage(uri);
@@ -126,10 +123,11 @@ public class CreatePrescription extends BaseActivity {
                         Toast.makeText(this, "사진을 선택하지 않았습니다.", Toast.LENGTH_SHORT).show();
                         finish(); // 사진 안 고르면 액티비티 종료
                     }
-                }
-        );
+                });
 
-        galleryLauncher.launch("image/*");
+        if (savedInstanceState == null) {
+            new ImageSourceBottomSheet().show(getSupportFragmentManager(), ImageSourceBottomSheet.REQUEST_KEY);
+        }
     }
 
     private void setupRecyclerView() {
@@ -336,8 +334,11 @@ public class CreatePrescription extends BaseActivity {
                 public void onSuccess(GenerateContentResponse result) {
                     String resultText = result.getText();
                     Log.d("Firebase_AI", resultText);
-                    parseAndDisplayGeminiResult(resultText);
-                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                    // 약 조회가 시작됐으면 로딩 다이얼로그는 조회가 전부 끝난 뒤 onPillSearchFinished 에서 닫는다
+                    if (!parseAndDisplayGeminiResult(resultText)
+                            && loadingDialog != null && loadingDialog.isShowing()) {
+                        loadingDialog.dismiss();
+                    }
                 }
 
                 @Override
@@ -355,7 +356,7 @@ public class CreatePrescription extends BaseActivity {
         }
     }
 
-    private void parseAndDisplayGeminiResult(String aiResponseText) {
+    private boolean parseAndDisplayGeminiResult(String aiResponseText) {
         try {
             String cleanJson = aiResponseText.replace("```json", "").replace("```", "").trim();
             JSONArray medicineArray = new JSONArray(cleanJson);
@@ -370,6 +371,7 @@ public class CreatePrescription extends BaseActivity {
                 failedPillNames.clear();
                 binding.tvFailedPills.setVisibility(View.GONE);
                 pendingPillSearchCount = medicineArray.length();
+                searchedPills = new PillRequest[medicineArray.length()];
 
                 // 모든 약 데이터를 돌며 가장 큰 days(투약일 수)와 frequency 추출 & 리스트에 등록
                 for(int i = 0; i < medicineArray.length(); i++) {
@@ -379,6 +381,7 @@ public class CreatePrescription extends BaseActivity {
                     String medDosage = med.getString("dose");
 
                     PillApi api = NetworkClient.getMedicineApi();
+                    final int index = i;
                     if (i == 0) firstMedName = medName;
 
                     api.searchPill(medName).enqueue(new Callback<ApiResponse<MedicineSearchResponse>>() {
@@ -400,12 +403,7 @@ public class CreatePrescription extends BaseActivity {
                                 return;
                             }
 
-                            selectedPills.add(new PillRequest(data.getImage(), medFreq, medDosage, data.getName()));
-
-                            if (settingAdapter != null) {
-                                settingAdapter.notifyItemInserted(selectedPills.size() - 1);
-                            }
-                            updateRegisterButtonState();
+                            searchedPills[index] = new PillRequest(data.getImage(), medFreq, medDosage, data.getName());
                             onPillSearchFinished();
                         }
 
@@ -463,24 +461,33 @@ public class CreatePrescription extends BaseActivity {
                 }
 
                 Toast.makeText(this, "처방전 정보 자동 입력 완료!", Toast.LENGTH_SHORT).show();
+                return true;
             }
+            return false;
 
         } catch (Exception e) {
             Log.e("Gemini_Parsing_Error", "응답 데이터 파싱 실패", e);
             Toast.makeText(this, "AI가 처방전을 명확히 식별하지 못했습니다.", Toast.LENGTH_SHORT).show();
+            return false;
         }
     }
 
     private void onPillSearchFinished() {
-        pendingPillSearchCount--;
+        if (--pendingPillSearchCount > 0) return;
+
+        // 전부 끝났다: 성공한 약(처방전 순서)과 실패한 약을 한 번에 반영한 뒤 로딩 다이얼로그를 닫는다
+        for (PillRequest pill : searchedPills) {
+            if (pill != null) selectedPills.add(pill);
+        }
+        settingAdapter.notifyDataSetChanged();
+        updateRegisterButtonState();
 
         if (!failedPillNames.isEmpty()) {
             binding.tvFailedPills.setText(
                     "추가하지 못한 약: " + String.join(", ", failedPillNames));
             binding.tvFailedPills.setVisibility(View.VISIBLE);
         }
-        if (pendingPillSearchCount > 0) return;
-        updateRegisterButtonState();
+        if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
     }
 
     private String processExtractedDataWithLocation(Text visionText) {

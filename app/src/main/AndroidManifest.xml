@@ -141,6 +141,17 @@
             android:exported="false"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme" />
+
+        <!-- 처방전·약봉투 촬영 시 카메라 앱이 사진을 쓸 content:// Uri 제공 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

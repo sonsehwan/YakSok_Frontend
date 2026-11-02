@@ -65,7 +65,6 @@ import retrofit2.Response;
 public class CreatePaperEnvelope extends BaseActivity {
     private ActivityCreatePrescriptionBinding binding;
 
-    private ActivityResultLauncher<String> galleryLauncher;
     private ActivityResultLauncher<Intent> searchLauncher;
 
     private LoadingDialog loadingDialog;
@@ -101,10 +100,9 @@ public class CreatePaperEnvelope extends BaseActivity {
             startCreateYaksok();
         });
 
-        // 3. 갤러리 런처 세팅 및 즉시 실행 (처방전 스캔 시작)
-        galleryLauncher = registerForActivityResult(
-                new ActivityResultContracts.GetContent(),
-                uri -> {
+        getSupportFragmentManager().setFragmentResultListener(
+                ImageSourceBottomSheet.REQUEST_KEY, this, (key, result) -> {
+                    Uri uri = result.getParcelable(ImageSourceBottomSheet.KEY_URI);
                     if (uri != null) {
                         Log.d("MLKit", "사진 주소 가져오기 성공: " + uri);
                         analyzeTextWithGemini(uri);
@@ -112,15 +110,13 @@ public class CreatePaperEnvelope extends BaseActivity {
                         Toast.makeText(this, "사진을 선택하지 않았습니다.", Toast.LENGTH_SHORT).show();
                         finish(); // 사진 안 고르면 액티비티 종료
                     }
-                }
-        );
+                });
 
-        galleryLauncher.launch("image/*");
+        if (savedInstanceState == null) {
+            new ImageSourceBottomSheet().show(getSupportFragmentManager(), ImageSourceBottomSheet.REQUEST_KEY);
+        }
     }
 
-    /***
-     * 리사이클러 뷰 셋팅
-     */
     private void setupRecyclerView() {
         settingAdapter = new AddMedicationSettingAdapter(selectedPills);
         binding.rvSelectedPills.setLayoutManager(new LinearLayoutManager(this));
@@ -153,19 +149,16 @@ public class CreatePaperEnvelope extends BaseActivity {
     }
 
     private void setupTimePickerLogic(){
-        // 아침 체크박스 로직
         binding.cbMorning.setOnCheckedChangeListener((button, isChecked) -> {
             binding.inputSetMorningTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
         binding.inputSetMorningTime.setOnClickListener(v -> showTimePicker(binding.inputSetMorningTime, 8, 0));
 
-        // 점심 체크박스 로직
         binding.cbLunch.setOnCheckedChangeListener((button, isChecked) -> {
             binding.inputSetLunchTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
         binding.inputSetLunchTime.setOnClickListener(v -> showTimePicker(binding.inputSetLunchTime, 12, 0));
 
-        // 저녁 체크박스 로직
         binding.cbDinner.setOnCheckedChangeListener((button, isChecked) -> {
             binding.inputSetDinnerTime.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
@@ -209,10 +202,6 @@ public class CreatePaperEnvelope extends BaseActivity {
         dialog.show();
     }
 
-
-    /***
-     * 달력 날짜 선택
-     */
     private void showDatePicker() {
         Calendar cal = Calendar.getInstance();
         DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
@@ -222,9 +211,6 @@ public class CreatePaperEnvelope extends BaseActivity {
         dialog.show();
     }
 
-    /***
-     * 모든 항목이 입력되었는지 확인
-     */
     private boolean validateInput() {
         if (!binding.inputStartDate.isValid() || !binding.inputCardTitle.isValid() || !binding.inputPrescriptionDays.isValid()) {
             Toast.makeText(this, "필수 항목을 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
@@ -261,10 +247,6 @@ public class CreatePaperEnvelope extends BaseActivity {
         return true;
     }
 
-
-    /***
-     *
-     */
     private void updateRegisterButtonState() {
         if (!selectedPills.isEmpty()) {
             binding.btnRegister.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.p600));
@@ -367,6 +349,8 @@ public class CreatePaperEnvelope extends BaseActivity {
 
                     int totalPills = medicineArray.length();
                     AtomicInteger completedCalls = new AtomicInteger(0);
+                    // 응답 도착 순서가 아니라 약봉투 순서(인덱스)대로 모아뒀다가 전부 끝나면 한 번에 반영한다
+                    PillRequest[] searchedPills = new PillRequest[totalPills];
 
                     // 모든 약 데이터를 돌며 가장 큰 days(투약일 수)와 frequency 추출 & 리스트에 등록
                     for(int i = 0; i < medicineArray.length(); i++) {
@@ -377,6 +361,7 @@ public class CreatePaperEnvelope extends BaseActivity {
 
                         PillApi api = NetworkClient.getMedicineApi();
 
+                        final int index = i;
                         final int finalFreq = medFreq;
                         final String finalDosage = medDosage;
 
@@ -388,16 +373,11 @@ public class CreatePaperEnvelope extends BaseActivity {
                                 if (response.isSuccessful() && response.body() != null) {
                                     MedicineSearchResponse data = response.body().getData();
                                     if (data != null) {
-                                        selectedPills.add(new PillRequest(data.getImage(), finalFreq, finalDosage, data.getName()));
-
-                                        if (settingAdapter != null) {
-                                            settingAdapter.notifyItemInserted(selectedPills.size() - 1);
-                                        }
-                                        updateRegisterButtonState();
+                                        searchedPills[index] = new PillRequest(data.getImage(), finalFreq, finalDosage, data.getName());
                                     }
                                 }
                                 if (completedCalls.incrementAndGet() == totalPills) {
-                                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                                    showSearchedPills(searchedPills);
                                 }
                             }
 
@@ -405,7 +385,7 @@ public class CreatePaperEnvelope extends BaseActivity {
                             public void onFailure(Call<ApiResponse<MedicineSearchResponse>> call, Throwable t) {
                                 Log.e("API_ERROR", "네트워크 오류: " + t.getMessage());
                                 if (completedCalls.incrementAndGet() == totalPills) {
-                                    if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
+                                    showSearchedPills(searchedPills);
                                 }
                             }
                         });
@@ -482,6 +462,16 @@ public class CreatePaperEnvelope extends BaseActivity {
             // 구멍 1 방어: AI가 요상한 포맷으로 대답해서 파싱 에러 났을 때 무조건 종료
             if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
         }
+    }
+
+    /** 약 조회가 전부 끝난 뒤 성공한 약을 한 번에 목록에 넣고 로딩 다이얼로그를 닫는다 */
+    private void showSearchedPills(PillRequest[] searchedPills) {
+        for (PillRequest pill : searchedPills) {
+            if (pill != null) selectedPills.add(pill);
+        }
+        settingAdapter.notifyDataSetChanged();
+        updateRegisterButtonState();
+        if (loadingDialog != null && loadingDialog.isShowing()) loadingDialog.dismiss();
     }
 
     private void startCreateYaksok(){

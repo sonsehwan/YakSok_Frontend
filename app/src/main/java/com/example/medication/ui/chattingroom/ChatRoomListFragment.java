@@ -1,5 +1,6 @@
 package com.example.medication.ui.chattingroom;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -132,6 +133,7 @@ public class ChatRoomListFragment extends Fragment {
     private void deleteChatRoom(ChatRoomListDto room) {
         NetworkClient.getChatApi().deleteChatRoom(room.getRoomId())
                 .enqueue(new Callback<ApiResponse<List<ChatRoomListDto>>>() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onResponse(Call<ApiResponse<List<ChatRoomListDto>>> call,
                                            Response<ApiResponse<List<ChatRoomListDto>>> response) {
