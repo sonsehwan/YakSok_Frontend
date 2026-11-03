@@ -81,7 +81,7 @@ public class InputView extends LinearLayout {
         setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         setOrientation(VERTICAL);
 
-        LayoutInflater.from(context).inflate(R.layout.input, this, true);
+        LayoutInflater.from(context).inflate(R.layout.component_input, this, true);
 
         icon = findViewById(R.id.img_icon);
         tvLabel = findViewById(R.id.tv_label);
@@ -327,7 +327,6 @@ public class InputView extends LinearLayout {
     public void setText(String text){
         editText.setText(text);
     }
-
     @Override
     public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
         return editText.requestFocus(direction, previouslyFocusedRect);
