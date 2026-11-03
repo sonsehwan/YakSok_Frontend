@@ -25,15 +25,10 @@ import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.ui.main.MainActivity;
 import com.example.medication.ui.signup.SignUpTypeBottomSheet;
 import com.example.medication.ui.signup.SignUp_Kakao;
+import com.example.medication.util.KakaoLoginHelper;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
-import com.kakao.sdk.auth.model.OAuthToken;
-import com.kakao.sdk.common.model.ClientError;
-import com.kakao.sdk.common.model.ClientErrorCause;
-import com.kakao.sdk.user.UserApiClient;
 
-import kotlin.Unit;
-import kotlin.jvm.functions.Function2;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -120,36 +115,15 @@ public class Login extends BaseActivity {
 
     private void startKakaoLogin() {
         setKakaoLoading(true);
-
-        Function2<OAuthToken, Throwable, Unit> callback = (token, error) -> {
-            if (error != null) {
+        KakaoLoginHelper.login(this, new KakaoLoginHelper.Listener() {
+            @Override public void onToken(String kakaoToken) { requestKakaoLogin(kakaoToken); }
+            @Override public void onError(Throwable error) {
                 setKakaoLoading(false);
                 Log.e("KakaoLogin", "카카오 로그인 실패", error);
                 showToast("카카오 로그인에 실패했습니다.");
-            } else if (token != null) {
-                requestKakaoLogin(token.getAccessToken());
             }
-            return Unit.INSTANCE;
-        };
-
-        UserApiClient client = UserApiClient.getInstance();
-
-        if (client.isKakaoTalkLoginAvailable(this)) {
-            client.loginWithKakaoTalk(this, (token, error) -> {
-                if (error instanceof ClientError
-                        && ((ClientError) error).getReason() == ClientErrorCause.Cancelled) {
-                    setKakaoLoading(false);
-                    return Unit.INSTANCE;
-                }
-                if (error != null) {
-                    client.loginWithKakaoAccount(this, callback);
-                    return Unit.INSTANCE;
-                }
-                return callback.invoke(token, null);
-            });
-        } else {
-            client.loginWithKakaoAccount(this, callback);
-        }
+            @Override public void onCancel() { setKakaoLoading(false); }
+        });
     }
 
     private void requestKakaoLogin(String kakaoToken) {
