@@ -10,16 +10,18 @@ import com.example.medication.model.request.ResetPwSendCodeRequest;
 import com.example.medication.model.request.ResetPwVerifyRequest;
 import com.example.medication.model.request.SignUpSendCodeRequest;
 import com.example.medication.model.request.SignUpVerifyRequest;
-import com.example.medication.model.response.SignUpVerifyResponse;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.FindIdResponse;
 import com.example.medication.model.response.KakaoLoginResponse;
 import com.example.medication.model.response.LoginResponse;
 import com.example.medication.model.response.ResetPwVerifyResponse;
+import com.example.medication.model.response.SignUpVerifyResponse;
 import com.example.medication.model.response.TokenResponse;
+import com.example.medication.model.response.UserResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.POST;
 
 public interface AuthApi {
@@ -35,6 +37,12 @@ public interface AuthApi {
 
     @POST("/api/auth/kakao/signup")
     Call<ApiResponse<LoginResponse>> kakaoSignUp(@Body KakaoSignUpRequest request);
+
+    @POST("/api/auth/kakao/interlock")
+    Call<ApiResponse<UserResponse>> kakaoInterlock(@Body KakaoLoginRequest request);
+
+    @DELETE("/api/auth/kakao/interlock")
+    Call<ApiResponse<UserResponse>> kakaoUnlink();
 
     @POST("/api/auth/signup/send-code")
     Call<ApiResponse<Void>> sendSignUpCode(@Body SignUpSendCodeRequest request);

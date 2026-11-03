@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+
+@Getter
 public class UserResponse implements Serializable {
 
     @SerializedName("id")
@@ -27,29 +30,6 @@ public class UserResponse implements Serializable {
     @SerializedName("socialType")
     private String socialType;
 
-    public Long getId(){ return id;}
-    public void setId(Long id){ this.id = id; }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getRole() {
-        return role;
-    }
-    public DrugStore getMyDrugStore() {
-        return myDrugStore;
-    }
-
-    public boolean isNotificationEnabled() {
-        return notificationEnabled;
-    }
-
-    public String getSocialType() {
-        return socialType;
-    }
+    @SerializedName("hasPassword")
+    private boolean hasPassword;
 }

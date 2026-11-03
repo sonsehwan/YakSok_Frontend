@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher;
 
 import com.example.medication.R;
 import com.example.medication.databinding.ActivityMyInfoBinding;
+import com.example.medication.model.request.KakaoLoginRequest;
 import com.example.medication.model.request.ModifyInfoRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
@@ -25,10 +26,14 @@ import com.example.medication.ui.common.AppDialog;
 import com.example.medication.ui.drugstore.FindDrugStore;
 import com.example.medication.ui.login.Login;
 import com.example.medication.ui.main.MainActivity;
+import com.example.medication.util.KakaoLoginHelper;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
+import com.kakao.sdk.user.UserApiClient;
 
 import java.util.Objects;
+
+import kotlin.Unit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,10 +66,16 @@ public class MyInfo extends BaseActivity {
             binding.tvEmail.setText(email);
         }
 
-        if (currentUser != null && currentUser.getSocialType() != null) {
+        if (currentUser != null && currentUser.getSocialType() != null && !currentUser.isHasPassword()) {
             binding.tvLabelAccount.setVisibility(View.GONE);
             binding.llAccount.setVisibility(View.GONE);
         }
+        updateKakaoStatus(currentUser);
+        binding.btnLinkKakao.setOnClickListener(v -> {
+            UserResponse user = SprefsManager.getUser(this);
+            if (user != null && user.getSocialType() != null) showUnlinkConfirmDialog();
+            else startKakaoLink();
+        });
 
         if (currentUser != null && Objects.equals(currentUser.getRole(), "DRUGSTORE")) {
             binding.tvLabelDrugstore.setVisibility(View.VISIBLE);
@@ -91,6 +102,83 @@ public class MyInfo extends BaseActivity {
             intent.putExtra("INTENT_TYPE", "modify");
             startActivity(intent);
         });
+    }
+
+    // 연결된 상태에서 누르면 해제. 카카오로만 가입한 회원은 해제할 수 없어 비활성
+    private void updateKakaoStatus(UserResponse user) {
+        boolean linked = user != null && user.getSocialType() != null;
+        boolean kakaoOnly = linked && !user.isHasPassword();
+        binding.tvKakaoStatus.setText(kakaoOnly ? "카카오로 가입한 계정" : linked ? "연결됨 · 해제하기" : "연결하기");
+        binding.btnLinkKakao.setEnabled(!kakaoOnly);
+    }
+
+    private void showUnlinkConfirmDialog() {
+        AppDialog.confirm(this, "카카오 연동 해제",
+                "연동을 해제하면 카카오로 로그인할 수 없습니다. 아이디와 비밀번호로 로그인해주세요.",
+                "해제", true, this::requestKakaoUnlink);
+    }
+
+    private void requestKakaoUnlink() {
+        NetworkClient.getAuthApi().kakaoUnlink()
+                .enqueue(new Callback<ApiResponse<UserResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<UserResponse>> call,
+                                           Response<ApiResponse<UserResponse>> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().isBusinessSuccess()) {
+                            UserResponse user = response.body().getData();
+                            SprefsManager.setUserInfo(MyInfo.this, user);
+                            updateKakaoStatus(user);
+                            // 다음 연동 때 다른 카카오 계정을 고를 수 있게 SDK 세션도 정리
+                            UserApiClient.getInstance().logout(error -> Unit.INSTANCE);
+                            showToast("카카오 연동이 해제되었습니다.");
+                        } else {
+                            handleErrorResponse(response);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                        showToast("네트워크 연결 실패: " + t.getMessage());
+                    }
+                });
+    }
+
+    private void startKakaoLink() {
+        KakaoLoginHelper.login(this, new KakaoLoginHelper.Listener() {
+            @Override public void onToken(String kakaoToken) { requestKakaoLink(kakaoToken); }
+            @Override public void onError(Throwable error) {
+                Log.e("KakaoLink", "카카오 로그인 실패", error);
+                showToast("카카오 로그인에 실패했습니다.");
+            }
+            @Override public void onCancel() { }
+        });
+    }
+
+    private void requestKakaoLink(String kakaoToken) {
+        NetworkClient.getAuthApi().kakaoInterlock(new KakaoLoginRequest(kakaoToken))
+                .enqueue(new Callback<ApiResponse<UserResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<UserResponse>> call,
+                                           Response<ApiResponse<UserResponse>> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().isBusinessSuccess()) {
+                            UserResponse user = response.body().getData();
+                            SprefsManager.setUserInfo(MyInfo.this, user);
+                            updateKakaoStatus(user);
+                            showToast("카카오 계정이 연결되었습니다.");
+                        } else {
+                            // 실패한 카카오 세션을 남기지 않아야 다음 시도에서 다른 카카오 계정을 고를 수 있다
+                            UserApiClient.getInstance().logout(error -> Unit.INSTANCE);
+                            handleErrorResponse(response);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                        showToast("네트워크 연결 실패: " + t.getMessage());
+                    }
+                });
     }
 
     private void showWithdrawConfirmDialog() {
