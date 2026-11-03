@@ -19,10 +19,10 @@ import retrofit2.http.POST;
 
 public interface UserApi {
 
-    @POST("/api/users/signup")
+    @POST("/api/auth/signup")
     Call<ApiResponse<Void>> signUp(@Body UserRequest request);
 
-    @POST("/api/users/login")
+    @POST("/api/auth/login")
     Call<ApiResponse<LoginResponse>> login(@Body LoginRequest request);
 
     @PATCH("/api/users/info")

@@ -15,8 +15,12 @@ import com.example.medication.ui.base.BaseActivity;
 
 import com.example.medication.databinding.ActivitySignUpNormalBinding;
 import com.example.medication.ui.login.Login;
+import com.example.medication.model.request.SignUpSendCodeRequest;
+import com.example.medication.model.request.SignUpVerifyRequest;
 import com.example.medication.model.request.UserRequest;
 import com.example.medication.model.response.ApiResponse;
+import com.example.medication.model.response.SignUpVerifyResponse;
+import com.example.medication.network.AuthApi;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.google.gson.Gson;
@@ -30,6 +34,9 @@ import retrofit2.Response;
 public class SignUp_Normal extends BaseActivity {
 
     private ActivitySignUpNormalBinding binding;
+
+    private String sentEmail;
+    private String emailVerifyToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,10 @@ public class SignUp_Normal extends BaseActivity {
 
         Intent intent = getIntent();
         String type = intent.getStringExtra("SignUp_Type");
+
+        binding.verificationCode.setOnSendListener(email -> sendCode(email, false));
+        binding.verificationCode.setOnResendListener(email -> sendCode(email, true));
+        binding.verificationCode.setOnVerifyListener(this::verify);
 
         binding.btnFinish.setOnClickListener(v -> {startSignUp(type);});
         binding.ivBack.setOnClickListener(v -> finish());
@@ -91,24 +102,34 @@ public class SignUp_Normal extends BaseActivity {
 
     private void startSignUp(String type){
         boolean isLoginIdValid = binding.inputLoginId.isValid();
-        boolean isEmailVaild = binding.inputEmail.isValid();
         boolean isPwVaild = binding.inputPw.isValid();
         boolean isCheckPw = binding.inputCheckPw.isValid();
         boolean isNickName = binding.inputNickname.isValid();
 
-        if(!isLoginIdValid || !isEmailVaild || !isPwVaild || !isCheckPw || !isNickName){
+        if(!isLoginIdValid || !isPwVaild || !isCheckPw || !isNickName){
             showToast("입력 정보를 다시 확인해주세요.");
             return;
         }
 
+        if(emailVerifyToken == null){
+            binding.verificationCode.showEmailError("이메일 인증을 완료해주세요.");
+            showToast("이메일 인증을 완료해주세요.");
+            return;
+        }
+        // 인증 후 이메일 칸을 고쳤다면: 화면의 이메일과 다른 주소로 가입되지 않게 막는다
+        if(!binding.verificationCode.getEmail().equals(sentEmail)){
+            binding.verificationCode.showEmailError("인증받은 이메일과 다릅니다. 인증코드를 다시 받아주세요.");
+            return;
+        }
+
         String loginId = binding.inputLoginId.getText();
-        String email = binding.inputEmail.getText();
         String pw = binding.inputPw.getText();
         String nickName = binding.inputNickname.getText();
         String role = type;
 
 
-        UserRequest request = new UserRequest(loginId, email, pw, nickName, role);
+        // 서버는 인증받은 이메일(sentEmail)과 토큰을 대조한다
+        UserRequest request = new UserRequest(loginId, sentEmail, pw, nickName, role, emailVerifyToken);
 
         UserApi api = NetworkClient.getApi();
         api.signUp(request).enqueue(new Callback<ApiResponse<Void>>() {
@@ -151,10 +172,15 @@ public class SignUp_Normal extends BaseActivity {
 
                 String message = errorResponse.getMessage();
 
+                // 토큰 자체가 만료·불일치일 때만 인증을 다시 받게 한다(다른 실패는 토큰이 살아 있다)
+                if(message.contains("이메일 인증")){
+                    resetEmailVerification();
+                }
+
                 if(message.contains("아이디")){
                     binding.inputLoginId.showError(message);
                 }else if(message.contains("이메일")){
-                    binding.inputEmail.showError(message);
+                    binding.verificationCode.showEmailError(message);
                 }else if(message.contains("닉네임")){
                     binding.inputNickname.showError(message);
                 }else{
@@ -168,6 +194,79 @@ public class SignUp_Normal extends BaseActivity {
         }catch (IOException e){
             showToast("에러 메시지 분석 중 오류가 발생했습니다.");
         }
+    }
+
+    private void sendCode(String email, boolean resend) {
+        AuthApi api = NetworkClient.getAuthApi();
+        api.sendSignUpCode(new SignUpSendCodeRequest(email)).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isBusinessSuccess()) {
+                    // 새 코드를 받는 순간 이전 인증은 버린다(발송 실패 땐 유지)
+                    sentEmail = email;
+                    emailVerifyToken = null;
+                    binding.verificationCode.start();
+                    showToast("인증코드를 이메일로 발송했습니다.");
+                } else {
+                    if (resend) binding.verificationCode.onResendFailed();
+                    binding.verificationCode.showEmailError(serverMessage(response, "인증코드 발송에 실패했습니다."));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                if (resend) binding.verificationCode.onResendFailed();
+                showToast("네트워크 연결을 확인해주세요.");
+                Log.e("SignUp", "send-code 실패: " + t.getMessage());
+            }
+        });
+    }
+
+    private void verify(String code) {
+        if (sentEmail == null) {
+            binding.verificationCode.showError("먼저 인증코드를 발송해주세요.");
+            return;
+        }
+        AuthApi api = NetworkClient.getAuthApi();
+        api.verifySignUp(new SignUpVerifyRequest(sentEmail, code)).enqueue(new Callback<ApiResponse<SignUpVerifyResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<SignUpVerifyResponse>> call, Response<ApiResponse<SignUpVerifyResponse>> response) {
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().isBusinessSuccess() && response.body().getData() != null) {
+                    emailVerifyToken = response.body().getData().getEmailVerifyToken();
+                    binding.verificationCode.markVerified();
+                    showToast("이메일 인증이 완료되었습니다.");
+                } else {
+                    binding.verificationCode.showError(serverMessage(response, "인증에 실패했습니다."));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<SignUpVerifyResponse>> call, Throwable t) {
+                showToast("네트워크 연결을 확인해주세요.");
+                Log.e("SignUp", "verify 실패: " + t.getMessage());
+            }
+        });
+    }
+
+    private void resetEmailVerification() {
+        sentEmail = null;
+        emailVerifyToken = null;
+        binding.verificationCode.reset();
+    }
+
+    private String serverMessage(Response<?> response, String fallback) {
+        try {
+            if (response.errorBody() != null) {
+                ApiResponse<?> body = new Gson().fromJson(response.errorBody().string(), ApiResponse.class);
+                if (body != null && body.getMessage() != null) {
+                    return body.getMessage();
+                }
+            }
+        } catch (Exception e) {
+            Log.e("SignUp", "에러 파싱 실패: " + e.getMessage());
+        }
+        return fallback;
     }
 
     private void showToast(String message){

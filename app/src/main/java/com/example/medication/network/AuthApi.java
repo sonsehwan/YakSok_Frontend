@@ -8,6 +8,9 @@ import com.example.medication.model.request.RefreshTokenRequest;
 import com.example.medication.model.request.ResetPwConfirmRequest;
 import com.example.medication.model.request.ResetPwSendCodeRequest;
 import com.example.medication.model.request.ResetPwVerifyRequest;
+import com.example.medication.model.request.SignUpSendCodeRequest;
+import com.example.medication.model.request.SignUpVerifyRequest;
+import com.example.medication.model.response.SignUpVerifyResponse;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.FindIdResponse;
 import com.example.medication.model.response.KakaoLoginResponse;
@@ -32,6 +35,12 @@ public interface AuthApi {
 
     @POST("/api/auth/kakao/signup")
     Call<ApiResponse<LoginResponse>> kakaoSignUp(@Body KakaoSignUpRequest request);
+
+    @POST("/api/auth/signup/send-code")
+    Call<ApiResponse<Void>> sendSignUpCode(@Body SignUpSendCodeRequest request);
+
+    @POST("/api/auth/signup/verify")
+    Call<ApiResponse<SignUpVerifyResponse>> verifySignUp(@Body SignUpVerifyRequest request);
 
     @POST("/api/auth/find-id/send-code")
     Call<ApiResponse<Void>> sendFindIdCode(@Body FindIdSendCodeRequest request);

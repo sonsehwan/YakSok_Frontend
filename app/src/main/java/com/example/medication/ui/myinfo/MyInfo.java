@@ -109,7 +109,7 @@ public class MyInfo extends BaseActivity {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(MyInfo.this, "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                    showToast("회원 탈퇴가 완료되었습니다.");
 
                     SprefsManager.clearUserInfo(MyInfo.this);
 
@@ -125,14 +125,14 @@ public class MyInfo extends BaseActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    Toast.makeText(MyInfo.this, "탈퇴 실패 (코드: " + statusCode + ")", Toast.LENGTH_SHORT).show();
+                    showToast("탈퇴 실패 (코드: " + statusCode + ")");
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                 Log.e("MyInfoActivity", "탈퇴 API 통신 실패: " + t.getMessage());
-                Toast.makeText(MyInfo.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                showToast("네트워크 오류가 발생했습니다.");
             }
         });
     }
@@ -164,12 +164,10 @@ public class MyInfo extends BaseActivity {
                     ApiResponse<UserResponse> result = response.body();
 
                     if(result.isBusinessSuccess()){
-
                         UserResponse user = result.getData();
-
                         SprefsManager.setUserInfo(MyInfo.this, user);
-
                         Log.d("ModifyNickName", result.getMessage());
+                        showToast("회원정보 수정완료.");
 
                         Intent intent = new Intent(MyInfo.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

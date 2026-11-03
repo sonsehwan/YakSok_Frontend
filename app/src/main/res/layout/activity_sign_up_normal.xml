@@ -60,18 +60,11 @@
                 app:hintText="아이디를 입력해 주세요"
                 app:validationType="id" />
 
-            <com.example.medication.InputView
-                android:id="@+id/input_email"
+            <com.example.medication.VerificationCode
+                android:id="@+id/verification_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:imeOptions="actionNext"
-                android:inputType="textEmailAddress"
-                android:nextFocusDown="@id/input_pw"
-                app:helperText="연락 가능한 이메일 주소를 입력해주세요."
-                app:labelText="이메일"
-                app:hintText="이메일을 입력해 주세요"
-                app:validationType="email" />
+                android:layout_marginTop="16dp" />
 
             <com.example.medication.InputView
                 android:id="@+id/input_pw"

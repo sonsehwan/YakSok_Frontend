@@ -22,9 +22,9 @@ public class VerificationCode extends LinearLayout {
     public interface OnResendListener { void onResend(String email); }
     public interface OnVerifyListener { void onVerify(String code); }
 
-    private static final long EXPIRY_MS = 5 * 60 * 1000L;
+    private static final long EXPIRY_MS = 1 * 60 * 1000L;
     private static final long RESEND_COOLDOWN_MS = 60 * 1000L;
-    private static final long WARN_THRESHOLD_MS = 60 * 1000L;   // 남은 시간 1분 이하면 빨강
+    private static final long WARN_THRESHOLD_MS = 10 * 1000L;
 
     private InputView inputEmail;
     private MaterialButton btnSendCode;
@@ -69,7 +69,7 @@ public class VerificationCode extends LinearLayout {
 
         btnResend.setOnClickListener(v -> {
             if (!inputEmail.isValid()) return;
-            setResendEnabled(false);                  // 응답 올 때까지 중복 클릭 방지
+            setResendEnabled(false);
             if (resendListener != null) resendListener.onResend(inputEmail.getText());
         });
 
@@ -85,6 +85,38 @@ public class VerificationCode extends LinearLayout {
             }
             if (verifyListener != null) verifyListener.onVerify(code);
         });
+    }
+
+    public String getEmail() { return inputEmail.getText(); }
+
+    public void showEmailError(String message) { inputEmail.showError(message); }
+
+    /**
+     * 인증 성공: 타이머를 멈추고 확인 버튼을 "인증완료"로 잠근다.
+     * 재발송 버튼은 남겨 둔다 — 이메일을 바꿨을 때 다시 받을 수 있어야 하기 때문이다.
+     */
+    public void markVerified() {
+        stop();
+        rowExpiry.setVisibility(GONE);
+        tvCooldown.setVisibility(GONE);
+        setResendEnabled(true);
+        inputCode.hideError();
+        btnVerify.setText("인증완료");
+        btnVerify.setEnabled(false);
+    }
+
+    /** 인증 상태를 처음(발송 전)으로 되돌린다. */
+    public void reset() {
+        stop();
+        rowExpiry.setVisibility(GONE);
+        tvCooldown.setVisibility(GONE);
+        btnResend.setVisibility(GONE);
+        btnSendCode.setVisibility(VISIBLE);
+        inputCode.setText("");
+        inputCode.hideError();
+        expired = false;
+        btnVerify.setText("확인");
+        btnVerify.setEnabled(true);
     }
 
     public void setOnSendListener(OnSendListener l) { this.sendListener = l; }
@@ -108,6 +140,7 @@ public class VerificationCode extends LinearLayout {
         inputCode.setText("");
         inputCode.hideError();
         expired = false;
+        btnVerify.setText("확인");
         btnVerify.setEnabled(true);
         startExpiryTimer();
         startCooldownTimer();
@@ -142,7 +175,7 @@ public class VerificationCode extends LinearLayout {
             @Override
             public void onFinish() {
                 expired = true;
-                tvExpiry.setText("만료됨");
+                tvExpiry.setText("만료되었습니다. 재발송하세요.");
                 tvExpiry.setTextColor(colorWarn);
                 btnVerify.setEnabled(false);
                 cancelCooldownTimer();
@@ -188,6 +221,6 @@ public class VerificationCode extends LinearLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        stop();                                  // 액티비티 onDestroy 에서 안 지워도 안전
+        stop();
     }
 }
