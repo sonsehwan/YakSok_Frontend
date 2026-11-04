@@ -34,6 +34,8 @@ public class ChattingRoom extends BaseActivity {
     // 백엔드 서버의 실제 IP 주소와 포트를 입력
     private static final String WEBSOCKET_URL = "ws://13.209.186.24:8080/ws-stomp";
 
+    public static String currentRoomId;
+
     private Long roomId;
     private String roomName;
     private Long myParticipantId;
@@ -260,8 +262,18 @@ public class ChattingRoom extends BaseActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        currentRoomId = String.valueOf(roomId);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
+        // 방 A→B 이동 시 B.onStart가 A.onStop보다 먼저 와서, 내 방일 때만 비운다.
+        if (String.valueOf(roomId).equals(currentRoomId)) {
+            currentRoomId = null;
+        }
         NetworkClient.getChatApi().markRead(roomId).enqueue(new Callback<ApiResponse<Long>>() {
             @Override
             public void onResponse(Call<ApiResponse<Long>> call, Response<ApiResponse<Long>> response) {

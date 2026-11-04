@@ -15,6 +15,8 @@ import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
+import com.example.medication.ui.chattingroom.ChattingRoom;
+import com.example.medication.util.ChatEventBus;
 import com.example.medication.util.SprefsManager;
 import com.example.medication.util.YaksokEventBus;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -75,6 +77,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
+        if("CHAT".equals(type)){
+            ChatEventBus.get().publish();
+            String roomId = remoteMessage.getData().get("roomId");
+            if(roomId != null && roomId.equals(ChattingRoom.currentRoomId)) return;
+        }
+
             String title = remoteMessage.getData().get("title");
             String body = remoteMessage.getData().get("body");
             String notiIdStr = remoteMessage.getData().get("notificationId");
@@ -90,15 +98,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private String resolveChannelId(String type, NotificationManager notificationManager) {
-        boolean isShareAlert = "TAKEN_ALERT".equals(type);
-        String channelId = isShareAlert ? "yaksok_share_channel" : "yaksok_channel";
+        String channelId;
+        String channelName;
+        String channelDesc;
+
+        if ("TAKEN_ALERT".equals(type)) {
+            channelId = "yaksok_share_channel";
+            channelName = "공유 약속 알림";
+            channelDesc = "공유받은 약속의 복약 완료 알림을 수신합니다.";
+        } else if ("CHAT".equals(type)) {
+            channelId = "yaksok_chat_channel";
+            channelName = "채팅 알림";
+            channelDesc = "새 채팅 메시지 알림을 수신합니다.";
+        } else {
+            channelId = "yaksok_channel";
+            channelName = "복약 알림";
+            channelDesc = "YakSok의 약 복용 시간 알림을 수신합니다.";
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelName = isShareAlert ? "공유 약속 알림" : "복약 알림";
-            String channelDesc = isShareAlert
-                    ? "공유받은 약속의 복약 완료 알림을 수신합니다."
-                    : "YakSok의 약 복용 시간 알림을 수신합니다.";
-
             NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription(channelDesc);
             channel.enableVibration(true);
@@ -123,6 +141,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String safeType = (type != null) ? type : "REMINDER";
         switch (safeType) {
             case "TAKEN_ALERT":
+                break;
+            case "CHAT":
                 break;
             case "REMINDER":
             default:

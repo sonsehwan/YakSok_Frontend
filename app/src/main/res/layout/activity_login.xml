@@ -13,29 +13,31 @@
         android:id="@+id/ll_brand"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
         android:layout_marginHorizontal="16dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginTop="80dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="16dp">
 
         <ImageView
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:background="@drawable/bg_logo_mark"
             android:padding="13dp"
-            app:tint="@color/white"
-            app:srcCompat="@drawable/ic_pill" />
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_pill"
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/tv_welcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:lineSpacingMultiplier="1.1"
             android:text="약 먹을 시간,\n약속이 챙겨드릴게요"
             android:textColor="@color/g900"
             android:textSize="28sp"
-            android:textStyle="bold"
-            android:lineSpacingMultiplier="1.36" />
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout

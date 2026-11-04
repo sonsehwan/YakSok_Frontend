@@ -24,6 +24,7 @@ import com.example.medication.model.response.ChatRoomListDto;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.common.AppDialog;
+import com.example.medication.util.ChatEventBus;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.android.material.tabs.TabLayout;
@@ -35,7 +36,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChatRoomListFragment extends Fragment {
+public class ChatRoomListFragment extends Fragment implements ChatEventBus.Listener {
 
     private FragmentChatRoomListBinding binding;
 
@@ -103,6 +104,19 @@ public class ChatRoomListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadChatRooms();
+        ChatEventBus.get().subscribe(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ChatEventBus.get().unsubscribe(this);
+    }
+
+    @Override
+    public void onChatChanged() {
+        if (binding == null) return;
         loadChatRooms();
     }
 
