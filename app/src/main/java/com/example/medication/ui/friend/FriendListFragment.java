@@ -53,6 +53,7 @@ import com.example.medication.model.response.UserSearchResultDto;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.chattingroom.ChattingRoom;
 import com.example.medication.ui.common.AppDialog;
+import com.example.medication.util.FriendEventBus;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
@@ -66,7 +67,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FriendListFragment extends Fragment {
+public class FriendListFragment extends Fragment implements FriendEventBus.Listener {
 
     private FragmentFriendListBinding binding;
     private FriendListAdapter adapter;
@@ -118,6 +119,21 @@ public class FriendListFragment extends Fragment {
         if (adapter == null) {
             return; // onViewCreated에서 로그인 정보 없이 return한 경우
         }
+        fetchFriendList();
+        updateRequestCount();
+        FriendEventBus.get().subscribe(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        FriendEventBus.get().unsubscribe(this);
+    }
+
+    // 친구 요청을 받았거나 친구가 성립했다는 FCM 신호. 보이는 동안에만 구독한다.
+    @Override
+    public void onFriendChanged() {
+        if (binding == null || adapter == null) return;
         fetchFriendList();
         updateRequestCount();
     }
@@ -219,7 +235,7 @@ public class FriendListFragment extends Fragment {
                                            Response<ApiResponse<UserProfileDto>> response) {
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().getData() != null) {
-                            renderProfileDialog(code, response.body().getData());
+                            renderProfileDialog(response.body().getData());
                         } else {
                             showError(response, "프로필을 불러오지 못했습니다.");
                         }
@@ -233,7 +249,7 @@ public class FriendListFragment extends Fragment {
                 });
     }
 
-    private void renderProfileDialog(String code, UserProfileDto profile) {
+    private void renderProfileDialog(UserProfileDto profile) {
         Dialog dialog = new Dialog(requireContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         DialogProfileBinding dialogBinding = DialogProfileBinding.inflate(LayoutInflater.from(requireContext()));
@@ -246,14 +262,13 @@ public class FriendListFragment extends Fragment {
         }
 
         dialogBinding.btnClose.setOnClickListener(v -> dialog.dismiss());
-        bindProfileDialog(dialogBinding, code, profile);
+        bindProfileDialog(dialog, dialogBinding, profile);
 
         dialog.show();
     }
 
-    // 관계 상태(relation)에 따라 아바타/닉네임/이메일/액션 버튼을 채운다. 액션 성공 시 이 메서드를
-    // 다시 불러 다이얼로그를 새로고침한다(다이얼로그를 새로 띄우지 않고 그대로 둔 채 버튼만 갱신).
-    private void bindProfileDialog(DialogProfileBinding dialogBinding, String code, UserProfileDto profile) {
+    // 관계 상태(relation)에 따라 아바타/닉네임/이메일/액션 버튼을 채운다. 액션이 성공하면 다이얼로그를 닫는다.
+    private void bindProfileDialog(Dialog dialog, DialogProfileBinding dialogBinding, UserProfileDto profile) {
         String nickname = profile.getNickname();
         dialogBinding.tvAvatar.setText((nickname == null || nickname.isEmpty()) ? "?" : nickname.substring(0, 1));
         dialogBinding.tvNickname.setText(nickname);
@@ -265,19 +280,19 @@ public class FriendListFragment extends Fragment {
                 dialogBinding.btnAction.setVisibility(View.INVISIBLE);
                 break;
             case FRIEND:
-                setProfileActionButton(dialogBinding, "채팅하기", true, v -> openChatWithFriend(profile));
+                setProfileActionButton(dialogBinding, "채팅하기", true, v -> openChatWithFriend(dialog, profile));
                 break;
             case SENT:
                 setProfileActionButton(dialogBinding, "요청 보냄", false, null);
                 break;
             case RECEIVED:
                 setProfileActionButton(dialogBinding, "친구 요청 수락하기", true,
-                        v -> acceptFriendRequestFromProfile(dialogBinding, code, profile));
+                        v -> acceptFriendRequestFromProfile(dialog, profile));
                 break;
             case NONE:
             default:
                 setProfileActionButton(dialogBinding, "친구 요청 보내기", true,
-                        v -> sendFriendRequestFromProfile(dialogBinding, code, profile));
+                        v -> sendFriendRequestFromProfile(dialog, profile));
                 break;
         }
     }
@@ -291,7 +306,7 @@ public class FriendListFragment extends Fragment {
         dialogBinding.btnAction.setOnClickListener(listener);
     }
 
-    private void sendFriendRequestFromProfile(DialogProfileBinding dialogBinding, String code, UserProfileDto profile) {
+    private void sendFriendRequestFromProfile(Dialog dialog, UserProfileDto profile) {
         FriendRequestCreateDto request = new FriendRequestCreateDto(profile.getUserId());
 
         NetworkClient.getFriendApi().createFriendRequest(request)
@@ -300,7 +315,7 @@ public class FriendListFragment extends Fragment {
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             Toast.makeText(requireContext(), "친구 요청을 보냈습니다.", Toast.LENGTH_SHORT).show();
-                            refreshProfileDialog(dialogBinding, code);
+                            dialog.dismiss();
                         } else {
                             showError(response, "친구 요청에 실패했습니다.");
                         }
@@ -313,7 +328,7 @@ public class FriendListFragment extends Fragment {
                 });
     }
 
-    private void acceptFriendRequestFromProfile(DialogProfileBinding dialogBinding, String code, UserProfileDto profile) {
+    private void acceptFriendRequestFromProfile(Dialog dialog, UserProfileDto profile) {
         FriendRequestAnswerDto answer = new FriendRequestAnswerDto(true);
 
         NetworkClient.getFriendApi().answerFriendRequest(profile.getRequestId(), answer)
@@ -324,7 +339,7 @@ public class FriendListFragment extends Fragment {
                             Toast.makeText(requireContext(), "친구 요청을 수락했습니다.", Toast.LENGTH_SHORT).show();
                             fetchFriendList();      // 친구 목록 갱신
                             updateRequestCount();   // 요청 개수 갱신
-                            refreshProfileDialog(dialogBinding, code);
+                            dialog.dismiss();
                         } else {
                             showError(response, "요청 처리에 실패했습니다.");
                         }
@@ -337,27 +352,8 @@ public class FriendListFragment extends Fragment {
                 });
     }
 
-    private void refreshProfileDialog(DialogProfileBinding dialogBinding, String code) {
-        NetworkClient.getFriendApi().getUserProfile(code)
-                .enqueue(new Callback<ApiResponse<UserProfileDto>>() {
-                    @Override
-                    public void onResponse(Call<ApiResponse<UserProfileDto>> call,
-                                           Response<ApiResponse<UserProfileDto>> response) {
-                        if (response.isSuccessful() && response.body() != null
-                                && response.body().getData() != null) {
-                            bindProfileDialog(dialogBinding, code, response.body().getData());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ApiResponse<UserProfileDto>> call, Throwable t) {
-                        Log.e("FriendList", "프로필 새로고침 실패: " + t.getMessage());
-                    }
-                });
-    }
-
     // 이미 친구인 상대를 스캔했을 때 바로 채팅방을 연다 (YaksokDetail.openChatRoomAndShare와 같은 흐름).
-    private void openChatWithFriend(UserProfileDto profile) {
+    private void openChatWithFriend(Dialog dialog, UserProfileDto profile) {
         FriendChatRoomRequest request = new FriendChatRoomRequest(profile.getUserId());
 
         NetworkClient.getChatApi().enterFriendChatRoom(request)
@@ -372,6 +368,7 @@ public class FriendListFragment extends Fragment {
                             chatIntent.putExtra("myParticipantId", response.body().getData().getMyParticipantId());
                             chatIntent.putExtra("roomName", profile.getNickname());
                             startActivity(chatIntent);
+                            dialog.dismiss();   // 채팅방에서 돌아왔을 때 다이얼로그가 남아 있지 않게
                         } else {
                             showError(response, "채팅방 연결에 실패했습니다.");
                         }
@@ -388,7 +385,7 @@ public class FriendListFragment extends Fragment {
         binding.rvYaksokList.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         adapter = new FriendListAdapter(new ArrayList<>(),
-                (friend, position) -> renderProfileDialog(null, UserProfileDto.fromFriend(friend)),
+                (friend, position) -> renderProfileDialog(UserProfileDto.fromFriend(friend)),
                 this::showFriendActionsDialog);
 
         binding.rvYaksokList.setAdapter(adapter);

@@ -17,10 +17,13 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.example.medication.ui.chattingroom.ChattingRoom;
 import com.example.medication.util.ChatEventBus;
+import com.example.medication.util.FriendEventBus;
 import com.example.medication.util.SprefsManager;
 import com.example.medication.util.YaksokEventBus;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -83,6 +86,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if(roomId != null && roomId.equals(ChattingRoom.currentRoomId)) return;
         }
 
+        if("FRIENDSHIP".equals(type)){
+            FriendEventBus.get().publish();   // 알림은 아래 공통 흐름에서 띄운다
+        }
+
             String title = remoteMessage.getData().get("title");
             String body = remoteMessage.getData().get("body");
             String notiIdStr = remoteMessage.getData().get("notificationId");
@@ -93,7 +100,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
 
             if (title != null && body != null) {
-                showNotification(title, body, notificationId, type);
+                showNotification(title, body, notificationId, type, remoteMessage.getData());
             }
     }
 
@@ -110,6 +117,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             channelId = "yaksok_chat_channel";
             channelName = "채팅 알림";
             channelDesc = "새 채팅 메시지 알림을 수신합니다.";
+        } else if ("FRIENDSHIP".equals(type)) {
+            channelId = "yaksok_friend_channel";
+            channelName = "친구 알림";
+            channelDesc = "친구 요청과 수락 알림을 수신합니다.";
         } else {
             channelId = "yaksok_channel";
             channelName = "복약 알림";
@@ -126,7 +137,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         return channelId;
     }
 
-    private void showNotification(String title, String body, int notificationId, String type) {
+    private void showNotification(String title, String body, int notificationId, String type,
+                                  Map<String, String> data) {
         Log.d("알림", "알림 생성을 시작합니다.");
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         String channelId = resolveChannelId(type, notificationManager);
@@ -144,26 +156,42 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 break;
             case "CHAT":
                 break;
+            case "FRIENDSHIP":
+                // 받은 요청(requestId 있음)에만 버튼을 붙인다. "친구가 되었어요" 알림에는 없다.
+                String requestId = data.get("requestId");
+                if (requestId != null) {
+                    addFriendRequestActions(builder, notificationId, Long.parseLong(requestId));
+                }
+                break;
             case "REMINDER":
             default:
                 Intent completeIntent = new Intent(this, NotificationActionReceiver.class);
                 completeIntent.setAction("ACTION_COMPLETE");
                 completeIntent.putExtra("notificationId", notificationId);
+                completeIntent.putExtra("notificationTag", safeType);   // notify와 같은 tag로 지워야 사라진다
                 PendingIntent completePendingIntent = PendingIntent.getBroadcast(
                         this, notificationId, completeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-                // [약속 미루기] 버튼은 실제 재알림 예약이 구현되기 전까지 숨긴다 (docs/todo.md 6.3 참고).
-                // 구현할 때 아래 주석을 풀고 addAction 체인에 다시 연결할 것.
-                // Intent snoozeIntent = new Intent(this, NotificationActionReceiver.class);
-                // snoozeIntent.setAction("ACTION_SNOOZE");
-                // snoozeIntent.putExtra("notificationId", notificationId);
-                // PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(
-                //         this, notificationId + 1000, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
                 builder.addAction(0, "약속 완료", completePendingIntent);
-                //        .addAction(0, "약속 미루기", snoozePendingIntent);
                 break;
         }
-        notificationManager.notify(notificationId, builder.build());
+        notificationManager.notify(safeType, notificationId, builder.build());
+    }
+
+    // 받은 친구 요청 알림의 수락/거절 버튼. 누르면 NotificationActionReceiver가 응답 API를 호출한다.
+    private void addFriendRequestActions(NotificationCompat.Builder builder, int notificationId, long requestId) {
+        builder.addAction(0, "수락", friendAnswerIntent("ACTION_FRIEND_ACCEPT", notificationId, requestId))
+                .addAction(0, "거절", friendAnswerIntent("ACTION_FRIEND_REJECT", notificationId, requestId));
+    }
+
+    private PendingIntent friendAnswerIntent(String action, int notificationId, long requestId) {
+        Intent intent = new Intent(this, NotificationActionReceiver.class);
+        intent.setAction(action);
+        intent.putExtra("notificationId", notificationId);
+        intent.putExtra("notificationTag", "FRIENDSHIP");
+        intent.putExtra("requestId", requestId);
+        // 수락/거절은 action이 달라 구분되고, requestCode를 요청 id로 줘서 요청마다 extras가 덮이지 않는다.
+        return PendingIntent.getBroadcast(this, (int) requestId, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 }

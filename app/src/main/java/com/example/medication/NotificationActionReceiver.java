@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.medication.model.request.FriendRequestAnswerDto;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.util.FriendEventBus;
 import com.example.medication.util.YaksokEventBus;
 
 import retrofit2.Call;
@@ -25,7 +27,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         // 버튼을 누르면 알림창을 지운다.
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if(notificationId != -1){
-            manager.cancel(notificationId);
+            manager.cancel(intent.getStringExtra("notificationTag"), notificationId);
         }
 
         // 약속 완료 버튼 클릭시
@@ -37,7 +39,45 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         } else if ("ACTION_SNOOZE".equals(action)) { // 미루기 버튼 클릭 시
             Log.d("NotificationAction", "미루기 버튼 클릭됨 ID: " + notificationId);
             Toast.makeText(context, "10분 뒤에 다시 알려드릴게요.", Toast.LENGTH_SHORT).show();
+
+        } else if ("ACTION_FRIEND_ACCEPT".equals(action) || "ACTION_FRIEND_REJECT".equals(action)) { // 친구 요청 수락/거절
+            long requestId = intent.getLongExtra("requestId", -1);
+            if (requestId != -1) {
+                answerFriendRequest(context, requestId, "ACTION_FRIEND_ACCEPT".equals(action), goAsync());
+            }
         }
+    }
+
+    private void answerFriendRequest(Context context, long requestId, boolean accept, PendingResult pendingResult) {
+        NetworkClient.getFriendApi().answerFriendRequest(requestId, new FriendRequestAnswerDto(accept))
+                .enqueue(new Callback<ApiResponse<Void>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                        try {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(context, accept ? "친구 요청을 수락했습니다." : "친구 요청을 거절했습니다.",
+                                        Toast.LENGTH_SHORT).show();
+                                FriendEventBus.get().publish();
+                            } else {
+                                // 이미 앱에서 처리한 요청이면 서버가 거절한다.
+                                Log.e("NotificationAction", "친구 요청 응답 실패: " + response.code());
+                                Toast.makeText(context, "요청을 처리하지 못했습니다. 앱에서 확인해주세요.", Toast.LENGTH_LONG).show();
+                            }
+                        } finally {
+                            pendingResult.finish();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                        try {
+                            Log.e("NotificationAction", "친구 요청 응답 네트워크 오류", t);
+                            Toast.makeText(context, "네트워크 오류! 앱에서 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                        } finally {
+                            pendingResult.finish();
+                        }
+                    }
+                });
     }
 
     public void completeNotification(Context context, int notificationId, PendingResult pendingResult){
