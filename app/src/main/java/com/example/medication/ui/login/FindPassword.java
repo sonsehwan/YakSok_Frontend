@@ -21,6 +21,7 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.base.BaseActivity;
 import com.google.gson.Gson;
 
+import com.example.medication.R;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,7 +51,7 @@ public class FindPassword extends BaseActivity {
         String loginId = binding.inputLoginId.getText();
 
         AuthApi api = NetworkClient.getAuthApi();
-        api.sendResetPasswordCode(new ResetPwSendCodeRequest(loginId, email)).enqueue(new Callback<ApiResponse<Void>>() {
+        api.sendResetPasswordCode(new ResetPwSendCodeRequest(loginId, email)).enqueue(busy(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isBusinessSuccess()) {
@@ -70,13 +71,13 @@ public class FindPassword extends BaseActivity {
                 showToast("네트워크 연결을 확인해주세요.");
                 Log.e("FindPassword", "send-code 실패: " + t.getMessage());
             }
-        });
+        }, binding.verificationCode.findViewById(R.id.btn_send_code), binding.verificationCode.findViewById(R.id.btn_resend)));
     }
 
     private void verify(String code) {
         AuthApi api = NetworkClient.getAuthApi();
         api.verifyResetPassword(new ResetPwVerifyRequest(sentLoginId, sentEmail, code))
-                .enqueue(new Callback<ApiResponse<ResetPwVerifyResponse>>() {
+                .enqueue(busy(new Callback<ApiResponse<ResetPwVerifyResponse>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<ResetPwVerifyResponse>> call, Response<ApiResponse<ResetPwVerifyResponse>> response) {
                         if (response.isSuccessful() && response.body() != null
@@ -96,7 +97,7 @@ public class FindPassword extends BaseActivity {
                         showToast("네트워크 연결을 확인해주세요.");
                         Log.e("FindPassword", "verify 실패: " + t.getMessage());
                     }
-                });
+                }, binding.verificationCode.findViewById(R.id.btn_verify)));
     }
 
     private String serverMessage(Response<?> response, String fallback) {

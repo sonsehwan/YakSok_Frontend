@@ -28,6 +28,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.kakao.sdk.user.UserApiClient;
 
 import kotlin.Unit;
+import com.example.medication.util.BusyCallback;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -74,7 +75,7 @@ public class SettingsFragment extends Fragment {
 
     private void onNotificationToggle(CompoundButton button, boolean enabled) {
         UserApi api = NetworkClient.getApi();
-        api.updateNotificationSetting(new NotificationSettingRequest(enabled)).enqueue(new Callback<ApiResponse<UserResponse>>() {
+        api.updateNotificationSetting(new NotificationSettingRequest(enabled)).enqueue(new BusyCallback<ApiResponse<UserResponse>>(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
@@ -95,7 +96,7 @@ public class SettingsFragment extends Fragment {
                 button.setChecked(!enabled);
                 button.setOnCheckedChangeListener(SettingsFragment.this::onNotificationToggle);
             }
-        });
+        }, button));
     }
 
     private void showLogOutDialog() {

@@ -92,7 +92,7 @@ public class DrugStoreDetail extends BaseActivity {
 
             ChatRoomRequest request = new ChatRoomRequest(hpid);
 
-            NetworkClient.getChatApi().enterChatRoom(request).enqueue(new Callback<ApiResponse<ChatRoomResponse>>() {
+            NetworkClient.getChatApi().enterChatRoom(request).enqueue(busy(new Callback<ApiResponse<ChatRoomResponse>>() {
                 @Override
                 public void onResponse(Call<ApiResponse<ChatRoomResponse>> call, Response<ApiResponse<ChatRoomResponse>> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -128,7 +128,7 @@ public class DrugStoreDetail extends BaseActivity {
                 public void onFailure(Call<ApiResponse<ChatRoomResponse>> call, Throwable t) {
                     Toast.makeText(DrugStoreDetail.this, "네트워크 통신 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            });
+            }, binding.btnStartChatting));
         });
 
     }

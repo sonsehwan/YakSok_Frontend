@@ -574,7 +574,7 @@ public class CreatePrescription extends BaseActivity {
 
         YaksokApi api = NetworkClient.getYaksokApi();
 
-        api.saveYaksok(request).enqueue(new Callback<ApiResponse<SaveYaksokResponse>>() {
+        api.saveYaksok(request).enqueue(busy(new Callback<ApiResponse<SaveYaksokResponse>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<SaveYaksokResponse>> call, @NonNull Response<ApiResponse<SaveYaksokResponse>> response) {
                 if(response.isSuccessful() && response.body() != null){
@@ -609,7 +609,7 @@ public class CreatePrescription extends BaseActivity {
             public void onFailure(Call<ApiResponse<SaveYaksokResponse>> call, Throwable t) {
                 Toast.makeText(CreatePrescription.this, "네트워크 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
             }
-        });
+        }, binding.btnRegister));
     }
 
     private void handleErrorResponse(Response<?> response) {

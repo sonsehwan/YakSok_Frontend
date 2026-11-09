@@ -21,6 +21,7 @@ import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.base.BaseActivity;
 import com.google.gson.Gson;
 
+import com.example.medication.R;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,7 +47,7 @@ public class FindId extends BaseActivity {
 
     private void sendCode(String email, boolean resend) {
         AuthApi api = NetworkClient.getAuthApi();
-        api.sendFindIdCode(new FindIdSendCodeRequest(email)).enqueue(new Callback<ApiResponse<Void>>() {
+        api.sendFindIdCode(new FindIdSendCodeRequest(email)).enqueue(busy(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isBusinessSuccess()) {
@@ -65,12 +66,12 @@ public class FindId extends BaseActivity {
                 showToast("네트워크 연결을 확인해주세요.");
                 Log.e("FindId", "send-code 실패: " + t.getMessage());
             }
-        });
+        }, binding.verificationCode.findViewById(R.id.btn_send_code), binding.verificationCode.findViewById(R.id.btn_resend)));
     }
 
     private void verify(String code) {
         AuthApi api = NetworkClient.getAuthApi();
-        api.verifyFindId(new FindIdVerifyRequest(sentEmail, code)).enqueue(new Callback<ApiResponse<FindIdResponse>>() {
+        api.verifyFindId(new FindIdVerifyRequest(sentEmail, code)).enqueue(busy(new Callback<ApiResponse<FindIdResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<FindIdResponse>> call, Response<ApiResponse<FindIdResponse>> response) {
                 if (response.isSuccessful() && response.body() != null
@@ -86,7 +87,7 @@ public class FindId extends BaseActivity {
                 showToast("네트워크 연결을 확인해주세요.");
                 Log.e("FindId", "verify 실패: " + t.getMessage());
             }
-        });
+        }, binding.verificationCode.findViewById(R.id.btn_verify)));
     }
 
     private void showResult(String loginId) {

@@ -100,10 +100,8 @@ public class SignUp_Kakao extends BaseActivity {
     }
 
     private void startKakaoSignUp(KakaoSignUpRequest request) {
-        binding.btnSignUp.setEnabled(false);
-
         NetworkClient.getAuthApi().kakaoSignUp(request)
-                .enqueue(new Callback<ApiResponse<LoginResponse>>() {
+                .enqueue(busy(new Callback<ApiResponse<LoginResponse>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<LoginResponse>> call,
                                            Response<ApiResponse<LoginResponse>> response) {
@@ -112,17 +110,15 @@ public class SignUp_Kakao extends BaseActivity {
                             onLoginSuccess(SignUp_Kakao.this, response.body().getData());
                             return;
                         }
-                        binding.btnSignUp.setEnabled(true);
                         showSignUpError(response);
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
-                        binding.btnSignUp.setEnabled(true);
                         showToast("네트워크 연결에 실패했습니다. 잠시 후 다시 시도해주세요.");
                         Log.e("KakaoSignUp", "Failure: " + t.getMessage());
                     }
-                });
+                }, binding.btnSignUp));
     }
 
     private void selectRole(boolean drugStoreRole) {

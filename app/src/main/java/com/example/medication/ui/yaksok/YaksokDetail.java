@@ -166,7 +166,7 @@ public class YaksokDetail extends BaseActivity {
     private void deleteYaksokFromServer(Long yaksokId) {
         YaksokApi api = NetworkClient.getYaksokApi();
 
-        api.deleteYaksok(yaksokId).enqueue(new Callback<ApiResponse<Void>>() {
+        api.deleteYaksok(yaksokId).enqueue(busy(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful()) {
@@ -185,7 +185,7 @@ public class YaksokDetail extends BaseActivity {
                 Log.e("YaksokList", "삭제 통신 실패: " + t.getMessage());
                 Toast.makeText(YaksokDetail.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
-        });
+        }, binding.ivMenu));
     }
 
     // 공유할 친구를 고르는 다이얼로그

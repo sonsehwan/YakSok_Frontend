@@ -120,7 +120,7 @@ public class MyInfo extends BaseActivity {
 
     private void requestKakaoUnlink() {
         NetworkClient.getAuthApi().kakaoUnlink()
-                .enqueue(new Callback<ApiResponse<UserResponse>>() {
+                .enqueue(busy(new Callback<ApiResponse<UserResponse>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<UserResponse>> call,
                                            Response<ApiResponse<UserResponse>> response) {
@@ -141,7 +141,7 @@ public class MyInfo extends BaseActivity {
                     public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                         showToast("네트워크 연결 실패: " + t.getMessage());
                     }
-                });
+                }, binding.btnLinkKakao));
     }
 
     private void startKakaoLink() {
@@ -157,7 +157,7 @@ public class MyInfo extends BaseActivity {
 
     private void requestKakaoLink(String kakaoToken) {
         NetworkClient.getAuthApi().kakaoInterlock(new KakaoLoginRequest(kakaoToken))
-                .enqueue(new Callback<ApiResponse<UserResponse>>() {
+                .enqueue(busy(new Callback<ApiResponse<UserResponse>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<UserResponse>> call,
                                            Response<ApiResponse<UserResponse>> response) {
@@ -178,7 +178,7 @@ public class MyInfo extends BaseActivity {
                     public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                         showToast("네트워크 연결 실패: " + t.getMessage());
                     }
-                });
+                }, binding.btnLinkKakao));
     }
 
     private void showWithdrawConfirmDialog() {
@@ -193,7 +193,7 @@ public class MyInfo extends BaseActivity {
 
         Log.d("MyInfoActivity", "탈퇴 요청 id: " + userId);
 
-        api.deleteUser().enqueue(new Callback<ApiResponse<Void>>() {
+        api.deleteUser().enqueue(busy(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful()) {
@@ -222,7 +222,7 @@ public class MyInfo extends BaseActivity {
                 Log.e("MyInfoActivity", "탈퇴 API 통신 실패: " + t.getMessage());
                 showToast("네트워크 오류가 발생했습니다.");
             }
-        });
+        }, binding.btnWithdraw));
     }
 
     private void navigateToLoginScreen() {
@@ -244,7 +244,7 @@ public class MyInfo extends BaseActivity {
 
         UserApi api = NetworkClient.getApi();
 
-        api.modifyNickname(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
+        api.modifyNickname(request).enqueue(busy(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
                 if(response.isSuccessful() && response.body() != null){
@@ -275,7 +275,7 @@ public class MyInfo extends BaseActivity {
                 showToast("네트워크 연결 실패: " + t.getMessage());
                 Log.e("ModifyNickName", "Failure: " + t.getMessage());
             }
-        });
+        }, binding.btnSaveInfo));
     }
 
     private void handleErrorResponse(Response<?> response) {

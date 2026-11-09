@@ -61,7 +61,7 @@ public class ResetPassword extends BaseActivity {
         String newPassword = binding.inputNewPw.getText();
 
         AuthApi api = NetworkClient.getAuthApi();
-        api.confirmResetPassword(new ResetPwConfirmRequest(resetToken, newPassword)).enqueue(new Callback<ApiResponse<Void>>() {
+        api.confirmResetPassword(new ResetPwConfirmRequest(resetToken, newPassword)).enqueue(busy(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isBusinessSuccess()) {
@@ -79,7 +79,7 @@ public class ResetPassword extends BaseActivity {
                 showToast("네트워크 연결을 확인해주세요.");
                 Log.e("ResetPassword", "confirm 실패: " + t.getMessage());
             }
-        });
+        }, binding.btnConfirm));
     }
 
     private void goLogin() {

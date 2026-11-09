@@ -64,7 +64,7 @@ public class ModifyPassword extends BaseActivity {
         ModifyPasswordRequest request = new ModifyPasswordRequest(userId, currentPw, newPw);
 
         UserApi api = NetworkClient.getApi();
-        api.modifyPassword(request).enqueue(new Callback<ApiResponse<Void>>() {
+        api.modifyPassword(request).enqueue(busy(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if(response.isSuccessful() && response.body() != null){
@@ -96,7 +96,7 @@ public class ModifyPassword extends BaseActivity {
                 // 에러 원인을 로그로 남기면 디버깅하기 좋습니다.
                 android.util.Log.e("ModifyPw", "통신 실패: " + t.getMessage());
             }
-        });
+        }, binding.btnModifyPw));
     }
 
     private void handleErrorResponse(Response<ApiResponse<Void>> response) {

@@ -111,7 +111,7 @@ public class MedicineSearchActivity extends BaseActivity {
 
         // 백엔드 서버에 요청 보내기
         api.searchMedicine(lastSearchedKeyword, currentPage)
-                .enqueue(new Callback<ApiResponse<List<MedicineSearchResponse>>>() {
+                .enqueue(busy(new Callback<ApiResponse<List<MedicineSearchResponse>>>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse<List<MedicineSearchResponse>>> call,
                                            @NonNull Response<ApiResponse<List<MedicineSearchResponse>>> response) {
@@ -131,6 +131,6 @@ public class MedicineSearchActivity extends BaseActivity {
                         isLoading = false;
                         Toast.makeText(MedicineSearchActivity.this, "서버 연결 실패: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                });
+                }, binding.btnSearch));
     }
 }

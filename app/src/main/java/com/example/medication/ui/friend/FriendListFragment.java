@@ -53,6 +53,8 @@ import com.example.medication.model.response.UserSearchResultDto;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.ui.chattingroom.ChattingRoom;
 import com.example.medication.ui.common.AppDialog;
+import com.example.medication.R;
+import com.example.medication.util.BusyCallback;
 import com.example.medication.util.FriendEventBus;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
@@ -310,7 +312,7 @@ public class FriendListFragment extends Fragment implements FriendEventBus.Liste
         FriendRequestCreateDto request = new FriendRequestCreateDto(profile.getUserId());
 
         NetworkClient.getFriendApi().createFriendRequest(request)
-                .enqueue(new Callback<ApiResponse<Void>>() {
+                .enqueue(new BusyCallback<>(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                         if (response.isSuccessful() && response.body() != null) {
@@ -325,14 +327,14 @@ public class FriendListFragment extends Fragment implements FriendEventBus.Liste
                     public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                         Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }, dialog.findViewById(R.id.btn_action)));
     }
 
     private void acceptFriendRequestFromProfile(Dialog dialog, UserProfileDto profile) {
         FriendRequestAnswerDto answer = new FriendRequestAnswerDto(true);
 
         NetworkClient.getFriendApi().answerFriendRequest(profile.getRequestId(), answer)
-                .enqueue(new Callback<ApiResponse<Void>>() {
+                .enqueue(new BusyCallback<>(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                         if (response.isSuccessful() && response.body() != null) {
@@ -349,7 +351,7 @@ public class FriendListFragment extends Fragment implements FriendEventBus.Liste
                     public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                         Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }, dialog.findViewById(R.id.btn_action)));
     }
 
     // 이미 친구인 상대를 스캔했을 때 바로 채팅방을 연다 (YaksokDetail.openChatRoomAndShare와 같은 흐름).
@@ -357,7 +359,7 @@ public class FriendListFragment extends Fragment implements FriendEventBus.Liste
         FriendChatRoomRequest request = new FriendChatRoomRequest(profile.getUserId());
 
         NetworkClient.getChatApi().enterFriendChatRoom(request)
-                .enqueue(new Callback<ApiResponse<ChatRoomResponse>>() {
+                .enqueue(new BusyCallback<>(new Callback<ApiResponse<ChatRoomResponse>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<ChatRoomResponse>> call,
                                            Response<ApiResponse<ChatRoomResponse>> response) {
@@ -378,7 +380,7 @@ public class FriendListFragment extends Fragment implements FriendEventBus.Liste
                     public void onFailure(Call<ApiResponse<ChatRoomResponse>> call, Throwable t) {
                         Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }, dialog.findViewById(R.id.btn_action)));
     }
 
     private void setRecyclerView() {
@@ -517,7 +519,7 @@ public class FriendListFragment extends Fragment implements FriendEventBus.Liste
             layoutResult.setVisibility(LinearLayout.GONE);
 
             NetworkClient.getFriendApi().searchUser(email)
-                    .enqueue(new Callback<ApiResponse<UserSearchResultDto>>() {
+                    .enqueue(new BusyCallback<>(new Callback<ApiResponse<UserSearchResultDto>>() {
                         @Override
                         public void onResponse(Call<ApiResponse<UserSearchResultDto>> call,
                                                Response<ApiResponse<UserSearchResultDto>> response) {
@@ -544,7 +546,7 @@ public class FriendListFragment extends Fragment implements FriendEventBus.Liste
                             Log.e("FriendList", "사용자 검색 실패: " + t.getMessage());
                             Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    }, dialogBinding.btnSearch));
         });
 
         dialogBinding.btnClose.setOnClickListener(v -> dialog.dismiss());
@@ -555,7 +557,7 @@ public class FriendListFragment extends Fragment implements FriendEventBus.Liste
         FriendRequestCreateDto request = new FriendRequestCreateDto(friendId);
 
         NetworkClient.getFriendApi().createFriendRequest(request)
-                .enqueue(new Callback<ApiResponse<Void>>() {
+                .enqueue(new BusyCallback<>(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                         if (response.isSuccessful() && response.body() != null) {
@@ -571,7 +573,7 @@ public class FriendListFragment extends Fragment implements FriendEventBus.Liste
                         Log.e("FriendList", "친구 요청 실패: " + t.getMessage());
                         Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }, dialog.findViewById(R.id.btn_send_request)));
     }
 
     private void showReceivedRequestDialog() {

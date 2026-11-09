@@ -141,29 +141,26 @@ public class ShareYaksokDetail extends BaseActivity {
 
     private void saveSharedYaksok() {
         Long userId = SprefsManager.getUserId(this);
-        binding.btnSave.setEnabled(false);   // 연타로 중복 요청이 나가지 않게 막는다
 
         NetworkClient.getYaksokApi()
                 .saveSharedYaksok(new ShareYaksokRequest(userId, yaksokId))
-                .enqueue(new Callback<ApiResponse<Void>>() {
+                .enqueue(busy(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                         if (response.isSuccessful()) {
                             showToast("공유 약속을 저장했습니다.");
                             finish();
                         } else {
-                            binding.btnSave.setEnabled(true);
                             showToast(parseErrorMessage(response, "저장에 실패했습니다."));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                        binding.btnSave.setEnabled(true);
                         Log.e("공유약속", "저장 통신 실패: " + t.getMessage());
                         showToast("네트워크 오류가 발생했습니다.");
                     }
-                });
+                }, binding.btnSave));
     }
 
     // 서버가 "이미 저장한 공유 약속입니다." 같은 메시지를 내려주므로 그대로 보여준다.

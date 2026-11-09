@@ -143,7 +143,7 @@ public class FindDrugStore extends BaseActivity {
         loadingDialog.show();
 
         DrugStoreApi api = NetworkClient.getDrugStoreApi();
-        api.getSearchDrugstores(firstAddress, secondAddress, drugstoreName).enqueue(new Callback<ApiResponse<List<SearchDrugStore>>>() {
+        api.getSearchDrugstores(firstAddress, secondAddress, drugstoreName).enqueue(busy(new Callback<ApiResponse<List<SearchDrugStore>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<SearchDrugStore>>> call, Response<ApiResponse<List<SearchDrugStore>>> response) {
                 loadingDialog.dismiss(); // 통신이 끝나면 로딩창 닫기
@@ -173,7 +173,7 @@ public class FindDrugStore extends BaseActivity {
                 loadingDialog.dismiss(); // 통신 실패 시 로딩창 닫기
                 showToast("네트워크 통신 오류: " + t.getMessage());
             }
-        });
+        }, binding.btnFindDrugstore));
     }
 
     private void showResultCount(int count) {

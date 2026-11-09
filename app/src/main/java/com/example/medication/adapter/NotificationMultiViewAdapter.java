@@ -16,6 +16,7 @@ import com.example.medication.model.NotificationListItem;
 import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
+import com.example.medication.util.BusyCallback;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -152,7 +153,7 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
                 checkListener.onCheckChanged();
             }
             NetworkClient.getYaksokApi().updateNotificationStatus(data.getId(), newState)
-                    .enqueue(new Callback<ApiResponse<Void>>() {
+                    .enqueue(new BusyCallback<>(new Callback<ApiResponse<Void>>() {
                         @Override
                         public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                             if (!response.isSuccessful()) {
@@ -171,7 +172,7 @@ public class NotificationMultiViewAdapter extends RecyclerView.Adapter<RecyclerV
                             rollbackStatus(context, position, data, originalState, "오류: " + errorMessage);
                             if (checkListener != null) checkListener.onCheckChanged();
                         }
-                    });
+                    }, holder.binding.cbDone));
 
         });
     }

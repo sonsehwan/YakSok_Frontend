@@ -182,7 +182,7 @@ public class SignUp_DrugStore extends BaseActivity {
         UserRequest request = new UserRequest(loginId, sentEmail, pw, nickName, drugStore, role, emailVerifyToken);
 
         UserApi api = NetworkClient.getApi();
-        api.signUp(request).enqueue(new Callback<ApiResponse<Void>>() {
+        api.signUp(request).enqueue(busy(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if(response.isSuccessful() && response.body() != null){
@@ -211,7 +211,7 @@ public class SignUp_DrugStore extends BaseActivity {
                 showToast("네트워크 연결을 확인해주세요.");
                 Log.e("SignUp", "통신 실패: " + t.getMessage());
             }
-        });
+        }, binding.btnSignUp));
     }
 
     private void handleErrorResponse(Response<ApiResponse<Void>> response) {
@@ -250,7 +250,7 @@ public class SignUp_DrugStore extends BaseActivity {
 
     private void sendCode(String email, boolean resend) {
         AuthApi api = NetworkClient.getAuthApi();
-        api.sendSignUpCode(new SignUpSendCodeRequest(email)).enqueue(new Callback<ApiResponse<Void>>() {
+        api.sendSignUpCode(new SignUpSendCodeRequest(email)).enqueue(busy(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isBusinessSuccess()) {
@@ -271,7 +271,7 @@ public class SignUp_DrugStore extends BaseActivity {
                 showToast("네트워크 연결을 확인해주세요.");
                 Log.e("SignUp", "send-code 실패: " + t.getMessage());
             }
-        });
+        }, binding.verificationCode.findViewById(R.id.btn_send_code), binding.verificationCode.findViewById(R.id.btn_resend)));
     }
 
     private void verify(String code) {
@@ -280,7 +280,7 @@ public class SignUp_DrugStore extends BaseActivity {
             return;
         }
         AuthApi api = NetworkClient.getAuthApi();
-        api.verifySignUp(new SignUpVerifyRequest(sentEmail, code)).enqueue(new Callback<ApiResponse<SignUpVerifyResponse>>() {
+        api.verifySignUp(new SignUpVerifyRequest(sentEmail, code)).enqueue(busy(new Callback<ApiResponse<SignUpVerifyResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<SignUpVerifyResponse>> call, Response<ApiResponse<SignUpVerifyResponse>> response) {
                 if (response.isSuccessful() && response.body() != null
@@ -298,7 +298,7 @@ public class SignUp_DrugStore extends BaseActivity {
                 showToast("네트워크 연결을 확인해주세요.");
                 Log.e("SignUp", "verify 실패: " + t.getMessage());
             }
-        });
+        }, binding.verificationCode.findViewById(R.id.btn_verify)));
     }
 
     private void resetEmailVerification() {
