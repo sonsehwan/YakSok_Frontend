@@ -16,6 +16,7 @@ import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
 import com.example.medication.ui.chattingroom.ChattingRoom;
+import com.example.medication.ui.main.MainActivity;
 import com.example.medication.util.ChatEventBus;
 import com.example.medication.util.FriendEventBus;
 import com.example.medication.util.SprefsManager;
@@ -151,6 +152,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setAutoCancel(true);
 
         String safeType = (type != null) ? type : "REMINDER";
+        builder.setContentIntent(openScreenIntent(safeType));
         switch (safeType) {
             case "TAKEN_ALERT":
                 break;
@@ -192,6 +194,35 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra("requestId", requestId);
         // 수락/거절은 action이 달라 구분되고, requestCode를 요청 id로 줘서 요청마다 extras가 덮이지 않는다.
         return PendingIntent.getBroadcast(this, (int) requestId, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    private PendingIntent openScreenIntent(String type){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        switch (type) {
+            case "TAKEN_ALERT":
+                intent.putExtra(MainActivity.EXTRA_TARGET_TAB, R.id.nav_history);
+                // 3단계에서 "공유받은 약속 탭을 열라"는 extra를 여기에 한 줄 추가
+                break;
+            case "FRIENDSHIP":
+                intent.putExtra(MainActivity.EXTRA_TARGET_TAB, R.id.nav_friend);
+                break;
+            case "CHAT":
+                intent.putExtra(MainActivity.EXTRA_TARGET_TAB, R.id.nav_chat);
+                break;
+            default: // REMINDER(복약)
+                intent.putExtra(MainActivity.EXTRA_TARGET_TAB, R.id.nav_home);
+                break;
+        }
+
+        return PendingIntent.getActivity(
+                this,
+                type.hashCode(),
+                intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 }
