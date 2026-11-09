@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -13,6 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.medication.ui.login.Login;
 import com.example.medication.util.AuthEventBus;
+import com.example.medication.util.BusyCallback;
+
+import retrofit2.Callback;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
@@ -52,6 +56,10 @@ public class BaseActivity extends AppCompatActivity implements AuthEventBus.List
     protected void onPause() {
         super.onPause();
         AuthEventBus.get().unsubscribe(this);
+    }
+
+    protected <T> Callback<T> busy(Callback<T> callback, View... buttons) {
+        return new BusyCallback<>(callback, buttons);
     }
 
     @Override

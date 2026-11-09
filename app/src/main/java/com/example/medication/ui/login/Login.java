@@ -76,7 +76,7 @@ public class Login extends BaseActivity {
 
         UserApi api = NetworkClient.getApi();
 
-        api.login(request).enqueue(new Callback<ApiResponse<LoginResponse>>() {
+        api.login(request).enqueue(busy(new Callback<ApiResponse<LoginResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
                 // 응답을 성공적으로 받고 내용이 있을 때
@@ -100,7 +100,7 @@ public class Login extends BaseActivity {
                 showToast("네트워크 연결 실패: " + t.getMessage());
                 Log.e("Login", "Failure: " + t.getMessage());
             }
-        });
+        }, binding.btnLogin, binding.btnKakaoLogin));
     }
 
     private void setKakaoLoading(boolean loading) {
