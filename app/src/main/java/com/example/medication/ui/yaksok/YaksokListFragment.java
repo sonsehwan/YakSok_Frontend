@@ -30,6 +30,7 @@ import com.example.medication.model.response.SharedUser;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.YaksokApi;
 import com.example.medication.ui.common.AppDialog;
+import com.example.medication.ui.main.MainActivity;
 import com.example.medication.ui.sharedyaksok.ShareYaksokDetail;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.YaksokEventBus;
@@ -94,6 +95,14 @@ public class YaksokListFragment extends Fragment implements YaksokEventBus.Liste
     @Override
     public void onResume() {
         super.onResume();
+
+        Intent intent = requireActivity().getIntent();
+        if(intent.getBooleanExtra(MainActivity.EXTRA_SHOW_SHARED_YAKSOK, false)){
+            intent.removeExtra(MainActivity.EXTRA_SHOW_SHARED_YAKSOK);
+            selectSharedYaksokTab();
+            return;
+        }
+
         refreshCurrentTab();
     }
 

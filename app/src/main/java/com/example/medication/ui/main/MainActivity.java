@@ -22,10 +22,13 @@ import com.example.medication.R;
 import com.example.medication.databinding.ActivityMainBinding;
 import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.ui.drugstore.DrugStoreList;
+import com.example.medication.ui.login.Login;
+import com.example.medication.util.SprefsManager;
 
 public class MainActivity extends BaseActivity {
 
     public static final String EXTRA_TARGET_TAB = "target_tab";
+    public static final String EXTRA_SHOW_SHARED_YAKSOK = "show_shared_yaksok";
 
     private ActivityMainBinding binding;
     private ActivityResultLauncher<String> notificationPermissionLauncher;
@@ -33,6 +36,13 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(!SprefsManager.isLoggedIn(this)){
+            startActivity(new Intent(this, Login.class));
+            finish();
+            return;
+        }
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -49,6 +59,10 @@ public class MainActivity extends BaseActivity {
             v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), systemBars.bottom);
             return insets;
         });
+
+        if (savedInstanceState == null) {
+            applyTargetTabFromIntent(getIntent());
+        }
     }
 
     private void requestNotificationPermission() {

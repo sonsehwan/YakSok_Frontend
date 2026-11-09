@@ -206,7 +206,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         switch (type) {
             case "TAKEN_ALERT":
                 intent.putExtra(MainActivity.EXTRA_TARGET_TAB, R.id.nav_history);
-                // 3단계에서 "공유받은 약속 탭을 열라"는 extra를 여기에 한 줄 추가
+                intent.putExtra(MainActivity.EXTRA_SHOW_SHARED_YAKSOK, true);
                 break;
             case "FRIENDSHIP":
                 intent.putExtra(MainActivity.EXTRA_TARGET_TAB, R.id.nav_friend);
