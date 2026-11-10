@@ -24,7 +24,7 @@ public class SprefsManager {
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
     private static final String LEGACY_KEY_YAKSOK_LIST = "yaksok_list";
     private static final String LEGACY_KEY_NOTIFICATION_LIST = "notification_list";
-
+    private static final String KEY_NOTIFICATION_ENABLED = "notification_enabled_";
     private static final String KEY_ACCESS_TOKEN = "access_token";
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
 
@@ -102,6 +102,25 @@ public class SprefsManager {
     public static Long getUserId(Context context){
         UserResponse user = getUser(context);
         return (user != null) ? user.getId() : null;
+    }
+
+    public static boolean isNotificationEnabled(Context context){
+        Long userId = getUserId(context);
+        if(userId == null) return false;
+
+        return(getPreference(context).getBoolean(
+                KEY_NOTIFICATION_ENABLED + userId,
+                true
+        ));
+    }
+
+    public static void setNotificationEnabled(Context context, boolean enabled){
+        Long userId = getUserId(context);
+        if(userId == null) return;
+
+        getPreference(context).edit()
+                .putBoolean(KEY_NOTIFICATION_ENABLED + userId, enabled)
+                .apply();
     }
 
     // 로그인 상태 확인
