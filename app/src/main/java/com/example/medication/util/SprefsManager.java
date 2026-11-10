@@ -3,20 +3,14 @@ package com.example.medication.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.medication.model.NotificationYaksok;
-import com.example.medication.model.Yaksok;
 import com.example.medication.model.response.UserResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SprefsManager {
 
@@ -28,8 +22,9 @@ public class SprefsManager {
     //데이터를 저장할 데이터 키값
     private static final String KEY_USER_DATA = "user_data"; // 유저 객체 전체 JSON
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
-    private static final String KEY_YAKSOK_LiST = "yaksok_list";
-    private static final String KEY_NOTIFICATION_LIST = "notification_list";
+    private static final String LEGACY_KEY_YAKSOK_LIST = "yaksok_list";
+    private static final String LEGACY_KEY_NOTIFICATION_LIST = "notification_list";
+
     private static final String KEY_ACCESS_TOKEN = "access_token";
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
 
@@ -119,84 +114,11 @@ public class SprefsManager {
         SharedPreferences.Editor editor = getPreference(context).edit();
         editor.remove(KEY_USER_DATA);
         editor.remove(KEY_IS_LOGGED_IN);
+        // 예전 버전이 남긴 약속/알림 캐시. 더는 쓰지 않으니 기기에서 지운다
+        editor.remove(LEGACY_KEY_YAKSOK_LIST);
+        editor.remove(LEGACY_KEY_NOTIFICATION_LIST);
         editor.apply();
 
         clearAuthInfo(context);
-    }
-
-    // 저장된 모든 약속 목록을 가져오기
-    public static List<Yaksok> getYaksokList(Context context){
-        String json = getPreference(context).getString(KEY_YAKSOK_LiST, null);
-        if(json == null){
-            return new ArrayList<>();
-        }
-        Type type = new TypeToken<List<Yaksok>>(){}.getType();
-        return getGson().fromJson(json, type);
-    }
-
-    // 새로 등록한 약속을 기존 목록에 추가
-    public static void addYaksok(Context context, Yaksok yaksok){
-        List<Yaksok> yaksokList = getYaksokList(context);
-        yaksokList.add(yaksok);
-
-        SharedPreferences.Editor editor = getPreference(context).edit();
-        String json = getGson().toJson(yaksokList);
-        editor.putString(KEY_YAKSOK_LiST, json);
-        editor.apply();
-    }
-
-    public static void updateYaksok(Context context, Yaksok updatedYaksok) {
-        // 1. 기존에 저장된 약속 리스트를 불러옵니다. (기존에 작성해두신 메서드 활용)
-        List<Yaksok> yaksokList = getYaksokList(context);
-
-        if (yaksokList != null) {
-            // 2. 리스트를 순회하며 수정할 약속과 ID가 일치하는 아이템을 찾습니다.
-            for (int i = 0; i < yaksokList.size(); i++) {
-                if (yaksokList.get(i).getId().equals(updatedYaksok.getId())) {
-                    // 3. 일치하는 위치(index)의 데이터를 수정된 약속으로 교체합니다.
-                    yaksokList.set(i, updatedYaksok);
-                    break;
-                }
-            }
-
-            // 4. 변경된 리스트를 JSON으로 변환하여 다시 로컬에 저장합니다.
-            SharedPreferences.Editor editor = getPreference(context).edit();
-            String json = getGson().toJson(yaksokList);
-            editor.putString(KEY_YAKSOK_LiST, json);
-            editor.apply();
-        }
-    }
-
-    // 저장된 모든 NotificationYaksok 목록 가져오기
-    public static List<NotificationYaksok> getNotificationList(Context context){
-        String json = getPreference(context).getString(KEY_NOTIFICATION_LIST, null);
-        if(json == null){
-            return new ArrayList<>();
-        }
-        Type type = new TypeToken<List<NotificationYaksok>>(){}.getType();
-        return getGson().fromJson(json, type);
-    }
-
-    // 새로운 알림 리스트로 싹 변경
-    public static void setNotifications(Context context, List<NotificationYaksok> newNotifications) {
-        SharedPreferences.Editor editor = getPreference(context).edit();
-
-        // 새로운 전체 리스트를 JSON으로 변환
-        String json = getGson().toJson(newNotifications);
-
-        // 기존 데이터를 덮어쓰고 저장
-        editor.putString(KEY_NOTIFICATION_LIST, json);
-        editor.apply();
-    }
-
-    // 새로 생성된 NotificationYaksok 리스트를 기존 목록에 누적 추가
-    public static void addNotifications(Context context, List<NotificationYaksok> newNotifications){
-        List<NotificationYaksok> currentList = getNotificationList(context);
-        currentList.addAll(newNotifications);
-
-        SharedPreferences.Editor editor = getPreference(context).edit();
-        String json = getGson().toJson(currentList);
-        editor.putString(KEY_NOTIFICATION_LIST, json);
-        editor.apply();
     }
 }

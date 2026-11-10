@@ -271,8 +271,6 @@ public class ModifyYaksok extends BaseActivity {
                         if(yaksokId != null) {
                             yaksok.setId(yaksokId);
 
-                            SprefsManager.updateYaksok(ModifyYaksok.this, yaksok);
-
                             showToast("약속이 성공적으로 수정되었습니다.");
 
                             Intent intent = new Intent();

@@ -27,7 +27,6 @@ import com.example.medication.model.NotificationYaksok;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.util.InsetsUtil;
-import com.example.medication.util.SprefsManager;
 import com.example.medication.util.YaksokEventBus;
 
 import java.text.SimpleDateFormat;
@@ -35,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -157,13 +155,12 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
                         if (binding == null) return; // 응답이 늦게 와서 View가 이미 파괴된 경우
                         if (response.isSuccessful() && response.body() != null) {
                             List<NotificationYaksok> notifications = response.body().getData();
-                            SprefsManager.setNotifications(requireContext(), notifications);
                             allNotifications = notifications != null ? notifications : new ArrayList<>();
                             renderForSelectedDate();
                         } else {
                             Log.e("메인화면 에러", "알림 리스트를 가져오는데 실패하였습니다." + response.code() + " 메시지: " + response.message());
                             showToast("알림 리스트를 가져오는데 실패하였습니다.");
-                            loadFromLocalFallback();
+                            showEmptyList();
                         }
                     }
 
@@ -171,14 +168,15 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
                     public void onFailure(Call<ApiResponse<List<NotificationYaksok>>> call, Throwable t) {
                         if (binding == null) return;
                         Log.e("메인화면 에러", "통신 실패: " + t.getMessage());
-                        loadFromLocalFallback();
+                        showToast("네트워크 연결을 확인해주세요.");
+                        showEmptyList();
                     }
                 });
     }
 
-    private void loadFromLocalFallback() {
-        List<NotificationYaksok> savedList = SprefsManager.getNotificationList(requireContext());
-        allNotifications = savedList != null ? savedList : new ArrayList<>();
+    // 실패 시 이전 데이터를 남겨두지 않는다 — 완료 체크가 서버에 반영되지 않는 오래된 목록을 보여주지 않기 위해
+    private void showEmptyList() {
+        allNotifications = new ArrayList<>();
         renderForSelectedDate();
     }
 
@@ -254,19 +252,6 @@ public class HomeFragment extends Fragment implements YaksokEventBus.Listener {
             binding.progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_done)));
         } else {
             binding.progressMain.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.status_pending)));
-        }
-
-        List<NotificationYaksok> allSavedList = SprefsManager.getNotificationList(requireContext());
-        if (allSavedList != null) {
-            for (NotificationYaksok todayItem : notificationYaksokList) {
-                for (NotificationYaksok savedItem : allSavedList) {
-                    if (Objects.equals(savedItem.getId(), todayItem.getId())) {
-                        savedItem.setTaken(todayItem.isTaken());
-                        break;
-                    }
-                }
-            }
-            SprefsManager.setNotifications(requireContext(), allSavedList);
         }
     }
 

@@ -522,8 +522,6 @@ public class CreatePaperEnvelope extends BaseActivity {
 
                         if(yaksokId != null) {
                             yaksok.setId(yaksokId);
-                            SprefsManager.addYaksok(CreatePaperEnvelope.this, yaksok);
-
                             Toast.makeText(CreatePaperEnvelope.this, "약속이 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
 
                             Intent intent = new Intent(CreatePaperEnvelope.this, MainActivity.class);

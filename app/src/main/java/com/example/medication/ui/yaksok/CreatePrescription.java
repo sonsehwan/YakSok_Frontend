@@ -587,8 +587,6 @@ public class CreatePrescription extends BaseActivity {
 
                         if(yaksokId != null) {
                             yaksok.setId(yaksokId);
-                            SprefsManager.addYaksok(CreatePrescription.this, yaksok);
-
                             Toast.makeText(CreatePrescription.this, "약속이 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
 
                             Intent intent = new Intent(CreatePrescription.this, MainActivity.class);
