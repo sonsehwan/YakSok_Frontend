@@ -100,7 +100,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 notificationId = Integer.parseInt(notiIdStr);
             }
 
-            if (title != null && body != null) {
+            if (title != null && body != null && SprefsManager.isNotificationEnabled(this)) {
                 showNotification(title, body, notificationId, type, remoteMessage.getData());
             }
     }
