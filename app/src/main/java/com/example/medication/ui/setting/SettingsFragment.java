@@ -67,7 +67,7 @@ public class SettingsFragment extends Fragment {
         });
 
         UserResponse user = SprefsManager.getUser(requireContext());
-        binding.swNotification.setChecked(user != null && SprefsManager.isNotificationEnabled(requireContext()));
+        binding.swNotification.setChecked(SprefsManager.isNotificationEnabled(requireContext()));
         binding.swNotification.setOnCheckedChangeListener(this::onNotificationToggle);
     }
 
