@@ -1,6 +1,7 @@
 package com.example.medication.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.kakao.sdk.auth.model.OAuthToken;
 import com.kakao.sdk.common.model.ClientError;
@@ -43,5 +44,14 @@ public class KakaoLoginHelper {
         } else {
             client.loginWithKakaoAccount(context, callback);
         }
+    }
+
+    public static void kakaoLogout() {
+        UserApiClient.getInstance().logout(error -> {
+            if (error != null) {
+                Log.w("KakaoLogin", "카카오 로그아웃 실패", error);
+            }
+            return Unit.INSTANCE;
+        });
     }
 }

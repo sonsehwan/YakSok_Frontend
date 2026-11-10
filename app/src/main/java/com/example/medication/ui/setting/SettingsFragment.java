@@ -1,8 +1,11 @@
 package com.example.medication.ui.setting;
 
+import static com.example.medication.util.AuthMethod.deleteToken;
+import static com.example.medication.util.KakaoLoginHelper.kakaoLogout;
+
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +16,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.medication.databinding.FragmentSettingsBinding;
-import com.example.medication.model.request.FirebaseTokenRequest;
-import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
-import com.example.medication.network.NetworkClient;
-import com.example.medication.network.UserApi;
 import com.example.medication.ui.common.AppDialog;
 import com.example.medication.ui.login.Login;
 import com.example.medication.ui.myinfo.MyInfo;
 import com.example.medication.util.InsetsUtil;
 import com.example.medication.util.SprefsManager;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.kakao.sdk.user.UserApiClient;
-
-import kotlin.Unit;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SettingsFragment extends Fragment {
 
@@ -77,63 +69,19 @@ public class SettingsFragment extends Fragment {
 
     private void showLogOutDialog() {
         AppDialog.confirm(requireContext(), "로그아웃", "로그아웃 하시겠습니까?", "로그아웃", false, () -> {
-            // clearUserInfo 가 사용자 정보를 지우므로 그 전에 카카오 회원인지 확인해 둔다
-            UserResponse user = SprefsManager.getUser(requireContext());
+            Activity activity = requireActivity();
+
+            UserResponse user = SprefsManager.getUser(activity);
             boolean isKakaoUser = user != null && user.getSocialType() != null;
 
-            deleteToken();
-            SprefsManager.clearUserInfo(requireContext());
-            if (isKakaoUser) {
-                kakaoLogout();
-            }
-            requireActivity().finishAffinity();
-            Intent intent = new Intent(requireContext(), Login.class);
-            startActivity(intent);
-        });
-    }
-
-    // 카카오 SDK가 앱 안에 들고 있는 카카오 토큰을 지운다. 실패해도 우리 앱 로그아웃에는 영향이 없다
-    private void kakaoLogout() {
-        UserApiClient.getInstance().logout(error -> {
-            if (error != null) {
-                Log.w("KakaoLogin", "카카오 로그아웃 실패", error);
-            }
-            return Unit.INSTANCE;
-        });
-    }
-
-    private void deleteToken() {
-        Long userId = SprefsManager.getUserId(requireContext());
-
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w("FcmToken", "로그아웃 중 토큰 조회 실패", task.getException());
-                        return;
-                    }
-                    sendTokenDeleteToServer(userId, task.getResult());
-                });
-    }
-
-    private void sendTokenDeleteToServer(Long userId, String token) {
-        FirebaseTokenRequest request = new FirebaseTokenRequest(token);
-        UserApi api = NetworkClient.getApi();
-
-        api.deleteFcmToken(request).enqueue(new Callback<ApiResponse<Void>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
-                if (response.isSuccessful()) {
-                    Log.d("FcmToken", "토큰을 저장적으로 삭제하였습니다.");
-                } else {
-                    Log.e("FcmToken", "토큰 삭제에 실패했습니다.");
+            deleteToken(activity, () -> {
+                SprefsManager.clearUserInfo(activity);
+                if (isKakaoUser) {
+                    kakaoLogout();
                 }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                Log.e("FcmToken", "네트워크 통신 실패: " + t.getMessage());
-            }
+                activity.finishAffinity();
+                activity.startActivity(new Intent(activity, Login.class));
+            });
         });
     }
-
 }

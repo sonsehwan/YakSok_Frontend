@@ -1,6 +1,6 @@
 package com.example.medication.ui.signup;
 
-import static com.example.medication.util.LoginMethod.onLoginSuccess;
+import static com.example.medication.util.AuthMethod.onLoginSuccess;
 
 import android.content.Intent;
 import android.graphics.Color;

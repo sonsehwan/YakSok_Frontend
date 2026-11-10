@@ -1,6 +1,6 @@
 package com.example.medication.ui.login;
 
-import static com.example.medication.util.LoginMethod.onLoginSuccess;
+import static com.example.medication.util.AuthMethod.onLoginSuccess;
 
 import android.content.Context;
 import android.content.Intent;

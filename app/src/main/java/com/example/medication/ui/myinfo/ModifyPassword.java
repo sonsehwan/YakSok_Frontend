@@ -1,5 +1,8 @@
 package com.example.medication.ui.myinfo;
 
+import static com.example.medication.util.AuthMethod.deleteToken;
+import static com.example.medication.util.KakaoLoginHelper.kakaoLogout;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -11,13 +14,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.medication.ui.base.BaseActivity;
-
 import com.example.medication.databinding.ActivityModifyPasswordBinding;
 import com.example.medication.model.request.ModifyPasswordRequest;
 import com.example.medication.model.response.ApiResponse;
+import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
 import com.example.medication.network.UserApi;
+import com.example.medication.ui.base.BaseActivity;
 import com.example.medication.ui.login.Login;
 import com.example.medication.util.SprefsManager;
 import com.google.gson.Gson;
@@ -72,12 +75,18 @@ public class ModifyPassword extends BaseActivity {
                     ApiResponse<Void> result = response.body();
 
                     if(result.isBusinessSuccess()){
-                        SprefsManager.clearUserInfo(ModifyPassword.this);
-                        showToast("수정 완료. 로그아웃합니다.");
-                        Intent intent = new Intent(ModifyPassword.this, Login.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
+                        UserResponse user = SprefsManager.getUser(ModifyPassword.this);
+                        boolean isKakaoUser = user != null && user.getSocialType() != null;
+
+                        deleteToken(ModifyPassword.this, () -> {
+                            SprefsManager.clearUserInfo(ModifyPassword.this);
+                            if (isKakaoUser) kakaoLogout();
+                            showToast("수정 완료. 로그아웃합니다.");
+                            Intent intent = new Intent(ModifyPassword.this, Login.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        });
                         Log.d("ModifyPw", result.getMessage());
                     }else{
                         //서버에서 회원가입에 실패 했을 경우.
