@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.medication.databinding.FragmentSettingsBinding;
 import com.example.medication.model.request.FirebaseTokenRequest;
-import com.example.medication.model.request.NotificationSettingRequest;
 import com.example.medication.model.response.ApiResponse;
 import com.example.medication.model.response.UserResponse;
 import com.example.medication.network.NetworkClient;
@@ -28,7 +27,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.kakao.sdk.user.UserApiClient;
 
 import kotlin.Unit;
-import com.example.medication.util.BusyCallback;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -69,34 +67,12 @@ public class SettingsFragment extends Fragment {
         });
 
         UserResponse user = SprefsManager.getUser(requireContext());
-        binding.swNotification.setChecked(user != null && user.isNotificationEnabled());
+        binding.swNotification.setChecked(user != null && SprefsManager.isNotificationEnabled(requireContext()));
         binding.swNotification.setOnCheckedChangeListener(this::onNotificationToggle);
     }
 
     private void onNotificationToggle(CompoundButton button, boolean enabled) {
-        UserApi api = NetworkClient.getApi();
-        api.updateNotificationSetting(new NotificationSettingRequest(enabled)).enqueue(new BusyCallback<ApiResponse<UserResponse>>(new Callback<ApiResponse<UserResponse>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    // 탭을 옮긴 뒤 응답이 와도 서버 설정과 로컬 캐시는 맞춰야 하므로 가드 대신 View의 context를 쓴다
-                    SprefsManager.setUserInfo(button.getContext(), response.body().getData());
-                } else {
-                    Log.e("NotificationSetting", "알림 설정 변경 실패");
-                    button.setOnCheckedChangeListener(null);
-                    button.setChecked(!enabled);
-                    button.setOnCheckedChangeListener(SettingsFragment.this::onNotificationToggle);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
-                Log.e("NotificationSetting", "네트워크 통신 실패: " + t.getMessage());
-                button.setOnCheckedChangeListener(null);
-                button.setChecked(!enabled);
-                button.setOnCheckedChangeListener(SettingsFragment.this::onNotificationToggle);
-            }
-        }, button));
+       SprefsManager.setNotificationEnabled(button.getContext(), enabled);
     }
 
     private void showLogOutDialog() {
