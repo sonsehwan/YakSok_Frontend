@@ -24,9 +24,6 @@ public class UserResponse implements Serializable {
     @SerializedName("myDrugStore")
     private DrugStore myDrugStore;
 
-    @SerializedName("notificationEnabled")
-    private boolean notificationEnabled;
-
     @SerializedName("socialType")
     private String socialType;
 
